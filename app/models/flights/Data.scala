@@ -1,9 +1,4 @@
-package models
-
-object Continent extends Enumeration {
-  type Continent = Value
-  val Africa, America, Asia, Australia, Europe = Value
-}
+package models.flights
 
 import Continent._
 
@@ -16,5 +11,3 @@ object Airports {
     Airport("PEK", "Beijing", "China", Asia),
     Airport("SYD", "Sydney", "Australia", Australia))
 }
-
-case class Airport(iata: String, city: String, country: String, continent: Continent)

@@ -4,17 +4,18 @@
 
 # Two ways to define routes
 #controllers.Assets.at(path="/public", file="index.html")
-GET   /                  controllers.Application.index(any = "none")
+GET   /                           controllers.Application.index(any = "none")
 
 
 # Admin-SignIns
-GET   /airline/flights							   controllers.airline.FlightsCtrl.list
+#GET   /airline/flights   controllers.airline.FlightsCtrl.list(from:Option[Airport] ?= None, to:Option[Airport] ?= None)
+GET   /airline/:airline/flights   controllers.airline.FlightsCtrl.list(airline:String, from:Option[String] ?= None, to:Option[String] ?= None, start:Option[String] ?= None, end:Option[String] ?= None)
 
 # GET      /api/gamesignin/spiel/:id               controllers.GameSignInCtrl.signinGame(id:Int)
 
 # POST     /api/gamesignin/spiel/:id               controllers.GameSignInCtrl.saveSigninLaundry(id:Int)
 
-GET   /api/*any          controllers.Application.http404(any)
+GET   /api/*any                   controllers.Application.http404(any)
 
 # Login/Logout
 # GET      /isUser                                controllers.SecurityController.isUser
@@ -26,7 +27,7 @@ GET   /api/*any          controllers.Application.http404(any)
 # POST     /logout                                 controllers.SecurityController.logout
 
 # Map static resources from the /public folder to the /assets URL path
-GET   /assets/*file      controllers.Assets.at(path="/public", file)
+GET   /assets/*file               controllers.Assets.at(path="/public", file)
 
-GET   /*any              controllers.Application.index(any)
+GET   /*any                       controllers.Application.index(any)
 

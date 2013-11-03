@@ -8,7 +8,7 @@ import play.api.libs.json.Json.writes
 import controllers.JsonHelper._
 import models.json._
 import models.Person
-import models.Flight
+import models.flights.Flight
 
 // order matters!
 object JsonDeSerialization {
