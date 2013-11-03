@@ -1,0 +1,42 @@
+<div class="row">
+	<div class="navbar navbar-inverse navbar-static-top">
+		<div class="navbar-inner">
+			<div class="nav-collapse collapse">
+				<ul class="nav">
+					<li class="dropdown" data-ng-show="loggedIn"><a href="#"
+						class="dropdown-toggle" data-toggle="dropdown">Mitgliederbereich<b
+							class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="/mitgliederbereich/anabmeldung">An/Abmeldung</a></li>
+							<li><a href="/mitgliederbereich/kontaktliste">Kontaktliste</a></li>
+							<li><a href="/mitgliederbereich/kontaktdaten">Kontaktdaten</a></li>
+							<li><a href="/mitgliederbereich/passwort">Passwortänderung</a></li>
+						</ul></li>
+					<li class="dropdown" data-ng-show="isAdmin"><a href="#"
+						class="dropdown-toggle" data-toggle="dropdown">Admin<b
+							class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="/admin/anmeldungen/team/Torpedos">Anmeldungen</a></li>
+							<li><a href="/admin/spiele/Torpedos/1314">Spiele</a></li>
+							<li><a href="/admin/spieler/Torpedos">Spieler</a></li>
+							<li><a href="/admin/eltern">Eltern</a></li>
+							<li><a href="/admin/termine/Torpedos/1314">Termine</a></li>
+							<!-- <li><a href="/admin/news">News</a></li> -->
+						</ul></li>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown">News<b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="/news/vereinsfest">Vereinsfest 2012</a></li>
+							<li><a href="/news/saisonauftaktMinis">Saisonauftakt
+									2012 - Nachwuchs</a></li>
+							<li><a href="/news/saisonauftaktTorpedos">Saisonauftakt
+									2012 - Torpedos</a></li>
+							<li><a href="/news/alihan">Alihan Verleihung 2012</a></li>
+							<li><a href="/news/halloffame">Hall of Fame -
+									Goldmedaillen</a></li>
+						</ul></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>

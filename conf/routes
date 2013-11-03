@@ -1,0 +1,32 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Two ways to define routes
+#controllers.Assets.at(path="/public", file="index.html")
+GET   /                  controllers.Application.index(any = "none")
+
+
+# Admin-SignIns
+GET   /airline/flights							   controllers.airline.FlightsCtrl.list
+
+# GET      /api/gamesignin/spiel/:id               controllers.GameSignInCtrl.signinGame(id:Int)
+
+# POST     /api/gamesignin/spiel/:id               controllers.GameSignInCtrl.saveSigninLaundry(id:Int)
+
+GET   /api/*any          controllers.Application.http404(any)
+
+# Login/Logout
+# GET      /isUser                                controllers.SecurityController.isUser
+
+# GET      /isAdmin                                controllers.SecurityController.isAdmin
+
+# POST     /login                                  controllers.SecurityController.login
+
+# POST     /logout                                 controllers.SecurityController.logout
+
+# Map static resources from the /public folder to the /assets URL path
+GET   /assets/*file      controllers.Assets.at(path="/public", file)
+
+GET   /*any              controllers.Application.index(any)
+

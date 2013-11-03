@@ -1,0 +1,85 @@
+#quickmenu {
+	text-align: justify;
+	-ms-text-justify: distribute-all-lines;
+	text-justify: distribute-all-lines;
+}
+
+#quickmenu a {
+	vertical-align: middle;
+	display: inline-block;
+	*display: inline;
+	zoom: 1;
+}
+
+.stretch {
+	width: 100%;
+	display: inline-block;
+	font-size: 0;
+	line-height: 0
+}
+
+#quick-tigers, #quick-minis, #quick-torpedos, #quick-login, #quick-logout {
+    /*height: 100px;*/
+    background-repeat: no-repeat;
+    background-position: top;
+    color: #4F4F4F;
+    /*line-height: 175px;*/
+    text-align: center;
+}
+
+#quick-tigers:hover, #quick-minis:hover, #quick-torpedos:hover, #quick-login:hover, #quick-logout:hover {
+    color: #000000  ;
+}
+
+/*
+#quick-login, #quick-logout {
+    left: 30px;
+    width: 75px;
+}
+*/
+#quick-login {
+    background-image: url("/assets/images/menu/player_black_75.png");
+}
+
+#quick-login:hover {
+    background-image: url("/assets/images/menu/player_75.png");
+}
+
+#quick-logout {
+    background-image: url("/assets/images/menu/power_black_75.png");
+}
+
+#quick-logout:hover {
+    background-image: url("/assets/images/menu/power_75.png");
+}
+/*
+#quick-torpedos {
+    background-image: url("images/torpedos_black_75.png");
+    left: 140px;
+    width: 90px;
+}
+
+#quick-torpedos:hover, body.torpedos #quick-torpedos {
+    background-image: url("images/torpedos_black_75.png");
+}
+
+#quick-tigers {
+    background-image: url("images/tigers_black_75.png");
+    left: 265px;
+    width: 75px;
+}
+
+#quick-tigers:hover, body.tigers #quick-tigers {
+    background-image: url("images/tigers_black_75.png");
+}
+
+#quick-minis {
+    background-image: url("images/minis_black_75.png");
+    left: 375px;
+    width: 100px;
+}
+
+#quick-minis:hover, body.minis #quick-minis {
+    background-image: url("images/minis_black_75.png");
+}
+*/
