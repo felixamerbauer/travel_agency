@@ -1,5 +1,5 @@
 import models.flights.Airport
-import models.flights.Airports.Airports
+import models.flights.Data.Airports
 import play.api.mvc.PathBindable
 
 package object binders {

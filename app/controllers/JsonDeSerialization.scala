@@ -8,7 +8,8 @@ import play.api.libs.json.Json.writes
 import controllers.JsonHelper._
 import models.json._
 import models.Person
-import models.flights.Flight
+import models.json.flights.FlightJson
+import models.json.flights.Link
 
 // order matters!
 object JsonDeSerialization {
@@ -23,7 +24,10 @@ object JsonDeSerialization {
   implicit val idReads = reads[Id]
   implicit val idWrites = writes[Id]
 
-  implicit val flightReads = reads[Flight]
-  implicit val flightWrites = writes[Flight]
+  implicit val linkReads = reads[Link]
+  implicit val linkWrites = writes[Link]
+
+  implicit val flightReads = reads[FlightJson]
+  implicit val flightWrites = writes[FlightJson]
 
 }
