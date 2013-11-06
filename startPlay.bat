@@ -1,2 +1,1 @@
-cd C:\tools\git_repos\bitbucket\travel_agency
-play
+%PLAY_2.2.1%\play
