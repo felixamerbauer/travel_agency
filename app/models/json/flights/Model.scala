@@ -1,15 +1,7 @@
 package models.json.flights
 
-import org.joda.time.LocalDate
-import models.QueryBasics._
-import models.flights.Data._
-import models.QueryBasics.localdateMapper
-import models.QueryBasics.personIdMapper
-import models.RoleEnum.RoleEnum
-import play.api.db.slick.Config.driver.simple.Table
-import play.api.db.slick.Config.driver.simple.columnBaseToInsertInvoker
-import play.api.Logger._
 import org.joda.time.DateTime
+
 import models.flights.Flight
 
 case class Link(rel: String, href: String)

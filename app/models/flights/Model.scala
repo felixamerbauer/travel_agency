@@ -2,10 +2,9 @@ package models.flights
 
 import org.joda.time.LocalDate
 
-import models.QueryBasics._
+import db.QueryBasics._
 import models.flights.Data._
-import models.QueryBasics.localdateMapper
-import models.QueryBasics.personIdMapper
+import db.QueryBasics.localdateMapper
 import models.RoleEnum.RoleEnum
 import play.api.db.slick.Config.driver.simple.Table
 import play.api.db.slick.Config.driver.simple.columnBaseToInsertInvoker

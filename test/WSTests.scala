@@ -1,17 +1,16 @@
-package models
+
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.DurationInt
-
 import org.scalatest.BeforeAndAfter
 import org.scalatest.FunSuite
-
 import controllers.JsonDeSerialization.flightReads
 import models.flights.Data
 import models.json.flights.FlightJson
 import play.api.libs.json.Json
 import play.api.libs.ws.WS
+import org.scalatest.Finders
 
 class WSTests extends FunSuite with BeforeAndAfter {
   implicit val context = ExecutionContext.Implicits.global

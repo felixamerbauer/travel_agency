@@ -1,8 +1,7 @@
 package models.json
 
-import models.PersonId
 
 case class PersonOverview(
-  id: PersonId,
+  id: Int,
   firstname: String,
   lastname: String)

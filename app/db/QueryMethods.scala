@@ -1,17 +1,12 @@
-package models
-import scala.slick.lifted.Query
-
+package db
 import play.api.db.slick.Config.driver.simple._
-import org.joda.time.DateTime
-import java.sql.Timestamp
-import org.joda.time.LocalDate
-import models.QueryLibrary._
+import db.QueryLibrary._
 import models.RoleEnum.RoleEnum
-import models.QueryBasics._
+import db.QueryBasics._
 import com.github.t3hnar.bcrypt.BCrypt
 import com.github.t3hnar.bcrypt.Password
-import controllers.AuthenticationCache
 import play.api.Logger._
+import models._
 
 object QueryMethods {
   val defaultPassword = "password".bcrypt(BCrypt.gensalt())
@@ -62,7 +57,7 @@ object QueryMethods {
 //    }
 //  }
 
-  def findAllUsersWithRoles(implicit session: Session): Seq[(Person, Set[RoleEnum])] = ??? 
+//  def findAllUsersWithRoles(implicit session: Session): Seq[(Person, Set[RoleEnum])] = ??? 
 //  {
 //    // ToDOfilter not null authToken
 //    val data = personRolesJoin.to[Vector]
@@ -72,7 +67,7 @@ object QueryMethods {
 //    }).toSeq
 //  }
   
-  def findByAuthToken(authToken: String)(implicit session: Session): Option[(Person, Set[RoleEnum])] = ???
+//  def findByAuthToken(authToken: String)(implicit session: Session): Option[(Person, Set[RoleEnum])] = ???
 //    qPersons.where(_.authToken === authToken).firstOption.map { e =>
 //      val roles = qPersonRoles.where(f => f.personId === e.id).map(_.role).to[Set]
 //      (e, roles)
@@ -80,7 +75,7 @@ object QueryMethods {
 
   val lower = SimpleFunction.unary[String, String]("LOWER")
 
-  def findByUsernamePassword(username: String, password: String)(implicit session: Session): Option[(Person, Set[RoleEnum])] = ??? 
+//  def findByUsernamePassword(username: String, password: String)(implicit session: Session): Option[(Person, Set[RoleEnum])] = ??? 
 //  {
 //    username.split("""\.""") match {
 //      case Array(firstname, lastname) =>
@@ -103,16 +98,16 @@ object QueryMethods {
 //    }
 //  }
 
-  def updateToken(person: Person, token: String)(implicit session: Session) {
-    info(s"updateToken $person $token")
-    qPersons.where(_.id === person.id).map(_.authToken).update(Some(token))
-    AuthenticationCache.update
-  }
-
-  def deleteAuthToken(person: Person)(implicit session: Session) {
-    info(s"deleteAuthToken $person")
-    qPersons.where(_.id === person.id).map(_.authToken).update(None)
-    AuthenticationCache.update
-  }
+//  def updateToken(person: Person, token: String)(implicit session: Session) {
+//    info(s"updateToken $person $token")
+//    qPersons.where(_.id === person.id).map(_.authToken).update(Some(token))
+//    AuthenticationCache.update
+//  }
+//
+//  def deleteAuthToken(person: Person)(implicit session: Session) {
+//    info(s"deleteAuthToken $person")
+//    qPersons.where(_.id === person.id).map(_.authToken).update(None)
+//    AuthenticationCache.update
+//  }
 
 }

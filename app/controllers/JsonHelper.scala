@@ -1,22 +1,16 @@
 package controllers
 
-import scala.math.BigDecimal.long2bigDecimal
 import org.joda.time.DateTime
-import org.joda.time.LocalDate
-import models.PersonId
-import models.RoleEnum
-import models.RoleEnum.RoleEnum
+import org.joda.time.format.ISODateTimeFormat
+
 import play.api.data.validation.ValidationError
 import play.api.libs.json.JsError
-import play.api.libs.json.JsNumber
 import play.api.libs.json.JsPath
-import play.api.libs.json.JsResult
 import play.api.libs.json.JsString
 import play.api.libs.json.JsSuccess
 import play.api.libs.json.JsValue
 import play.api.libs.json.Reads
 import play.api.libs.json.Writes
-import org.joda.time.format.ISODateTimeFormat
 
 object JsonHelper {
   val isoDtf = ISODateTimeFormat.dateTimeNoMillis()
