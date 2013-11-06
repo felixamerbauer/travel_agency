@@ -13,7 +13,7 @@ import models.THotelGroup
 import models.ext.TExtHotelRoom
 import models.ext.TExtFlight
 
-object Playground extends App {
+object PrintDDL extends App {
   import play.api.db.slick.Config.driver.simple.Database.threadLocalSession
 
   running(FakeApplication()) {

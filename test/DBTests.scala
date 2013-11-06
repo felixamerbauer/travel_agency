@@ -1,18 +1,28 @@
+import scala.slick.lifted.Query
 
-
-import play.api.db.slick.Config.driver.simple._
 import org.scalatest.BeforeAndAfter
-import org.scalatest.FunSuite
-import db.QueryLibrary._
-import db.QueryBasics._
-import db.QueryMethods._
-import models.TUser
 import org.scalatest.Finders
+import org.scalatest.FunSuite
+
 import Misc.db
+import models.TUser
+import models.User
+import play.api.db.slick.Config.driver.simple.Database.threadLocalSession
+import play.api.db.slick.Config.driver.simple._
+import play.api.test.FakeApplication
+import play.api.test.Helpers.running
 
-class DB1Tests extends FunSuite with BeforeAndAfter {
+class DBTests extends FunSuite with BeforeAndAfter {
 
-  db.withSession {
-    println(TUser.ddl)
+  test("read write to all tables") {
+    running(FakeApplication()) {
+      db.withSession {
+        val user = User(email = "user@example.org", passwordHash = "passwordhash")
+        TUser.autoInc.insert(user)
+        val userDb = Query(TUser).where(_.email === user.email).to[Vector].head
+        assert(user === userDb.copy(id = -1))
+      }
+    }
+
   }
 }

@@ -15,33 +15,6 @@ import play.api.libs.json.Writes
 object JsonHelper {
   val isoDtf = ISODateTimeFormat.dateTimeNoMillis()
 
-
-//  // person id
-//  implicit object personIdReads extends Reads[PersonId] {
-//    override def reads(json: JsValue): JsResult[PersonId] = json match {
-//      case JsString(s) => JsSuccess(new PersonId(s.toInt))
-//      case _ => JsError(Seq(JsPath() -> Seq(ValidationError("validate.error.expected.eventid"))))
-//    }
-//  }
-//
-//  implicit object personIdWrites extends Writes[PersonId] {
-//    override def writes(et: PersonId) = JsString(et.id.toString)
-//  }
-//
-//  // role enum
-//  implicit object roleReads extends Reads[RoleEnum] {
-//    override def reads(json: JsValue): JsResult[RoleEnum] = json match {
-//      case JsString(s) => s match {
-//        case RoleEnum(role) => JsSuccess(role)
-//      }
-//      case _ => JsError(Seq(JsPath() -> Seq(ValidationError("validate.error.expected.season"))))
-//    }
-//  }
-//
-//  implicit object roleWrites extends Writes[RoleEnum] {
-//    override def writes(role: RoleEnum) = JsString(role.toString)
-//  }
-
   // datetime
   implicit object dateTimeReads extends Reads[DateTime] {
     override def reads(json: JsValue) = json match {

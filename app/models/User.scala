@@ -12,6 +12,8 @@ object TUser extends Table[User]("users") {
     { t => User(email = t._1, passwordHash = t._2) },
     { (p: User) => Some((p.email, p.passwordHash)) })
   def autoInc = forInsert returning id
+
+  def emailUnique = index("users_email_UNIQUE", email, unique = true)
 }
 
 case class User(

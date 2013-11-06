@@ -1,7 +1,6 @@
 package db
 import play.api.db.slick.Config.driver.simple._
 import db.QueryLibrary._
-import models.RoleEnum.RoleEnum
 import db.QueryBasics._
 import com.github.t3hnar.bcrypt.BCrypt
 import com.github.t3hnar.bcrypt.Password

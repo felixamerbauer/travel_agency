@@ -5,7 +5,6 @@ import org.joda.time.LocalDate
 import db.QueryBasics._
 import models.flights.Data._
 import db.QueryBasics.localdateMapper
-import models.RoleEnum.RoleEnum
 import play.api.db.slick.Config.driver.simple.Table
 import play.api.db.slick.Config.driver.simple.columnBaseToInsertInvoker
 import play.api.Logger._
