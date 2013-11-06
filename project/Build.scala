@@ -13,11 +13,10 @@ object ApplicationBuild extends Build {
     jdbc,
     filters,
     "com.typesafe.slick" % "slick_2.10" % "1.0.1",
-    "mysql" % "mysql-connector-java" % "5.1.26",
+    "org.postgresql" % "postgresql" % "9.3-1100-jdbc41",
     "org.scalatest" % "scalatest_2.10" % "2.0",
     "com.typesafe.play" %% "play-slick" % "0.5.0.5",
-    "com.github.t3hnar" % "scala-bcrypt_2.10" % "2.3",
-    "com.h2database" % "h2" % "1.3.174")
+    "com.github.t3hnar" % "scala-bcrypt_2.10" % "2.3")
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     routesImport += "binders._",
