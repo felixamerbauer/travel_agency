@@ -15,6 +15,10 @@ import models.ext.TExtHotelRoom
 import models.ext.ExtFlight
 import models.ext.TExtFlight
 import org.joda.time.DateTime
+import models.ext.ExtFlightLastModified
+import models.ext.TExtFlightLastModified
+import models.ext.ExtHotelRoomLastModified
+import models.ext.TExtHotelRoomLastModified
 
 class DBTests extends FunSuite with BeforeAndAfter {
 
@@ -22,8 +26,8 @@ class DBTests extends FunSuite with BeforeAndAfter {
     running(FakeApplication()) {
 
       db.withSession {
-        // empty tables
-        Query(TUser).delete
+        // TODO empty tables
+        //        Query(TUser).delete
         // user
         val user = User(email = "user@example.org", passwordHash = "passwordhash")
         TUser.autoInc.insert(user)
@@ -82,6 +86,16 @@ class DBTests extends FunSuite with BeforeAndAfter {
         TExtFlight.autoInc.insert(extFlight)
         val extFlightDb = Query(TExtFlight).where(_.airlineShortName === "airlineShortName").first
         assert(extFlight === extFlightDb.copy(id = -1))
+        // extFlightLastModified
+        val extFlightLastModified = ExtFlightLastModified(lastModified = new DateTime(2013, 12, 24, 20, 15))
+        TExtFlightLastModified.autoInc.insert(extFlightLastModified)
+        val extFlightLastModifiedDb = Query(TExtFlightLastModified).first
+        assert(extFlightLastModified === extFlightLastModifiedDb.copy(id = -1))
+        // extHotelRoomLastModified
+        val extHotelRoomLastModified = ExtHotelRoomLastModified(lastModified = new DateTime(2013, 12, 24, 20, 15))
+        TExtHotelRoomLastModified.autoInc.insert(extHotelRoomLastModified)
+        val extHotelRoomLastModifiedDb = Query(TExtHotelRoomLastModified).first
+        assert(extHotelRoomLastModified === extHotelRoomLastModifiedDb.copy(id = -1))
       }
     }
 

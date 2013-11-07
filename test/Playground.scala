@@ -12,6 +12,8 @@ import models.TAirline
 import models.THotelGroup
 import models.ext.TExtHotelRoom
 import models.ext.TExtFlight
+import models.ext.TExtFlightLastModified
+import models.ext.TExtHotelRoomLastModified
 
 object PrintDDL extends App {
   import play.api.db.slick.Config.driver.simple.Database.threadLocalSession
@@ -29,6 +31,8 @@ object PrintDDL extends App {
       print(THotelGroup.ddl.createStatements)
       print(TExtHotelRoom.ddl.createStatements)
       print(TExtFlight.ddl.createStatements)
+      print(TExtFlightLastModified.ddl.createStatements)
+      print(TExtHotelRoomLastModified.ddl.createStatements)
     }
   }
 }

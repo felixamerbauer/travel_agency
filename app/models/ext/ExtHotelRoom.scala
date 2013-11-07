@@ -4,6 +4,7 @@ import play.api.db.slick.Config.driver.simple._
 import org.joda.time.LocalDate
 import db.QueryBasics.localdateMapper
 import models.TLocation
+import scala.slick.lifted.Projection7
 
 object TExtHotelRoom extends Table[ExtHotelRoom]("extHotelRooms") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)

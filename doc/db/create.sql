@@ -2,11 +2,13 @@ drop table if exists "orders";
 drop table if exists "airlines";
 drop table if exists "hotelgroups";
 drop table if exists "extHotelRooms";
-drop table if exists "extFlight";
+drop table if exists "extFlights";
 drop table if exists "products";
 drop table if exists "customers";
 drop table if exists "users";
 drop table if exists "locations";
+drop table if exists "extFlightsLastModified";
+drop table if exists "extHotelRoomsLastModified";
 
 
 create table "users" ("id" SERIAL NOT NULL PRIMARY KEY,"email" VARCHAR(254) NOT NULL,"passwordHash" VARCHAR(254) NOT NULL);
@@ -24,6 +26,8 @@ create table "airlines" ("id" SERIAL NOT NULL PRIMARY KEY,"name" VARCHAR(254) NO
 create table "hotelgroups" ("id" SERIAL NOT NULL PRIMARY KEY,"name" VARCHAR(254) NOT NULL,"apiUrl" VARCHAR(254) NOT NULL);
 create table "extHotelRooms" ("id" SERIAL NOT NULL PRIMARY KEY,"hotelShortName" VARCHAR(254) NOT NULL,"hotelName" VARCHAR(254) NOT NULL,"locationId" INTEGER NOT NULL,"startDate" TIMESTAMP NOT NULL,"endDate" TIMESTAMP NOT NULL,"personCount" INTEGER NOT NULL,"availableRooms" INTEGER NOT NULL);
 alter table "extHotelRooms" add constraint "Location_FK" foreign key("locationId") references "locations"("id") on update NO ACTION on delete NO ACTION;
-create table "extFlight" ("id" SERIAL NOT NULL PRIMARY KEY,"airlineShortName" VARCHAR(254) NOT NULL,"airlineName" VARCHAR(254) NOT NULL,"fromLocationId" INTEGER NOT NULL,"toLocationId" INTEGER NOT NULL,"dateTime" TIMESTAMP NOT NULL,"availableSeats" INTEGER NOT NULL);
-alter table "extFlight" add constraint "FromLocation_FK" foreign key("fromLocationId") references "locations"("id") on update NO ACTION on delete NO ACTION;
-alter table "extFlight" add constraint "ToLocation_FK" foreign key("toLocationId") references "locations"("id") on update NO ACTION on delete NO ACTION;
+create table "extFlights" ("id" SERIAL NOT NULL PRIMARY KEY,"airlineShortName" VARCHAR(254) NOT NULL,"airlineName" VARCHAR(254) NOT NULL,"fromLocationId" INTEGER NOT NULL,"toLocationId" INTEGER NOT NULL,"dateTime" TIMESTAMP NOT NULL,"availableSeats" INTEGER NOT NULL);
+alter table "extFlights" add constraint "FromLocation_FK" foreign key("fromLocationId") references "locations"("id") on update NO ACTION on delete NO ACTION;
+alter table "extFlights" add constraint "ToLocation_FK" foreign key("toLocationId") references "locations"("id") on update NO ACTION on delete NO ACTION;
+create table "extFlightsLastModified" ("id" SERIAL NOT NULL PRIMARY KEY,"lastModified" TIMESTAMP NOT NULL,"tmp" BOOLEAN);
+create table "extHotelRoomsLastModified" ("id" SERIAL NOT NULL PRIMARY KEY,"lastModified" TIMESTAMP NOT NULL,"tmp" BOOLEAN);

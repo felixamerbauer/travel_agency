@@ -6,7 +6,7 @@ import db.QueryBasics.dateTimeMapper
 import org.joda.time.DateTime
 import models.TLocation
 
-object TExtFlight extends Table[ExtFlight]("extFlight") {
+object TExtFlight extends Table[ExtFlight]("extFlights") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def airlineShortName = column[String]("airlineShortName")
   def airlineName = column[String]("airlineName")
