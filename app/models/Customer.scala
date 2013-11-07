@@ -1,13 +1,19 @@
 package models
 
 import play.api.db.slick.Config.driver.simple._
+import org.joda.time.LocalDate
+import db.QueryBasics.dateTimeMapper
+import play.api.db.slick.Config.driver.simple._
+import org.joda.time.LocalDate
+import db.QueryBasics._
+import org.joda.time.DateTime
 
 object TCustomer extends Table[Customer]("customers") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def userId = column[Int]("user")
   def firstName = column[String]("firstName")
   def lastName = column[String]("lastName")
-  def birthDate = column[String]("birthDate")
+  def birthDate = column[LocalDate]("birthDate")
   def sex = column[String]("sex")
   def street = column[String]("street")
   def zipCode = column[String]("zipCode")
@@ -33,7 +39,7 @@ case class Customer(
   userId: Int,
   firstName: String,
   lastName: String,
-  birthDate: String,
+  birthDate: LocalDate,
   sex: String,
   street: String,
   zipCode: String,

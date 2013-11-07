@@ -11,7 +11,7 @@ drop table if exists "locations";
 
 create table "users" ("id" SERIAL NOT NULL PRIMARY KEY,"email" VARCHAR(254) NOT NULL,"passwordHash" VARCHAR(254) NOT NULL);
 create unique index "users_email_UNIQUE" on "users" ("email");
-create table "customers" ("id" SERIAL NOT NULL PRIMARY KEY,"user" INTEGER NOT NULL,"firstName" VARCHAR(254) NOT NULL,"lastName" VARCHAR(254) NOT NULL,"birthDate" VARCHAR(254) NOT NULL,"sex" VARCHAR(254) NOT NULL,"street" VARCHAR(254) NOT NULL,"zipCode" VARCHAR(254) NOT NULL,"city" VARCHAR(254) NOT NULL,"country" VARCHAR(254) NOT NULL,"phoneNumber" VARCHAR(254) NOT NULL,"creditCardCompany" VARCHAR(254) NOT NULL,"creditCardNumber" VARCHAR(254) NOT NULL,"creditCardExpireDate" VARCHAR(254) NOT NULL,"creditCardVerificationCode" VARCHAR(254) NOT NULL);
+create table "customers" ("id" SERIAL NOT NULL PRIMARY KEY,"user" INTEGER NOT NULL,"firstName" VARCHAR(254) NOT NULL,"lastName" VARCHAR(254) NOT NULL,"birthDate" TIMESTAMP NOT NULL,"sex" VARCHAR(254) NOT NULL,"street" VARCHAR(254) NOT NULL,"zipCode" VARCHAR(254) NOT NULL,"city" VARCHAR(254) NOT NULL,"country" VARCHAR(254) NOT NULL,"phoneNumber" VARCHAR(254) NOT NULL,"creditCardCompany" VARCHAR(254) NOT NULL,"creditCardNumber" VARCHAR(254) NOT NULL,"creditCardExpireDate" VARCHAR(254) NOT NULL,"creditCardVerificationCode" VARCHAR(254) NOT NULL);
 alter table "customers" add constraint "User_FK" foreign key("user") references "users"("id") on update NO ACTION on delete NO ACTION;
 create table "locations" ("id" SERIAL NOT NULL PRIMARY KEY,"iataCode" VARCHAR(254) NOT NULL,"fullName" VARCHAR(254) NOT NULL);
 create table "products" ("id" SERIAL NOT NULL PRIMARY KEY,"fromLocationId" INTEGER NOT NULL,"toLocationId" INTEGER NOT NULL,"archived" BOOLEAN NOT NULL);
