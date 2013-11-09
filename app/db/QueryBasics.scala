@@ -1,15 +1,20 @@
 package db
 
 import java.sql.Timestamp
-import org.joda.time.DateTime
-import org.joda.time.LocalDate
-import models._
+
 import scala.slick.lifted.MappedTypeMapper
 import scala.slick.lifted.Query
-import models.ext.ExtFlightLastModified
-import models.ext.ExtFlight
-import models.ext.ExtHotelRoom
-import models.ext.ExtHotelRoomLastModified
+
+import org.joda.time.DateTime
+import org.joda.time.LocalDate
+
+import models.TAirline
+import models.TCustomer
+import models.THotelGroup
+import models.TLocation
+import models.TOrder
+import models.TProduct
+import models.TUser
 import models.ext.TExtFlight
 import models.ext.TExtFlightLastModified
 import models.ext.TExtHotelRoom

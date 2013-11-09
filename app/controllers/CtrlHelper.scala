@@ -8,6 +8,7 @@ import play.api.mvc.AnyContent
 
 trait CtrlHelper {
   def parse[T](implicit rs: DBSessionRequest[AnyContent], fjs: Reads[T]): T = {
+    // TODO handle exceptions
     val json: JsValue = rs.request.body.asJson.get
     fromJson[T](json).get
   }

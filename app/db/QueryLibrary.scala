@@ -1,8 +1,8 @@
 package db
+
+import db.QueryBasics.qExtFlight
+import db.QueryBasics.qLocation
 import play.api.db.slick.Config.driver.simple._
-import db.QueryBasics._
-import models.ext.ExtFlight
-import models.Location
 
 object QueryLibrary {
 
@@ -24,4 +24,7 @@ object QueryLibrary {
     from <- qLocation if (from.id === flight.fromLocationId)
   } yield (flight, to, from)
 
+  def qFlight(airlineShortName: String, flightId: Int) = for {
+    flight <- qExtFlight if (flight.id === flightId && flight.airlineShortName === airlineShortName)
+  } yield flight
 }

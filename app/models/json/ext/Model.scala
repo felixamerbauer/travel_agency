@@ -25,3 +25,5 @@ case class FlightJson(
     dateTime = flight.dateTime,
     availableSeats = flight.availableSeats)
 }
+
+case class FlightBookingDetails(seats: Int)
