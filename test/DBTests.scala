@@ -82,7 +82,7 @@ class DBTests extends FunSuite with BeforeAndAfter {
         assert(extHotelRoom === extHotelRoomDb.copy(id = -1))
         // extFlight
         val extFlight = ExtFlight(airlineShortName = "airlineShortName", airlineName = "airlineName", fromLocationId = location1Db.id,
-          toLocationId = location2Db.id, dateTime = new DateTime(2013, 12, 24, 20, 15), availableSeats = 1)
+          toLocationId = location2Db.id, dateTime = new DateTime(2013, 12, 24, 20, 15), availableSeats = 1, price = 199.90)
         TExtFlight.autoInc.insert(extFlight)
         val extFlightDb = Query(TExtFlight).where(_.airlineShortName === "airlineShortName").first
         assert(extFlight === extFlightDb.copy(id = -1))

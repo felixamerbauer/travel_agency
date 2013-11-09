@@ -19,12 +19,10 @@ object ApplicationBuild extends Build {
     "com.github.t3hnar" % "scala-bcrypt_2.10" % "2.3")
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
-    routesImport += "binders._",
     scalacOptions += "-deprecation",
     scalacOptions += "-unchecked",
     scalacOptions += "-feature" 
     )
-  // .settings(scalacOptions ++= Seq("-deprecation","-unchecked","-feature"))
 
 }
             

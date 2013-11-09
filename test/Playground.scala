@@ -36,3 +36,12 @@ object PrintDDL extends App {
     }
   }
 }
+
+object TestQuery extends App {
+  import play.api.db.slick.Config.driver.simple.Database.threadLocalSession
+
+  running(FakeApplication()) {
+    println(qFlightsWithLocation("airlineShortName", 1)._selectStatement)
+  }
+
+}

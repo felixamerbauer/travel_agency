@@ -14,11 +14,12 @@ object TExtFlight extends Table[ExtFlight]("extFlights") {
   def toLocationId = column[Int]("toLocationId")
   def dateTime = column[DateTime]("dateTime")
   def availableSeats = column[Int]("availableSeats")
-  def baseProjection = airlineShortName ~ airlineName ~ fromLocationId ~ toLocationId ~ dateTime ~ availableSeats
+  def price = column[Double]("price")
+  def baseProjection = airlineShortName ~ airlineName ~ fromLocationId ~ toLocationId ~ dateTime ~ availableSeats ~ price
   override def * = id ~: baseProjection <> (ExtFlight, ExtFlight.unapply _)
   def forInsert = baseProjection <> (
-    { t => ExtFlight(-1, t._1, t._2, t._3, t._4, t._5, t._6) },
-    { (p: ExtFlight) => Some((p.airlineShortName, p.airlineName, p.fromLocationId, p.toLocationId, p.dateTime, p.availableSeats)) })
+    { t => ExtFlight(-1, t._1, t._2, t._3, t._4, t._5, t._6, t._7) },
+    { (p: ExtFlight) => Some((p.airlineShortName, p.airlineName, p.fromLocationId, p.toLocationId, p.dateTime, p.availableSeats, p.price)) })
   def autoInc = forInsert returning id
 
   def fromLocation = foreignKey("FromLocation_FK", fromLocationId, TLocation)(_.id)
@@ -32,6 +33,7 @@ case class ExtFlight(
   fromLocationId: Int,
   toLocationId: Int,
   dateTime: DateTime,
-  availableSeats: Int)
+  availableSeats: Int,
+  price: Double)
 
   
