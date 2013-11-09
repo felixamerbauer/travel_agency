@@ -9,7 +9,7 @@ import models.TProduct
 import models.TLocation
 import models.TOrder
 import models.TAirline
-import models.THotelGroup
+import models.THotelgroup
 import models.ext.TExtHotelRoom
 import models.ext.TExtFlight
 import models.ext.TExtFlightLastModified
@@ -28,7 +28,7 @@ object PrintDDL extends App {
       print(TProduct.ddl.createStatements)
       print(TOrder.ddl.createStatements)
       print(TAirline.ddl.createStatements)
-      print(THotelGroup.ddl.createStatements)
+      print(THotelgroup.ddl.createStatements)
       print(TExtHotelRoom.ddl.createStatements)
       print(TExtFlight.ddl.createStatements)
       print(TExtFlightLastModified.ddl.createStatements)

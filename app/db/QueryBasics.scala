@@ -10,7 +10,7 @@ import org.joda.time.LocalDate
 
 import models.TAirline
 import models.TCustomer
-import models.THotelGroup
+import models.THotelgroup
 import models.TLocation
 import models.TOrder
 import models.TProduct
@@ -33,7 +33,7 @@ object QueryBasics {
   // Simple Queries
   val qAirline = Query(TAirline)
   val qCustomer = Query(TCustomer)
-  val qHotelGroup = Query(THotelGroup)
+  val qHotelgroup = Query(THotelgroup)
   val qLocation = Query(TLocation)
   val qOrder = Query(TOrder)
   val qProduct = Query(TProduct)

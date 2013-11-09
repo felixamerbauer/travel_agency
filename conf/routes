@@ -4,28 +4,28 @@
 
 # Two ways to define routes
 #controllers.Assets.at(path="/public", file="index.html")
-GET      /                                          controllers.Application.index(any = "none")
+GET      /                                         controllers.Application.index(any = "none")
 
 
 # Admin-SignIns
 # http://127.0.0.1:9000/airline/austrian/flights?from=SYD&to=BER&start=2013-11-16T15:00:00%2B01:00&end=2013-11-16T15:00:00%2B01:00
-GET      /airline/:airline/flights                  controllers.ext.FlightsCtrl.list(airline:String, from:Option[String] ?= None, to:Option[String] ?= None, start:Option[String] ?= None, end:Option[String] ?= None)
+GET      /airline/:airline/flights                 controllers.ext.FlightsCtrl.list(airline:String, from:Option[String] ?= None, to:Option[String] ?= None, start:Option[String] ?= None, end:Option[String] ?= None)
 
-GET      /airline/:airline/flights/:id              controllers.ext.FlightsCtrl.find(airline:String, id: Int)
+GET      /airline/:airline/flights/:id             controllers.ext.FlightsCtrl.find(airline:String, id: Int)
 
-POST     /airline/:airline/flights/book/:id         controllers.ext.FlightsCtrl.book(airline:String, id: Int)
+POST     /airline/:airline/flights/book/:id        controllers.ext.FlightsCtrl.book(airline:String, id: Int)
 
-DELETE   /airline/:airline/flights/book/:id         controllers.ext.FlightsCtrl.cancel(airline:String, id: Int)
+DELETE   /airline/:airline/flights/book/:id        controllers.ext.FlightsCtrl.cancel(airline:String, id: Int)
 
-GET      /hotelgroup/:hotelgroup/flights            controllers.ext.HotelsCtrl.list(hotelgroup:String, from:Option[String] ?= None, to:Option[String] ?= None, start:Option[String] ?= None, end:Option[String] ?= None)
+GET      /hotelgroup/:hotelgroup/hotels            controllers.ext.HotelsCtrl.list(hotelgroup:String, location:Option[String] ?= None, start:Option[String] ?= None, end:Option[String] ?= None)
 
-GET      /hotelgroup/:hotelgroup/flights/:id        controllers.ext.HotelsCtrl.find(hotelgroup:String, id: Int)
+GET      /hotelgroup/:hotelgroup/hotels/:id        controllers.ext.HotelsCtrl.find(hotelgroup:String, id: Int)
 
-POST     /hotelgroup/:hotelgroup/flights/book/:id   controllers.ext.HotelsCtrl.book(hotelgroup:String, id: Int)
+POST     /hotelgroup/:hotelgroup/hotels/book/:id   controllers.ext.HotelsCtrl.book(hotelgroup:String, id: Int)
 
-DELETE   /hotelgroup/:hotelgroup/flights/book/:id   controllers.ext.HotelsCtrl.cancel(hotelgroup:String, id: Int)
+DELETE   /hotelgroup/:hotelgroup/hotels/book/:id   controllers.ext.HotelsCtrl.cancel(hotelgroup:String, id: Int)
 
-GET      /api/*any                                  controllers.Application.http404(any)
+GET      /api/*any                                 controllers.Application.http404(any)
 
 # Login/Logout
 # GET      /isUser                                controllers.SecurityController.isUser
@@ -37,7 +37,7 @@ GET      /api/*any                                  controllers.Application.http
 # POST     /logout                                 controllers.SecurityController.logout
 
 # Map static resources from the /public folder to the /assets URL path
-GET      /assets/*file                              controllers.Assets.at(path="/public", file)
+GET      /assets/*file                             controllers.Assets.at(path="/public", file)
 
-GET      /*any                                      controllers.Application.index(any)
+GET      /*any                                     controllers.Application.index(any)
 

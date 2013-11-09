@@ -19,6 +19,9 @@ object JsonDeSerialization {
   implicit val flightReads = reads[FlightJson]
   implicit val flightWrites = writes[FlightJson]
 
+  implicit val hotelReads = reads[HotelRoomJson]
+  implicit val hotelWrites = writes[HotelRoomJson]
+
   implicit val flightBookingDetailsReads = reads[FlightBookingDetails]
   implicit val flightBookingDetailsWrites = writes[FlightBookingDetails]
 

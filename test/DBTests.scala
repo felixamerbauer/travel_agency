@@ -2,6 +2,7 @@ import scala.slick.lifted.Query
 import org.scalatest.BeforeAndAfter
 import org.scalatest.Finders
 import org.scalatest.FunSuite
+import db.QueryBasics._
 import Misc.db
 import models.TUser
 import models._
@@ -19,80 +20,129 @@ import models.ext.ExtFlightLastModified
 import models.ext.TExtFlightLastModified
 import models.ext.ExtHotelRoomLastModified
 import models.ext.TExtHotelRoomLastModified
-
+import scala.util.Random
 class DBTests extends FunSuite with BeforeAndAfter {
 
   test("read write to all tables") {
     running(FakeApplication()) {
+      Random.setSeed(1234)
 
       db.withSession {
         // TODO empty tables
-        //        Query(TUser).delete
+        val tables = Seq(qOrder,
+          qAirline,
+          qHotelgroup,
+          qExtHotelRoom,
+          qExtFlight,
+          qProduct,
+          qCustomer,
+          qUser,
+          qLocation,
+          qCustomer,
+          qUser,
+          qLocation,
+          qExtFlightLastModified,
+          qExtHotelRoomLastModified)
+        tables foreach (_.delete)
         // user
-        val user = User(email = "user@example.org", passwordHash = "passwordhash")
-        TUser.autoInc.insert(user)
-        val userDb = Query(TUser).where(_.email === user.email).first
-        assert(user === userDb.copy(id = -1))
+        val users = (1 to 5 map (e => User(email = s"user$e@example.org", passwordHash = "passwordhash"))).toSeq
+        println("Inserting\n\t" + users.mkString("\n\t"))
+        users foreach TUser.autoInc.insert
+        val usersDb = qUser.to[Seq]
+        assert(users === usersDb.map(_.copy(id = -1)))
         // customer
-        val customer = Customer(userId = userDb.id, firstName = "firstName", lastName = "lastName",
-          birthDate = new LocalDate(2013, 12, 24), sex = "m", street = "street",
-          zipCode = "1234", city = "city", country = "country",
-          phoneNumber = "+43 1234567", creditCardCompany = "", creditCardNumber = "",
-          creditCardExpireDate = "", creditCardVerificationCode = "")
-        TCustomer.autoInc.insert(customer)
-        val customerDb = Query(TCustomer).where(_.firstName === "firstName").first
-        assert(customer === customerDb.copy(id = -1))
+        val customers = usersDb map { userDb =>
+          Customer(userId = userDb.id, firstName = s"firstName${userDb.id}", lastName = "lastName${userDb.id}",
+            birthDate = new LocalDate(2013, 12, 24), sex = "m", street = "street",
+            zipCode = "1234", city = "city", country = "country",
+            phoneNumber = "+43 1234567", creditCardCompany = "", creditCardNumber = "",
+            creditCardExpireDate = "", creditCardVerificationCode = "")
+        }
+        println("Inserting\n\t" + customers.mkString("\n\t"))
+        customers foreach TCustomer.autoInc.insert
+        val customersDb = qCustomer.to[Seq]
+        assert(customers === customersDb.map(_.copy(id = -1)))
         // location
-        val location1 = Location(iataCode = "BER", fullName = "Berlin")
-        val location2 = Location(iataCode = "JFK", fullName = "New York")
-        TLocation.autoInc.insert(location1)
-        TLocation.autoInc.insert(location2)
-        val location1Db = Query(TLocation).where(_.iataCode === "BER").first
-        val location2Db = Query(TLocation).where(_.iataCode === "JFK").first
-        assert(location1 === location1Db.copy(id = -1))
-        assert(location2 === location2Db.copy(id = -1))
+        val locations = for {
+          (iata, fullName) <- Seq(
+            ("VIE", "Wien"),
+            ("BER", "Berlin"),
+            ("JNB", "Johannesburg"),
+            ("JFK", "New York"),
+            ("PEK", "Peking"),
+            ("SYD", "Sydney"))
+        } yield { Location(iataCode = iata, fullName = fullName) }
+        println("Inserting\n\t" + locations.mkString("\n\t"))
+        locations foreach TLocation.autoInc.insert
+        val locationsDb = qLocation.to[Seq]
+        assert(locations === locationsDb.map(_.copy(id = -1)))
         // product
-        val product = Product(fromLocationId = location1Db.id, toLocationId = location2Db.id: Int, archived = false)
-        TProduct.autoInc.insert(product)
-        val productDb = Query(TProduct).where(_.fromLocationId === location1Db.id).first
-        assert(product === productDb.copy(id = -1))
+        val products = for {
+          from <- locationsDb
+          to <- locationsDb
+        } yield (Product(fromLocationId = from.id, toLocationId = to.id: Int, archived = false))
+        println("Inserting\n\t" + products.mkString("\n\t"))
+        products foreach TProduct.autoInc.insert
+        val productsDb = qProduct.to[Seq]
+        assert(products === productsDb.map(_.copy(id = -1)))
         // order
-        val order = Order(customerId = customerDb.id, productId = productDb.id, hotelName = "hotelName",
-          hotelAddress = "hotelAddress", personCount = 10, roomOrderId = "1",
-          toFlight = "OS 123", fromFlight = "OS 321", startDate = new LocalDate(2013, 12, 24),
-          endDate = new LocalDate(2014, 1, 1), price = 1499.99, currency = "EUR")
-        TOrder.autoInc.insert(order)
-        val orderDb = Query(TOrder).where(_.hotelName === "hotelName").first
-        assert(order === orderDb.copy(id = -1))
+        val orders = for {
+          customer <- customersDb.take(3)
+          product <- productsDb
+        } yield {
+          Order(customerId = customer.id, productId = product.id, hotelName = "hotelName",
+            hotelAddress = "hotelAddress", personCount = 10, roomOrderId = "1",
+            toFlight = "OS 123", fromFlight = "OS 321", startDate = new LocalDate(2013, 12, 24),
+            endDate = new LocalDate(2014, 1, 1), price = 1499.99, currency = "EUR")
+
+        }
+        println("Inserting\n\t" + orders.mkString("\n\t"))
+        orders foreach TOrder.autoInc.insert
+        val ordersDb = qOrder.to[Seq]
+        assert(orders === ordersDb.map(_.copy(id = -1)))
         // airline
-        val airline = Airline(name = "Austrian", apiUrl = "austrian")
-        TAirline.autoInc.insert(airline)
-        val airlineDb = Query(TAirline).where(_.name === "Austrian").first
-        assert(airline === airlineDb.copy(id = -1))
+        val airlines = Seq("A", "B", "C").map(e => Airline(name = s"Airline$e", apiUrl = s"airline$e"))
+        println("Inserting\n\t" + airlines.mkString("\n\t"))
+        airlines foreach TAirline.autoInc.insert
+        val airlinesDb = qAirline.to[Seq]
+        assert(airlines === airlinesDb.map(_.copy(id = -1)))
         // hotelgroup
-        val hotelGroup = HotelGroup(name = "Hilton", apiUrl = "hilton")
-        THotelGroup.autoInc.insert(hotelGroup)
-        val hotelGroupDb = Query(THotelGroup).where(_.name === "Hilton").first
-        assert(hotelGroup === hotelGroupDb.copy(id = -1))
+        val hotelGroups = Seq("X", "Y", "Z").map(e => Hotelgroup(name = s"Hotelgroup$e", apiUrl = s"hg$e"))
+        println("Inserting\n\t" + hotelGroups.mkString("\n\t"))
+        hotelGroups foreach THotelgroup.autoInc.insert
+        val hotelGroupsDb = qHotelgroup.to[Seq]
+        assert(hotelGroups === hotelGroupsDb.map(_.copy(id = -1)))
         // extHotelRoom
-        val extHotelRoom = ExtHotelRoom(hotelShortName = "hotelShortName", hotelName = "hotelName", locationId = location1Db.id,
-          startDate = new LocalDate(2013, 12, 24), endDate = new LocalDate(2013, 12, 24), personCount = 1, availableRooms = 1)
-        TExtHotelRoom.autoInc.insert(extHotelRoom)
-        val extHotelRoomDb = Query(TExtHotelRoom).where(_.hotelShortName === "hotelShortName").first
-        assert(extHotelRoom === extHotelRoomDb.copy(id = -1))
+        val extHotelRooms = 0 to 30 map { idx =>
+          ExtHotelRoom(hotelShortName = hotelGroupsDb(idx % hotelGroupsDb.size).apiUrl, hotelName = s"hotelName$idx", locationId = locationsDb(idx % locationsDb.size).id,
+            startDate = new LocalDate(2013, 12, 24).plusDays(idx),
+            endDate = new LocalDate(2013, 12, 24).plusDays(idx + 1 + idx % 14), personCount = 1, availableRooms = 1)
+
+        }
+        println("Inserting\n\t" + extHotelRooms.mkString("\n\t"))
+        extHotelRooms foreach TExtHotelRoom.autoInc.insert
+        val extHotelRoomsDb = qExtHotelRoom.to[Seq]
+        assert(extHotelRooms === extHotelRoomsDb.map(_.copy(id = -1)))
         // extFlight
-        val extFlight = ExtFlight(airlineShortName = "airlineShortName", airlineName = "airlineName", fromLocationId = location1Db.id,
-          toLocationId = location2Db.id, dateTime = new DateTime(2013, 12, 24, 20, 15), availableSeats = 1, price = 199.90)
-        TExtFlight.autoInc.insert(extFlight)
-        val extFlightDb = Query(TExtFlight).where(_.airlineShortName === "airlineShortName").first
-        assert(extFlight === extFlightDb.copy(id = -1))
+        val extFlights = 0 to 30 map { idx =>
+          ExtFlight(airlineShortName = airlinesDb(idx % airlinesDb.size).apiUrl, airlineName = airlinesDb(idx % airlinesDb.size).name,
+            fromLocationId = locationsDb(Random.nextInt(locationsDb.size)).id,
+            toLocationId = locationsDb(Random.nextInt(locationsDb.size)).id,
+            dateTime = new DateTime(2013, 12, 24, 20, 15).plusDays(idx % 14), availableSeats = 10, price = (idx + 1) * 10)
+        }
+        extFlights foreach TExtFlight.autoInc.insert
+        println("Inserting\n\t" + extFlights.mkString("\n\t"))
+        val extFlightsDb = qExtFlight.to[Seq]
+        assert(extFlights === extFlightsDb.map(_.copy(id = -1)))
         // extFlightLastModified
-        val extFlightLastModified = ExtFlightLastModified(lastModified = new DateTime(2013, 12, 24, 20, 15))
+        val extFlightLastModified = ExtFlightLastModified(lastModified = new DateTime(2013, 11, 1, 20, 15))
+        println("Inserting\n\t" + extFlightLastModified)
         TExtFlightLastModified.autoInc.insert(extFlightLastModified)
         val extFlightLastModifiedDb = Query(TExtFlightLastModified).first
         assert(extFlightLastModified === extFlightLastModifiedDb.copy(id = -1))
         // extHotelRoomLastModified
-        val extHotelRoomLastModified = ExtHotelRoomLastModified(lastModified = new DateTime(2013, 12, 24, 20, 15))
+        val extHotelRoomLastModified = ExtHotelRoomLastModified(lastModified = new DateTime(2013, 11, 1, 20, 15))
+        println("Inserting\n\t" + extHotelRoomLastModified)
         TExtHotelRoomLastModified.autoInc.insert(extHotelRoomLastModified)
         val extHotelRoomLastModifiedDb = Query(TExtHotelRoomLastModified).first
         assert(extHotelRoomLastModified === extHotelRoomLastModifiedDb.copy(id = -1))

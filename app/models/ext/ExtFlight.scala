@@ -9,6 +9,7 @@ import models.TLocation
 object TExtFlight extends Table[ExtFlight]("extFlights") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def airlineShortName = column[String]("airlineShortName")
+  // TODO should be foreign key to Airline
   def airlineName = column[String]("airlineName")
   def fromLocationId = column[Int]("fromLocationId")
   def toLocationId = column[Int]("toLocationId")

@@ -26,14 +26,6 @@ import play.api.mvc.Controller
 
 object FlightsCtrl extends Controller with CtrlHelper {
 
-  private def parseDateTime(dateTime: String) = try {
-    Some(isoDtf.parseDateTime(dateTime))
-  } catch {
-    case e: IllegalArgumentException =>
-      warn(s"unknown iso date $dateTime", e)
-      None
-  }
-
   // e.g. http://127.0.0.1:9000/airline/austrian/flights?from=JFK&to=BER&start=2013-11-16T15:00:00%2B01:00&end=2014-11-16T15:00:00%2B01:00
   def list(airline: String, from: Option[String], to: Option[String], start: Option[String], end: Option[String]) = DBAction { implicit rs =>
     info(s"list airline:$airline, from=$from to=$to start=$start end=$end")
@@ -43,24 +35,18 @@ object FlightsCtrl extends Controller with CtrlHelper {
     val endDT = end flatMap parseDateTime
 
     // build the dynamic query parts
-    def flightConditions(flight: TExtFlight.type): Column[Boolean] = {
-      val conditions: MutableList[Column[Boolean]] = MutableList.empty
-      startDT foreach { conditions += flight.dateTime >= _ }
-      endDT foreach { conditions += flight.dateTime <= _ }
-      conditions.reduce(_ && _)
-    }
-
-    def locationConditions(toLocation: TLocation.type, fromLocation: TLocation.type): Column[Boolean] = {
-      val conditions: MutableList[Column[Boolean]] = MutableList.empty
-      to foreach (conditions += toLocation.iataCode === _)
-      from foreach (conditions += fromLocation.iataCode === _)
+    def flightConditions(flight: TExtFlight.type, toLocation: TLocation.type, fromLocation: TLocation.type): Column[Boolean] = {
+      val conditions: List[Column[Boolean]] = List(
+        Some(flight.airlineShortName === airline),
+        startDT map (flight.dateTime >= _),
+        endDT map (flight.dateTime <= _),
+        to map (toLocation.iataCode === _),
+        from map (fromLocation.iataCode === _)).flatten
       conditions.reduce(_ && _)
     }
 
     // build the complete query including dynamic parts
-    val query = for {
-      (flight, from, to) <- qFlightsWithLocation if (flightConditions(flight) && locationConditions(to, from))
-    } yield (flight, from, to)
+    val query = for { (flight, from, to) <- qFlightsWithLocation if (flightConditions(flight, to, from)) } yield (flight, from, to)
     info("query\n" + query.selectStatement)
 
     // perform the query
@@ -75,7 +61,7 @@ object FlightsCtrl extends Controller with CtrlHelper {
   }
 
   def find(airline: String, id: Int) = DBAction { implicit rs =>
-    info(s"find airline $airline id $id")
+    info(s"find airline=$airline id=$id")
     implicit val dbSession = rs.dbSession
     qFlightsWithLocation(airline, id).to[Vector] match {
       // good case: single result
@@ -96,7 +82,7 @@ object FlightsCtrl extends Controller with CtrlHelper {
 
   def book(airline: String, id: Int) = DBAction { implicit rs =>
     val bookingDetails = parse[FlightBookingDetails]
-    info(s"book airline $airline id $id seats ${bookingDetails.seats}")
+    info(s"book airline=$airline id=$id bookingDetails=$bookingDetails")
     implicit val dbSession = rs.dbSession
     qFlight(airline, id).to[Vector] match {
       // good case: single result
@@ -129,7 +115,7 @@ object FlightsCtrl extends Controller with CtrlHelper {
 
   def cancel(airline: String, id: Int) = DBAction { implicit rs =>
     val bookingDetails = parse[FlightBookingDetails]
-    info(s"cancel airline $airline id $id seats ${bookingDetails.seats}")
+    info(s"cancel airline=$airline id=$id bookingDetails=$bookingDetails")
     implicit val dbSession = rs.dbSession
     qFlight(airline, id).to[Vector] match {
       // good case: single result
