@@ -34,6 +34,11 @@ object QueryLibrary {
     location <- qLocation if (location.id === hotelroom.locationId)
   } yield (hotelroom, location)
 
+  def qHotelRoomsWithLocation(api: String) = for {
+    hotelroom <- qExtHotelRoom if (hotelroom.hotelShortName === api)
+    location <- qLocation if (location.id === hotelroom.locationId)
+  } yield (hotelroom, location)
+  
   def qHotelRoomsWithLocation(api: String, id: Int) = for {
     hotelroom <- qExtHotelRoom if (hotelroom.id === id && hotelroom.hotelShortName === api)
     location <- qLocation if (location.id === hotelroom.locationId)

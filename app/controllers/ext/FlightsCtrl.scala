@@ -1,9 +1,8 @@
 package controllers.ext
 
 import scala.collection.mutable.MutableList
-
 import controllers.CtrlHelper
-import controllers.JsonDeSerialization.flightBookingDetailsReads
+import controllers.JsonDeSerialization._
 import controllers.JsonDeSerialization.flightWrites
 import controllers.JsonHelper.isoDtf
 import db.QueryBasics.dateTimeMapper
@@ -23,12 +22,24 @@ import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DBAction
 import play.api.libs.json.Json.toJson
 import play.api.mvc.Controller
+import models.Direction
+import scala.collection.SortedSet
 
 object FlightsCtrl extends Controller with CtrlHelper {
 
+  def directions(airline: String) = DBAction { implicit rs =>
+    info(s"directions $airline")
+    implicit val dbSession = rs.dbSession
+    val query = for {
+      (_, from, to) <- qFlightsWithLocation(airline)
+    } yield (from.iataCode, to.iataCode)
+    val data = query.to[Set].map(e=>Direction(e._1,e._2))
+    Ok(toJson(data))
+  }
+
   // e.g. http://127.0.0.1:9000/airline/austrian/flights?from=JFK&to=BER&start=2013-11-16T15:00:00%2B01:00&end=2014-11-16T15:00:00%2B01:00
   def list(airline: String, from: Option[String], to: Option[String], start: Option[String], end: Option[String]) = DBAction { implicit rs =>
-    info(s"list airline:$airline, from=$from to=$to start=$start end=$end")
+    info(s"list airline=$airline, from=$from to=$to start=$start end=$end")
     implicit val dbSession = rs.dbSession
     // check if start and end are valid dates
     val startDT = start flatMap parseDateTime

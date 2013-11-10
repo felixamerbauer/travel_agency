@@ -9,6 +9,8 @@ GET      /                                         controllers.Application.index
 
 # Admin-SignIns
 # http://127.0.0.1:9000/airline/austrian/flights?from=SYD&to=BER&start=2013-11-16T15:00:00%2B01:00&end=2013-11-16T15:00:00%2B01:00
+GET      /airline/:airline/directions              controllers.ext.FlightsCtrl.directions(airline:String)
+
 GET      /airline/:airline/flights                 controllers.ext.FlightsCtrl.list(airline:String, from:Option[String] ?= None, to:Option[String] ?= None, start:Option[String] ?= None, end:Option[String] ?= None)
 
 GET      /airline/:airline/flights/:id             controllers.ext.FlightsCtrl.find(airline:String, id: Int)
@@ -16,6 +18,8 @@ GET      /airline/:airline/flights/:id             controllers.ext.FlightsCtrl.f
 POST     /airline/:airline/flights/book/:id        controllers.ext.FlightsCtrl.book(airline:String, id: Int)
 
 DELETE   /airline/:airline/flights/book/:id        controllers.ext.FlightsCtrl.cancel(airline:String, id: Int)
+
+GET      /hotelgroup/:hotelgroup/locations         controllers.ext.HotelsCtrl.locations(hotelgroup:String)
 
 GET      /hotelgroup/:hotelgroup/hotels            controllers.ext.HotelsCtrl.list(hotelgroup:String, location:Option[String] ?= None, start:Option[String] ?= None, end:Option[String] ?= None)
 

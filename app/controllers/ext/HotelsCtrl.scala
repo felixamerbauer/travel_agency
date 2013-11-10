@@ -31,6 +31,17 @@ import models.json.ext.HotelRoomJson
 
 object HotelsCtrl extends Controller with CtrlHelper {
 
+  // http://127.0.0.1:9000/hotelgroup/hgX/locations
+  def locations(hotelgroup: String) = DBAction { implicit rs =>
+    info(s"hotelgroup=$hotelgroup")
+    implicit val dbSession = rs.dbSession
+    val query = for {
+      (_, location) <- qHotelRoomsWithLocation(hotelgroup)
+    } yield (location.iataCode)
+    val data = query.to[Set]
+    Ok(toJson(data))
+  }
+
   def list(hotelgroup: String, location: Option[String], start: Option[String], end: Option[String]) = DBAction { implicit rs =>
     info(s"list hotelGroup=$hotelgroup, location=$location start=$start end=$end")
     implicit val dbSession = rs.dbSession
@@ -70,8 +81,8 @@ object HotelsCtrl extends Controller with CtrlHelper {
       // good case: single result
       case Vector(hotelWithLocation) =>
         info(s"Hotel for hotelgroup $hotelgroup and id $id found $hotelWithLocation -> returning 200 (with json body)")
-        val(hotel,location)=hotelWithLocation
-        val flightJson = new HotelRoomJson(hotel,location)
+        val (hotel, location) = hotelWithLocation
+        val flightJson = new HotelRoomJson(hotel, location)
         Ok(toJson(flightJson))
       // bad case 1: no result
       case Vector() =>

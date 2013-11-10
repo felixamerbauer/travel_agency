@@ -8,6 +8,7 @@ import play.api.libs.json.Json.writes
 import controllers.JsonHelper._
 import models.json._
 import models.json.ext._
+import models.Direction
 
 // order matters!
 object JsonDeSerialization {
@@ -18,6 +19,9 @@ object JsonDeSerialization {
 
   implicit val flightReads = reads[FlightJson]
   implicit val flightWrites = writes[FlightJson]
+
+  implicit val directionReads = reads[Direction]
+  implicit val directionWrites = writes[Direction]
 
   implicit val hotelReads = reads[HotelRoomJson]
   implicit val hotelWrites = writes[HotelRoomJson]
