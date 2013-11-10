@@ -1,33 +1,116 @@
-drop table if exists "orders";
-drop table if exists "airlines";
-drop table if exists "hotelgroups";
-drop table if exists "extHotelRooms";
-drop table if exists "extFlights";
-drop table if exists "products";
-drop table if exists "customers";
-drop table if exists "users";
-drop table if exists "locations";
-drop table if exists "extFlightsLastModified";
-drop table if exists "extHotelRoomsLastModified";
+BEGIN;
+
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS customers CASCADE;
+DROP TABLE IF EXISTS locations CASCADE;
+DROP TABLE IF EXISTS products CASCADE;
+DROP TABLE IF EXISTS orders CASCADE;
+DROP TABLE IF EXISTS airlines CASCADE;
+DROP TABLE IF EXISTS hotelgroups CASCADE;
+DROP TABLE IF EXISTS extHotelrooms CASCADE;
+DROP TABLE IF EXISTS extFlights CASCADE;
+DROP TABLE IF EXISTS extHotelroomsLastmodified CASCADE;
+DROP TABLE IF EXISTS extFlightsLastmodified CASCADE;
+
+CREATE TABLE users (
+  id           SERIAL PRIMARY KEY,
+  email        TEXT UNIQUE NOT NULL,
+  passwordHash TEXT NOT NULL
+);
+
+CREATE TABLE customers (
+  id                         SERIAL PRIMARY KEY,
+  userId                     INTEGER REFERENCES users NOT NULL,
+  firstName                  TEXT NOT NULL,
+  lastName                   TEXT NOT NULL,
+  birthDate                  DATE NOT NULL,
+  sex                        CHAR(1) CHECK (sex IN ('m','f')) NOT NULL,
+  street                     TEXT NOT NULL,
+  zipCode                    TEXT NOT NULL,
+  city                       TEXT NOT NULL,
+  country                    TEXT NOT NULL,
+  phoneNumber                TEXT,
+  creditCardCompany          TEXT,
+  creditCardNumber           TEXT,
+  creditCardExpireDate       DATE,
+  creditCardVerificationCode TEXT
+);
+
+CREATE TABLE locations (
+  id       SERIAL PRIMARY KEY,
+  iataCode CHAR(3) NOT NULL,
+  fullName TEXT NOT NULL
+);
 
 
-create table "users" ("id" SERIAL NOT NULL PRIMARY KEY,"email" VARCHAR(254) NOT NULL,"passwordHash" VARCHAR(254) NOT NULL);
-create unique index "users_email_UNIQUE" on "users" ("email");
-create table "customers" ("id" SERIAL NOT NULL PRIMARY KEY,"user" INTEGER NOT NULL,"firstName" VARCHAR(254) NOT NULL,"lastName" VARCHAR(254) NOT NULL,"birthDate" TIMESTAMP NOT NULL,"sex" VARCHAR(254) NOT NULL,"street" VARCHAR(254) NOT NULL,"zipCode" VARCHAR(254) NOT NULL,"city" VARCHAR(254) NOT NULL,"country" VARCHAR(254) NOT NULL,"phoneNumber" VARCHAR(254) NOT NULL,"creditCardCompany" VARCHAR(254) NOT NULL,"creditCardNumber" VARCHAR(254) NOT NULL,"creditCardExpireDate" VARCHAR(254) NOT NULL,"creditCardVerificationCode" VARCHAR(254) NOT NULL);
-alter table "customers" add constraint "User_FK" foreign key("user") references "users"("id") on update NO ACTION on delete NO ACTION;
-create table "locations" ("id" SERIAL NOT NULL PRIMARY KEY,"iataCode" VARCHAR(254) NOT NULL,"fullName" VARCHAR(254) NOT NULL);
-create table "products" ("id" SERIAL NOT NULL PRIMARY KEY,"fromLocationId" INTEGER NOT NULL,"toLocationId" INTEGER NOT NULL,"archived" BOOLEAN NOT NULL);
-alter table "products" add constraint "FromLocation_FK" foreign key("fromLocationId") references "locations"("id") on update NO ACTION on delete NO ACTION;
-alter table "products" add constraint "ToLocation_FK" foreign key("toLocationId") references "locations"("id") on update NO ACTION on delete NO ACTION;
-create table "orders" ("id" SERIAL NOT NULL PRIMARY KEY,"customerId" INTEGER NOT NULL,"productId" INTEGER NOT NULL,"hotelName" VARCHAR(254) NOT NULL,"hotelAddress" VARCHAR(254) NOT NULL,"personCount" INTEGER NOT NULL,"roomOrderId" VARCHAR(254) NOT NULL,"toFlight" VARCHAR(254) NOT NULL,"fromFlight" VARCHAR(254) NOT NULL,"startDate" TIMESTAMP NOT NULL,"endDate" TIMESTAMP NOT NULL,"price" DOUBLE PRECISION NOT NULL,"currency" VARCHAR(254) NOT NULL);
-alter table "orders" add constraint "Product_FK" foreign key("productId") references "products"("id") on update NO ACTION on delete NO ACTION;
-alter table "orders" add constraint "Customer_FK" foreign key("customerId") references "customers"("id") on update NO ACTION on delete NO ACTION;
-create table "airlines" ("id" SERIAL NOT NULL PRIMARY KEY,"name" VARCHAR(254) NOT NULL,"apiUrl" VARCHAR(254) NOT NULL);
-create table "hotelgroups" ("id" SERIAL NOT NULL PRIMARY KEY,"name" VARCHAR(254) NOT NULL,"apiUrl" VARCHAR(254) NOT NULL);
-create table "extHotelRooms" ("id" SERIAL NOT NULL PRIMARY KEY,"hotelShortName" VARCHAR(254) NOT NULL,"hotelName" VARCHAR(254) NOT NULL,"locationId" INTEGER NOT NULL,"startDate" TIMESTAMP NOT NULL,"endDate" TIMESTAMP NOT NULL,"personCount" INTEGER NOT NULL,"availableRooms" INTEGER NOT NULL);
-alter table "extHotelRooms" add constraint "Location_FK" foreign key("locationId") references "locations"("id") on update NO ACTION on delete NO ACTION;
-create table "extFlights" ("id" SERIAL NOT NULL PRIMARY KEY,"airlineShortName" VARCHAR(254) NOT NULL,"airlineName" VARCHAR(254) NOT NULL,"fromLocationId" INTEGER NOT NULL,"toLocationId" INTEGER NOT NULL,"dateTime" TIMESTAMP NOT NULL,"availableSeats" INTEGER NOT NULL,"price" DOUBLE PRECISION NOT NULL);
-alter table "extFlights" add constraint "FromLocation_FK" foreign key("fromLocationId") references "locations"("id") on update NO ACTION on delete NO ACTION;
-alter table "extFlights" add constraint "ToLocation_FK" foreign key("toLocationId") references "locations"("id") on update NO ACTION on delete NO ACTION;
-create table "extFlightsLastModified" ("id" SERIAL NOT NULL PRIMARY KEY,"lastModified" TIMESTAMP NOT NULL,"tmp" BOOLEAN);
-create table "extHotelRoomsLastModified" ("id" SERIAL NOT NULL PRIMARY KEY,"lastModified" TIMESTAMP NOT NULL,"tmp" BOOLEAN);
+CREATE TABLE products (
+  id             SERIAL PRIMARY KEY,
+  fromLocationId INTEGER REFERENCES locations NOT NULL,
+  toLocationId   INTEGER REFERENCES locations NOT NULL,
+  archived       BOOLEAN NOT NULL,
+  UNIQUE(fromLocationId, toLocationId)
+);
+
+CREATE TABLE orders (
+  id           SERIAL PRIMARY KEY,
+  customerId   INTEGER REFERENCES customers NOT NULL,
+  productId    INTEGER REFERENCES products NOT NULL,
+  hotelName    TEXT NOT NULL,
+  hotelAddress TEXT NOT NULL,
+  personCount  INTEGER NOT NULL,
+  roomOrderId  TEXT NOT NULL,
+  toFlight     TEXT NOT NULL,
+  fromFlight   TEXT NOT NULL,
+  startDate    TIMESTAMP NOT NULL,
+  endDate      TIMESTAMP NOT NULL,
+  price        MONEY NOT NULL,
+  currency     CHAR(3) NOT NULL
+);
+
+CREATE TABLE airlines (
+  id     SERIAL PRIMARY KEY,
+  name   TEXT NOT NULL,
+  apiUrl TEXT NOT NULL
+);
+
+CREATE TABLE hotelgroups (
+  id     SERIAL PRIMARY KEY,
+  name   TEXT NOT NULL,
+  apiUrl TEXT NOT NULL
+);
+
+--- Tables for external services (Airlines and Hotelgroups)
+
+CREATE TABLE extHotelrooms (
+  hotelShortName TEXT PRIMARY KEY, -- for differentiation of REST services
+  hotelName      TEXT NOT NULL,
+  locationId     INTEGER NOT NULL REFERENCES locations,
+  startDate      DATE NOT NULL,
+  endDate        DATE NOT NULL,
+  personCount    INTEGER NOT NULL, -- how many persons can sleep in this room
+  availableRooms INTEGER NOT NULL  -- how many rooms of this type are available at the moment
+);
+
+CREATE TABLE extFlights (
+  airlineShortName TEXT PRIMARY KEY, -- for differentiation of REST services
+  airlineName      TEXT NOT NULL,
+  fromLocationId   INTEGER NOT NULL REFERENCES locations,
+  toLocationId     INTEGER NOT NULL REFERENCES locations,
+  dateTime         TIMESTAMP,
+  availableSeats   INTEGER           -- how many seats for this flight are available at the moment
+);
+
+CREATE TABLE extHotelroomsLastmodified (
+  id           SERIAL PRIMARY KEY,
+  lastModified TIMESTAMP NOT NULL,
+  tmp          BOOLEAN
+);
+
+
+CREATE TABLE extFlightsLastmodified (
+  id           SERIAL PRIMARY KEY,
+  lastModified TIMESTAMP NOT NULL,
+  tmp          BOOLEAN
+);
+
+END;
