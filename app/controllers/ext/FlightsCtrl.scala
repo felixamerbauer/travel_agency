@@ -12,8 +12,7 @@ import db.QueryMethods.bookFlightSeats
 import db.QueryMethods.cancelFlightSeats
 import models.TLocation
 import models.ext.TExtFlight
-import models.json.ext.FlightBookingDetails
-import models.json.ext.FlightJson
+import models.json._
 import play.api.Logger.error
 import play.api.Logger.info
 import play.api.Logger.warn
@@ -58,7 +57,7 @@ object FlightsCtrl extends Controller with CtrlHelper {
 
     // build the complete query including dynamic parts
     val query = for { (flight, from, to) <- qFlightsWithLocation if (flightConditions(flight, to, from)) } yield (flight, from, to)
-    info("query\n" + query.selectStatement)
+//    info("query\n" + query.selectStatement)
 
     // perform the query
     val data = query.to[Vector]

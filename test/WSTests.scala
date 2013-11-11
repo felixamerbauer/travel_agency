@@ -1,12 +1,10 @@
-
-
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.DurationInt
 import org.scalatest.BeforeAndAfter
 import org.scalatest.FunSuite
 import controllers.JsonDeSerialization._
-import models.json.ext._
+import models.json._
 import play.api.libs.json.Json
 import play.api.libs.ws.WS
 import org.scalatest.Finders

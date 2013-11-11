@@ -16,8 +16,7 @@ import db.QueryMethods.bookFlightSeats
 import db.QueryMethods.cancelFlightSeats
 import models.TLocation
 import models.ext.TExtFlight
-import models.json.ext.FlightBookingDetails
-import models.json.ext.FlightJson
+import models.json._
 import play.api.Logger.error
 import play.api.Logger.info
 import play.api.Logger.warn
@@ -27,7 +26,6 @@ import play.api.db.slick.DBAction
 import play.api.libs.json.Json.toJson
 import play.api.mvc.Controller
 import models.ext._
-import models.json.ext.HotelJson
 
 object HotelsCtrl extends Controller with CtrlHelper {
 
@@ -61,7 +59,7 @@ object HotelsCtrl extends Controller with CtrlHelper {
 
     // build the complete query including dynamic parts
     val query = for { (hotelRoom, location) <- qHotelWithLocation if (hotelroomConditions(hotelRoom, location)) } yield (hotelRoom, location)
-    info("query\n" + query.selectStatement)
+//    info("query\n" + query.selectStatement)
 
     // perform the query
     val data = query.to[Vector]

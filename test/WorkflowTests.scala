@@ -1,16 +1,21 @@
 import scala.concurrent.ExecutionContext
-
 import org.scalatest.BeforeAndAfter
 import org.scalatest.FunSuite
-
 import Misc.db
 import controllers.Client
 import play.api.db.slick.Config.driver.simple.Database.threadLocalSession
 import play.api.test.FakeApplication
 import play.api.test.Helpers.running
+import org.joda.time.LocalDate
+import org.joda.time.DateMidnight
 
 class WorkflowTests extends FunSuite with BeforeAndAfter {
   implicit val context = ExecutionContext.Implicits.global
+  
+  implicit def tuple3ToDateMidnight(t: Tuple3[Int, Int, Int]): DateMidnight = {
+    val (year, month, day) = t
+    new DateMidnight(year, month, day)
+  }
 
   test("complete workflow") {
     running(FakeApplication()) {
@@ -18,6 +23,7 @@ class WorkflowTests extends FunSuite with BeforeAndAfter {
       db.withSession {
         val directions = Client.fetchDirections
         println(s"directions\n${directions.mkString("\n")}")
+        Client.checkAvailability("JFK", (2013, 12, 24), (2014, 1, 15), 5, 7)
       }
     }
   }

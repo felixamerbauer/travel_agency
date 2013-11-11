@@ -13,6 +13,8 @@ import play.api.libs.ws.Response
 import play.api.Logger._
 import models.Location
 import org.joda.time.LocalDate
+import org.joda.time.DateMidnight
+import models.json._
 
 object Client {
 
@@ -23,9 +25,9 @@ object Client {
     (airlineApiUrls, hotelgroupApiUrls)
   }
 
-  private def get(url: String): Response = {
-    debug(s"get $url")
-    val call = WS.url(url).get()
+  private def get(url: String, query: Seq[Tuple2[String, String]] = Seq()): Response = {
+    debug(s"get url=$url${query.map(e => s"${e._1}=${e._2}").mkString("?", "&", "")}")
+    val call = WS.url(url).withQueryString(query: _*).get()
     Await.result(call, 20.seconds)
   }
 
@@ -53,26 +55,44 @@ object Client {
     directionsDistinct.filter(direction => locations.exists(location => location == direction.from || location == direction.from))
   }
 
-  def checkAvailability(location: String, start: LocalDate, end: LocalDate, durationMin: Int, durationMax: Int)(implicit session: Session) = {
+  def checkAvailability(location: String, start: DateMidnight, end: DateMidnight, durationMin: Int, durationMax: Int)(implicit session: Session) = {
     val (airlineApiUrls, hotelgroupApiUrls) = fetchApiUrls
-    // airlines
-//    val flights = (for (airlineApiUrl <- airlineApiUrls) yield {
-//      val url = s"http://127.0.0.1:9000/airline/$airlineApiUrl/directions"
-//      val result = get(s"")
-//      Json.fromJson[Seq[Direction]](result.json).get
-//    }).flatten
-//    info(s"directions ${directions.size}")
-//    val directionsDistinct = directions.toSet
-//    info(s"directions distinct ${directionsDistinct.size}")
-    // hotelgroups
-//    val locations = (for (hotelgroupApiUrl <- hotelgroupApiUrls) yield {
-//      val result = get(s"http://127.0.0.1:9000/hotelgroup/$hotelgroupApiUrl/locations")
-//      Json.fromJson[Seq[String]](result.json).get
-//    }).flatten
-//    info(s"locations ${locations.size}")
-//    val locationsDistinct = locations.toSet
-//    info(s"locations distinct ${locationsDistinct.size}")
-	  
+    // Outward Flight
+    val outwardFlights = (for (airlineApiUrl <- airlineApiUrls) yield {
+      val queryParams = Seq(
+        ("to", location),
+        ("start", JsonHelper.isoDtf.print(start)),
+        ("end", JsonHelper.isoDtf.print(end)))
+      val url = s"http://127.0.0.1:9000/airline/$airlineApiUrl/flights"
+      val result = get(url, queryParams)
+      Json.fromJson[Seq[FlightJson]](result.json).get
+    }).flatten
+    info(s"outwardFlights ${outwardFlights.size}")
+    debug(outwardFlights.map(_.pretty).mkString("\n\t", "\n\t", ""))
+    // Inward Flight
+    val inwardFlights = (for (airlineApiUrl <- airlineApiUrls) yield {
+      val queryParams = Seq(
+        ("from", location),
+        ("start", JsonHelper.isoDtf.print(start)),
+        ("end", JsonHelper.isoDtf.print(end)))
+      val url = s"http://127.0.0.1:9000/airline/$airlineApiUrl/flights"
+      val result = get(url, queryParams)
+      Json.fromJson[Seq[FlightJson]](result.json).get
+    }).flatten
+    info(s"inwardFlights ${inwardFlights.size}")
+    debug(inwardFlights.map(_.pretty).mkString("\n\t", "\n\t", ""))
+    // Hotel
+    val locations = (for (hotelgroupApiUrl <- hotelgroupApiUrls) yield {
+      val url = s"http://127.0.0.1:9000/hotelgroup/$hotelgroupApiUrl/hotels"
+      val queryParams = Seq(
+        ("location", location),
+        ("start", JsonHelper.isoDtf.print(start)),
+        ("end", JsonHelper.isoDtf.print(end)))
+      val result = get(url, queryParams)
+      Json.fromJson[Seq[HotelJson]](result.json).get
+    }).flatten
+    info(s"locations ${locations.size}")
+    debug(locations.map(_.pretty).mkString("\n\t", "\n\t", ""))
   }
 
 }

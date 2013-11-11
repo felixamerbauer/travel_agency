@@ -7,7 +7,6 @@ import play.api.libs.json.Json.reads
 import play.api.libs.json.Json.writes
 import controllers.JsonHelper._
 import models.json._
-import models.json.ext._
 import models.Direction
 import models.Location
 
