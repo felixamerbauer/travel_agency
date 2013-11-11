@@ -3,6 +3,7 @@ package models
 import play.api.db.slick.Config.driver.simple._
 import org.joda.time.LocalDate
 import db.QueryBasics.localdateMapper
+import org.joda.time.DateMidnight
 
 object TOrder extends Table[Order]("orders") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
@@ -14,8 +15,8 @@ object TOrder extends Table[Order]("orders") {
   def roomOrderId = column[String]("roomorderid")
   def toFlight = column[String]("toflight")
   def fromFlight = column[String]("fromflight")
-  def startDate = column[LocalDate]("startdate")
-  def endDate = column[LocalDate]("enddate")
+  def startDate = column[DateMidnight]("startdate")
+  def endDate = column[DateMidnight]("enddate")
   def price = column[Int]("price")
   def currency = column[String]("currency")
   def baseProjection = customerId ~ productId ~ hotelName ~ hotelAddress ~ personCount ~ roomOrderId ~ toFlight ~ fromFlight ~ startDate ~ endDate ~ price ~ currency
@@ -40,8 +41,8 @@ case class Order(
   roomOrderId: String,
   toFlight: String,
   fromFlight: String,
-  startDate: LocalDate,
-  endDate: LocalDate,
+  startDate: DateMidnight,
+  endDate: DateMidnight,
   price: Int,
   currency: String)
 

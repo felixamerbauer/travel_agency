@@ -20,6 +20,7 @@ import models.ext.ExtFlightLastModified
 import models.ext.TExtFlightLastModified
 import models.ext._
 import scala.util.Random
+import org.joda.time.DateMidnight
 
 class DBTests extends FunSuite with BeforeAndAfter {
 
@@ -53,10 +54,10 @@ class DBTests extends FunSuite with BeforeAndAfter {
         // customer
         val customers = usersDb map { userDb =>
           Customer(userId = userDb.id, firstName = s"firstName${userDb.id}", lastName = "lastName${userDb.id}",
-            birthDate = new LocalDate(2013, 12, 24), sex = "m", street = "street",
+            birthDate = new DateMidnight(2013, 12, 24), sex = "m", street = "street",
             zipCode = "1234", city = "city", country = "country",
             phoneNumber = "+43 1234567", creditCardCompany = "", creditCardNumber = "",
-            creditCardExpireDate = new LocalDate(2016, 1, 1), creditCardVerificationCode = "")
+            creditCardExpireDate = new DateMidnight(2016, 1, 1), creditCardVerificationCode = "")
         }
         println("Inserting\n\t" + customers.mkString("\n\t"))
         customers foreach TCustomer.autoInc.insert
@@ -92,8 +93,8 @@ class DBTests extends FunSuite with BeforeAndAfter {
         } yield {
           Order(customerId = customer.id, productId = product.id, hotelName = "hotelName",
             hotelAddress = "hotelAddress", personCount = 10, roomOrderId = "1",
-            toFlight = "OS 123", fromFlight = "OS 321", startDate = new LocalDate(2013, 12, 24),
-            endDate = new LocalDate(2014, 1, 1), price = 149999, currency = "EUR")
+            toFlight = "OS 123", fromFlight = "OS 321", startDate = new DateMidnight(2013, 12, 24),
+            endDate = new DateMidnight(2014, 1, 1), price = 149999, currency = "EUR")
 
         }
         println("Inserting\n\t" + orders.mkString("\n\t"))
@@ -115,8 +116,8 @@ class DBTests extends FunSuite with BeforeAndAfter {
         // extHotel
         val extHotel = 0 to 30 map { idx =>
           ExtHotel(apiUrl = hotelGroupsDb(idx % hotelGroupsDb.size).apiUrl, hotelName = s"hotelName$idx", locationId = locationsDb(idx % locationsDb.size).id,
-            startDate = new LocalDate(2013, 12, 24).plusDays(idx),
-            endDate = new LocalDate(2013, 12, 24).plusDays(idx + 1 + idx % 14),
+            startDate = new DateMidnight(2013, 12, 24).plusDays(idx),
+            endDate = new DateMidnight(2013, 12, 24).plusDays(idx + 1 + idx % 14),
             personCount = 1, availableRooms = 1, price = (idx + 1) * 10, currency = "EUR")
 
         }

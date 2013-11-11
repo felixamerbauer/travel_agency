@@ -7,13 +7,14 @@ import play.api.db.slick.Config.driver.simple._
 import org.joda.time.LocalDate
 import db.QueryBasics._
 import org.joda.time.DateTime
+import org.joda.time.DateMidnight
 
 object TCustomer extends Table[Customer]("customers") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def userId = column[Int]("userid")
   def firstName = column[String]("firstname")
   def lastName = column[String]("lastname")
-  def birthDate = column[LocalDate]("birthdate")
+  def birthDate = column[DateMidnight]("birthdate")
   def sex = column[String]("sex")
   def street = column[String]("street")
   def zipCode = column[String]("zipcode")
@@ -22,7 +23,7 @@ object TCustomer extends Table[Customer]("customers") {
   def phoneNumber = column[String]("phonenumber")
   def creditCardCompany = column[String]("creditcardcompany")
   def creditCardNumber = column[String]("creditcardnumber")
-  def creditCardExpireDate = column[LocalDate]("creditcardexpiredate")
+  def creditCardExpireDate = column[DateMidnight]("creditcardexpiredate")
   def creditCardVerificationCode = column[String]("creditcardverificationcode")
   def baseProjection = userId ~ firstName ~ lastName ~ birthDate ~ sex ~ street ~ zipCode ~ city ~ country ~ phoneNumber ~ creditCardCompany ~ creditCardNumber ~ creditCardExpireDate ~ creditCardVerificationCode
   override def * = id ~: baseProjection <> (Customer, Customer.unapply _)
@@ -39,7 +40,7 @@ case class Customer(
   userId: Int,
   firstName: String,
   lastName: String,
-  birthDate: LocalDate,
+  birthDate: DateMidnight,
   sex: String,
   street: String,
   zipCode: String,
@@ -48,7 +49,7 @@ case class Customer(
   phoneNumber: String,
   creditCardCompany: String,
   creditCardNumber: String,
-  creditCardExpireDate: LocalDate,
+  creditCardExpireDate: DateMidnight,
   creditCardVerificationCode: String)
 
   

@@ -44,8 +44,8 @@ object HotelsCtrl extends Controller with CtrlHelper {
     info(s"list apiUrl=$apiUrl, location=$location start=$start end=$end")
     implicit val dbSession = rs.dbSession
     // check if start and end are valid dates
-    val startDate = start flatMap parseLocatDate
-    val endDate = end flatMap parseLocatDate
+    val startDate = start flatMap parseDateMidnight
+    val endDate = end flatMap parseDateMidnight
 
     // build the dynamic query parts
     def hotelroomConditions(room: TExtHotel.type, locationDb: TLocation.type): Column[Boolean] = {

@@ -5,14 +5,15 @@ import org.joda.time.LocalDate
 import db.QueryBasics.localdateMapper
 import models.TLocation
 import scala.slick.lifted.Projection7
+import org.joda.time.DateMidnight
 
 object TExtHotel extends Table[ExtHotel]("exthotels") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def apiUrl = column[String]("apiurl")
   def hotelName = column[String]("hotelname")
   def locationId = column[Int]("locationid")
-  def startDate = column[LocalDate]("startdate")
-  def endDate = column[LocalDate]("enddate")
+  def startDate = column[DateMidnight]("startdate")
+  def endDate = column[DateMidnight]("enddate")
   def personCount = column[Int]("personcount")
   def availableRooms = column[Int]("availablerooms")
   def price = column[Int]("price")
@@ -33,8 +34,8 @@ case class ExtHotel(
   apiUrl: String,
   hotelName: String,
   locationId: Int,
-  startDate: LocalDate,
-  endDate: LocalDate,
+  startDate: DateMidnight,
+  endDate: DateMidnight,
   personCount: Int,
   availableRooms: Int,
   price: Int,

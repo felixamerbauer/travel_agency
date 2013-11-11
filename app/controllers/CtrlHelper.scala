@@ -9,6 +9,7 @@ import play.api.Logger._
 import controllers.JsonHelper.isoDtf
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
+import org.joda.time.DateMidnight
 
 trait CtrlHelper {
   def parse[T](implicit rs: DBSessionRequest[AnyContent], fjs: Reads[T]): T = {
@@ -28,8 +29,8 @@ trait CtrlHelper {
       None
   }
 
-  def parseLocatDate(dateTime: String): Option[LocalDate] = try {
-    Some(isoDtf.parseLocalDate(dateTime))
+  def parseDateMidnight(dateTime: String): Option[DateMidnight] = try {
+    Some(isoDtf.parseDateTime(dateTime).toDateMidnight())
   } catch {
     case e: IllegalArgumentException =>
       warn(s"unknown iso local date $dateTime", e)

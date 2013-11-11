@@ -1,13 +1,10 @@
 package db
 
 import java.sql.Timestamp
-
 import scala.slick.lifted.MappedTypeMapper
 import scala.slick.lifted.Query
-
 import org.joda.time.DateTime
 import org.joda.time.LocalDate
-
 import models.TAirline
 import models.TCustomer
 import models.THotelgroup
@@ -18,6 +15,7 @@ import models.TUser
 import models.ext.TExtFlight
 import models.ext.TExtFlightLastModified
 import models.ext._
+import org.joda.time.DateMidnight
 
 object QueryBasics {
 
@@ -25,9 +23,9 @@ object QueryBasics {
     dt => new Timestamp(dt.getMillis),
     ts => new DateTime(ts.getTime))
 
-  implicit val localdateMapper = MappedTypeMapper.base[LocalDate, Timestamp](
-    dt => new Timestamp(dt.toDateTimeAtStartOfDay().getMillis),
-    ts => new LocalDate(ts.getTime))
+  implicit val localdateMapper = MappedTypeMapper.base[DateMidnight, Timestamp](
+    dt => new Timestamp(dt.getMillis),
+    ts => new DateMidnight(ts.getTime))
 
   // Simple Queries
   val qAirline = Query(TAirline)

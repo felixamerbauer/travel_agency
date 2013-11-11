@@ -1,15 +1,15 @@
 package models.json
 
 import org.joda.time.LocalDate
-
 import controllers.JsonHelper.isoDtf
 import models.Location
 import models.ext.ExtHotel
+import org.joda.time.DateMidnight
 
 case class HotelJson(
   links: Seq[Link],
-  startDate: LocalDate,
-  endDate: LocalDate,
+  startDate: DateMidnight,
+  endDate: DateMidnight,
   location: String,
   availableRooms: Int,
   personCount: Int) {
