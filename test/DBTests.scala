@@ -20,6 +20,7 @@ import models.ext.ExtFlightLastModified
 import models.ext.TExtFlightLastModified
 import models.ext._
 import scala.util.Random
+
 class DBTests extends FunSuite with BeforeAndAfter {
 
   test("read write to all tables") {

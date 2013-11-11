@@ -9,6 +9,7 @@ import controllers.JsonHelper._
 import models.json._
 import models.json.ext._
 import models.Direction
+import models.Location
 
 // order matters!
 object JsonDeSerialization {
@@ -22,6 +23,9 @@ object JsonDeSerialization {
 
   implicit val directionReads = reads[Direction]
   implicit val directionWrites = writes[Direction]
+
+  implicit val locationReads = reads[Location]
+  implicit val locationWrites = writes[Location]
 
   implicit val hotelReads = reads[HotelJson]
   implicit val hotelWrites = writes[HotelJson]

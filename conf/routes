@@ -29,7 +29,20 @@ POST     /hotelgroup/:hotelgroup/hotels/book/:id   controllers.ext.HotelsCtrl.bo
 
 DELETE   /hotelgroup/:hotelgroup/hotels/book/:id   controllers.ext.HotelsCtrl.cancel(hotelgroup:String, id: Int)
 
-GET      /api/*any                                 controllers.Application.http404(any)
+# handle other potential get requests
+GET      /airline/*any                             controllers.Application.http404(any)
+
+GET      /hotelgroup/*any                          controllers.Application.http404(any)
+
+# Travel Booking Workflow
+
+GET      /travel/search                            controllers.Application.travelSearch
+
+GET      /travel/list                              controllers.Application.travelList
+
+GET      /travel/booking                           controllers.Application.travelBooking
+
+GET      /travel/bookingconfirmation               controllers.Application.travelBookingConfirmation
 
 # Login/Logout
 # GET      /isUser                                controllers.SecurityController.isUser

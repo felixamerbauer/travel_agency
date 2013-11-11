@@ -13,6 +13,22 @@ object Application extends Controller {
     }
   }
 
+  def travelSearch = Action {
+    Ok(views.html.travelsearch())
+  }
+
+  def travelList = Action {
+    Ok(views.html.travellist())
+  }
+
+  def travelBooking = Action {
+    Ok(views.html.travelbooking())
+  }
+
+  def travelBookingConfirmation = Action {
+    Ok(views.html.travelbookingconfirmation())
+  }
+
   def http404(any: String) = Action { NotFound }
 
 }
