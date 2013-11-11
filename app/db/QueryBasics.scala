@@ -17,8 +17,7 @@ import models.TProduct
 import models.TUser
 import models.ext.TExtFlight
 import models.ext.TExtFlightLastModified
-import models.ext.TExtHotelRoom
-import models.ext.TExtHotelRoomLastModified
+import models.ext._
 
 object QueryBasics {
 
@@ -40,6 +39,6 @@ object QueryBasics {
   val qUser = Query(TUser)
   val qExtFlight = Query(TExtFlight)
   val qExtFlightLastModified = Query(TExtFlightLastModified)
-  val qExtHotelRoom = Query(TExtHotelRoom)
-  val qExtHotelRoomLastModified = Query(TExtHotelRoomLastModified)
+  val qExtHotel = Query(TExtHotel)
+  val qExtHotelLastModified = Query(TExtHotelLastModified)
 }

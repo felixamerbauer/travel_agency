@@ -6,19 +6,19 @@ import db.QueryBasics.dateTimeMapper
 import org.joda.time.DateTime
 import models.TLocation
 
-object TExtHotelRoomLastModified extends Table[ExtHotelRoomLastModified]("extHotelRoomsLastModified") {
+object TExtHotelLastModified extends Table[ExtHotelLastModified]("exthotelslastmodified") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-  def lastModified = column[DateTime]("lastModified")
+  def lastModified = column[DateTime]("lastmodified")
   def tmp = column[Option[Boolean]]("tmp")
   def baseProjection = lastModified ~ tmp
-  override def * = id ~: baseProjection <> (ExtHotelRoomLastModified, ExtHotelRoomLastModified.unapply _)
+  override def * = id ~: baseProjection <> (ExtHotelLastModified, ExtHotelLastModified.unapply _)
   def forInsert = baseProjection <> (
-    { t => ExtHotelRoomLastModified(-1, t._1) },
-    { (p: ExtHotelRoomLastModified) => Some((p.lastModified, p.tmp)) })
+    { t => ExtHotelLastModified(-1, t._1) },
+    { (p: ExtHotelLastModified) => Some((p.lastModified, p.tmp)) })
   def autoInc = forInsert returning id
 }
 
-case class ExtHotelRoomLastModified(
+case class ExtHotelLastModified(
   id: Int = -1,
   lastModified: DateTime,
   tmp: Option[Boolean] = None)

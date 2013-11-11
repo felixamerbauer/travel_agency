@@ -5,7 +5,7 @@ import play.api.db.slick.Config.driver.simple._
 object TUser extends Table[User]("users") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def email = column[String]("email")
-  def passwordHash = column[String]("passwordHash")
+  def passwordHash = column[String]("passwordhash")
   def baseProjection = email ~ passwordHash
   override def * = id ~: baseProjection <> (User, User.unapply _)
   def forInsert = baseProjection <> (

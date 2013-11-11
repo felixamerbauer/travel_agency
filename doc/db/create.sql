@@ -7,9 +7,9 @@ DROP TABLE IF EXISTS products CASCADE;
 DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS airlines CASCADE;
 DROP TABLE IF EXISTS hotelgroups CASCADE;
-DROP TABLE IF EXISTS extHotelrooms CASCADE;
+DROP TABLE IF EXISTS extHotels CASCADE;
 DROP TABLE IF EXISTS extFlights CASCADE;
-DROP TABLE IF EXISTS extHotelroomsLastmodified CASCADE;
+DROP TABLE IF EXISTS extHotelsLastmodified CASCADE;
 DROP TABLE IF EXISTS extFlightsLastmodified CASCADE;
 
 CREATE TABLE users (
@@ -57,13 +57,13 @@ CREATE TABLE orders (
   productId    INTEGER REFERENCES products NOT NULL,
   hotelName    TEXT NOT NULL,
   hotelAddress TEXT NOT NULL,
-  personCount  INTEGER NOT NULL,
+  personCount  INTEGER NOT NULL CHECK (personCount >= 0),
   roomOrderId  TEXT NOT NULL,
   toFlight     TEXT NOT NULL,
   fromFlight   TEXT NOT NULL,
   startDate    TIMESTAMP NOT NULL,
   endDate      TIMESTAMP NOT NULL,
-  price        MONEY NOT NULL,
+  price        INTEGER NOT NULL CHECK (price >= 0),
   currency     CHAR(3) NOT NULL
 );
 
@@ -81,26 +81,32 @@ CREATE TABLE hotelgroups (
 
 --- Tables for external services (Airlines and Hotelgroups)
 
-CREATE TABLE extHotelrooms (
-  hotelShortName TEXT PRIMARY KEY, -- for differentiation of REST services
+CREATE TABLE extHotels (
+  id             SERIAL PRIMARY KEY,
+  apiUrl         TEXT NOT NULL, -- for differentiation of REST services
   hotelName      TEXT NOT NULL,
   locationId     INTEGER NOT NULL REFERENCES locations,
   startDate      DATE NOT NULL,
   endDate        DATE NOT NULL,
   personCount    INTEGER NOT NULL, -- how many persons can sleep in this room
-  availableRooms INTEGER NOT NULL  -- how many rooms of this type are available at the moment
+  availableRooms INTEGER NOT NULL,  -- how many rooms of this type are available at the moment
+  price          INTEGER NOT NULL CHECK (price >= 0),
+  currency       CHAR(3) NOT NULL
 );
 
 CREATE TABLE extFlights (
-  airlineShortName TEXT PRIMARY KEY, -- for differentiation of REST services
+  id               SERIAL PRIMARY KEY,
+  apiUrl           TEXT NOT NULL, -- for differentiation of REST services
   airlineName      TEXT NOT NULL,
   fromLocationId   INTEGER NOT NULL REFERENCES locations,
   toLocationId     INTEGER NOT NULL REFERENCES locations,
-  dateTime         TIMESTAMP,
-  availableSeats   INTEGER           -- how many seats for this flight are available at the moment
+  dateTime         TIMESTAMP NOT NULL,
+  availableSeats   INTEGER NOT NULL CHECK (availableSeats >= 0),  -- how many seats for this flight are available at the moment
+  price            INTEGER NOT NULL CHECK (price >= 0),
+  currency         CHAR(3) NOT NULL
 );
 
-CREATE TABLE extHotelroomsLastmodified (
+CREATE TABLE extHotelsLastmodified (
   id           SERIAL PRIMARY KEY,
   lastModified TIMESTAMP NOT NULL,
   tmp          BOOLEAN

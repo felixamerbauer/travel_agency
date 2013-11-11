@@ -4,8 +4,8 @@ import play.api.db.slick.Config.driver.simple._
 
 object TLocation extends Table[Location]("locations") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-  def iataCode = column[String]("iataCode")
-  def fullName = column[String]("fullName")
+  def iataCode = column[String]("iatacode")
+  def fullName = column[String]("fullname")
   def baseProjection = iataCode ~ fullName
   override def * = id ~: baseProjection <> (Location, Location.unapply _)
   def forInsert = baseProjection <> (

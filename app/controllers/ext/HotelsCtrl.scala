@@ -26,33 +26,33 @@ import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DBAction
 import play.api.libs.json.Json.toJson
 import play.api.mvc.Controller
-import models.ext.TExtHotelRoom
-import models.json.ext.HotelRoomJson
+import models.ext._
+import models.json.ext.HotelJson
 
 object HotelsCtrl extends Controller with CtrlHelper {
 
   // http://127.0.0.1:9000/hotelgroup/hgX/locations
-  def locations(hotelgroup: String) = DBAction { implicit rs =>
-    info(s"hotelgroup=$hotelgroup")
+  def locations(apiUrl: String) = DBAction { implicit rs =>
+    info(s"apiUrl=$apiUrl")
     implicit val dbSession = rs.dbSession
     val query = for {
-      (_, location) <- qHotelRoomsWithLocation(hotelgroup)
+      (_, location) <- qHotelWithLocation(apiUrl)
     } yield (location.iataCode)
     val data = query.to[Set]
     Ok(toJson(data))
   }
 
-  def list(hotelgroup: String, location: Option[String], start: Option[String], end: Option[String]) = DBAction { implicit rs =>
-    info(s"list hotelGroup=$hotelgroup, location=$location start=$start end=$end")
+  def list(apiUrl: String, location: Option[String], start: Option[String], end: Option[String]) = DBAction { implicit rs =>
+    info(s"list apiUrl=$apiUrl, location=$location start=$start end=$end")
     implicit val dbSession = rs.dbSession
     // check if start and end are valid dates
     val startDate = start flatMap parseLocatDate
     val endDate = end flatMap parseLocatDate
 
     // build the dynamic query parts
-    def hotelroomConditions(room: TExtHotelRoom.type, locationDb: TLocation.type): Column[Boolean] = {
+    def hotelroomConditions(room: TExtHotel.type, locationDb: TLocation.type): Column[Boolean] = {
       val conditions: List[Column[Boolean]] = List(
-        Some(room.hotelShortName === hotelgroup),
+        Some(room.apiUrl === apiUrl),
         startDate map (room.startDate === _),
         endDate map (room.endDate === _),
         location map (locationDb.iataCode === _)).flatten
@@ -60,7 +60,7 @@ object HotelsCtrl extends Controller with CtrlHelper {
     }
 
     // build the complete query including dynamic parts
-    val query = for { (hotelRoom, location) <- qHotelRoomsWithLocation if (hotelroomConditions(hotelRoom, location)) } yield (hotelRoom, location)
+    val query = for { (hotelRoom, location) <- qHotelWithLocation if (hotelroomConditions(hotelRoom, location)) } yield (hotelRoom, location)
     info("query\n" + query.selectStatement)
 
     // perform the query
@@ -69,28 +69,28 @@ object HotelsCtrl extends Controller with CtrlHelper {
     // build the json from the returned data
     info("data\n\t" + data.mkString("\n\t"))
     val json = for ((hotelRoom, location) <- data) yield {
-      new HotelRoomJson(hotelRoom, location)
+      new HotelJson(hotelRoom, location)
     }
     Ok(toJson(json))
   }
 
-  def find(hotelgroup: String, id: Int) = DBAction { implicit rs =>
-    info(s"find hotelgroup=$hotelgroup id=$id")
+  def find(apiUrl: String, id: Int) = DBAction { implicit rs =>
+    info(s"find apiUrl=$apiUrl id=$id")
     implicit val dbSession = rs.dbSession
-    qHotelRoomsWithLocation(hotelgroup, id).to[Vector] match {
+    qHotelWithLocation(apiUrl, id).to[Vector] match {
       // good case: single result
       case Vector(hotelWithLocation) =>
-        info(s"Hotel for hotelgroup $hotelgroup and id $id found $hotelWithLocation -> returning 200 (with json body)")
+        info(s"Hotel for apiUrl $apiUrl and id $id found $hotelWithLocation -> returning 200 (with json body)")
         val (hotel, location) = hotelWithLocation
-        val flightJson = new HotelRoomJson(hotel, location)
+        val flightJson = new HotelJson(hotel, location)
         Ok(toJson(flightJson))
       // bad case 1: no result
       case Vector() =>
-        warn(s"No hotel for hotelgroup $hotelgroup and id $id -> returning 404")
+        warn(s"No hotel for hotelgroup $apiUrl and id $id -> returning 404")
         NotFound
       // error case 1: unexpected result
       case e =>
-        error(s"unknown data for hotelgroup $hotelgroup and id $id $e returning 500")
+        error(s"unknown data for hotelgroup $apiUrl and id $id $e returning 500")
         InternalServerError
     }
   }

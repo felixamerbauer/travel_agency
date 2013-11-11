@@ -1,7 +1,7 @@
 package db
 
 import db.QueryBasics.qExtFlight
-import db.QueryBasics.qExtHotelRoom
+import db.QueryBasics._
 import db.QueryBasics.qLocation
 import play.api.db.slick.Config.driver.simple._
 
@@ -13,34 +13,34 @@ object QueryLibrary {
     from <- qLocation if (from.id === flight.fromLocationId)
   } yield (flight, to, from)
 
-  def qFlightsWithLocation(airlineShortName: String) = for {
-    flight <- qExtFlight if (flight.airlineShortName === airlineShortName)
+  def qFlightsWithLocation(apiUrl: String) = for {
+    flight <- qExtFlight if (flight.apiUrl === apiUrl)
     to <- qLocation if (to.id === flight.toLocationId)
     from <- qLocation if (from.id === flight.fromLocationId)
   } yield (flight, to, from)
 
-  def qFlightsWithLocation(airlineShortName: String, flightId: Int) = for {
-    flight <- qExtFlight if (flight.id === flightId && flight.airlineShortName === airlineShortName)
+  def qFlightsWithLocation(apiUrl: String, flightId: Int) = for {
+    flight <- qExtFlight if (flight.id === flightId && flight.apiUrl === apiUrl)
     to <- qLocation if (to.id === flight.toLocationId)
     from <- qLocation if (from.id === flight.fromLocationId)
   } yield (flight, to, from)
 
-  def qFlight(airlineShortName: String, flightId: Int) = for {
-    flight <- qExtFlight if (flight.id === flightId && flight.airlineShortName === airlineShortName)
+  def qFlight(apiUrl: String, flightId: Int) = for {
+    flight <- qExtFlight if (flight.id === flightId && flight.apiUrl === apiUrl)
   } yield flight
 
-  def qHotelRoomsWithLocation = for {
-    hotelroom <- qExtHotelRoom
-    location <- qLocation if (location.id === hotelroom.locationId)
-  } yield (hotelroom, location)
+  def qHotelWithLocation = for {
+    hotel <- qExtHotel
+    location <- qLocation if (location.id === hotel.locationId)
+  } yield (hotel, location)
 
-  def qHotelRoomsWithLocation(api: String) = for {
-    hotelroom <- qExtHotelRoom if (hotelroom.hotelShortName === api)
-    location <- qLocation if (location.id === hotelroom.locationId)
-  } yield (hotelroom, location)
+  def qHotelWithLocation(api: String) = for {
+    hotel <- qExtHotel if (hotel.apiUrl === api)
+    location <- qLocation if (location.id === hotel.locationId)
+  } yield (hotel, location)
   
-  def qHotelRoomsWithLocation(api: String, id: Int) = for {
-    hotelroom <- qExtHotelRoom if (hotelroom.id === id && hotelroom.hotelShortName === api)
-    location <- qLocation if (location.id === hotelroom.locationId)
-  } yield (hotelroom, location)
+  def qHotelWithLocation(api: String, id: Int) = for {
+    hotel <- qExtHotel if (hotel.id === id && hotel.apiUrl === api)
+    location <- qLocation if (location.id === hotel.locationId)
+  } yield (hotel, location)
 }

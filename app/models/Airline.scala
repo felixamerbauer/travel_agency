@@ -5,7 +5,7 @@ import play.api.db.slick.Config.driver.simple._
 object TAirline extends Table[Airline]("airlines") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def name = column[String]("name")
-  def apiUrl = column[String]("apiUrl")
+  def apiUrl = column[String]("apiurl")
   def baseProjection = name ~ apiUrl
   override def * = id ~: baseProjection <> (Airline, Airline.unapply _)
   def forInsert = baseProjection <> (

@@ -48,7 +48,7 @@ object FlightsCtrl extends Controller with CtrlHelper {
     // build the dynamic query parts
     def flightConditions(flight: TExtFlight.type, toLocation: TLocation.type, fromLocation: TLocation.type): Column[Boolean] = {
       val conditions: List[Column[Boolean]] = List(
-        Some(flight.airlineShortName === airline),
+        Some(flight.apiUrl === airline),
         startDT map (flight.dateTime >= _),
         endDT map (flight.dateTime <= _),
         to map (toLocation.iataCode === _),

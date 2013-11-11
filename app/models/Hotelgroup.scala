@@ -5,7 +5,7 @@ import play.api.db.slick.Config.driver.simple._
 object THotelgroup extends Table[Hotelgroup]("hotelgroups") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def name = column[String]("name")
-  def apiUrl = column[String]("apiUrl")
+  def apiUrl = column[String]("apiurl")
   def baseProjection = name ~ apiUrl
   override def * = id ~: baseProjection <> (Hotelgroup, Hotelgroup.unapply _)
   def forInsert = baseProjection <> (

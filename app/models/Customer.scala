@@ -10,20 +10,20 @@ import org.joda.time.DateTime
 
 object TCustomer extends Table[Customer]("customers") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-  def userId = column[Int]("user")
-  def firstName = column[String]("firstName")
-  def lastName = column[String]("lastName")
-  def birthDate = column[LocalDate]("birthDate")
+  def userId = column[Int]("userid")
+  def firstName = column[String]("firstname")
+  def lastName = column[String]("lastname")
+  def birthDate = column[LocalDate]("birthdate")
   def sex = column[String]("sex")
   def street = column[String]("street")
-  def zipCode = column[String]("zipCode")
+  def zipCode = column[String]("zipcode")
   def city = column[String]("city")
   def country = column[String]("country")
-  def phoneNumber = column[String]("phoneNumber")
-  def creditCardCompany = column[String]("creditCardCompany")
-  def creditCardNumber = column[String]("creditCardNumber")
-  def creditCardExpireDate = column[String]("creditCardExpireDate")
-  def creditCardVerificationCode = column[String]("creditCardVerificationCode")
+  def phoneNumber = column[String]("phonenumber")
+  def creditCardCompany = column[String]("creditcardcompany")
+  def creditCardNumber = column[String]("creditcardnumber")
+  def creditCardExpireDate = column[LocalDate]("creditcardexpiredate")
+  def creditCardVerificationCode = column[String]("creditcardverificationcode")
   def baseProjection = userId ~ firstName ~ lastName ~ birthDate ~ sex ~ street ~ zipCode ~ city ~ country ~ phoneNumber ~ creditCardCompany ~ creditCardNumber ~ creditCardExpireDate ~ creditCardVerificationCode
   override def * = id ~: baseProjection <> (Customer, Customer.unapply _)
   def forInsert = baseProjection <> (
@@ -48,7 +48,7 @@ case class Customer(
   phoneNumber: String,
   creditCardCompany: String,
   creditCardNumber: String,
-  creditCardExpireDate: String,
+  creditCardExpireDate: LocalDate,
   creditCardVerificationCode: String)
 
   

@@ -6,17 +6,17 @@ import db.QueryBasics.localdateMapper
 
 object TOrder extends Table[Order]("orders") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-  def customerId = column[Int]("customerId")
-  def productId = column[Int]("productId")
-  def hotelName = column[String]("hotelName")
-  def hotelAddress = column[String]("hotelAddress")
-  def personCount = column[Int]("personCount")
-  def roomOrderId = column[String]("roomOrderId")
-  def toFlight = column[String]("toFlight")
-  def fromFlight = column[String]("fromFlight")
-  def startDate = column[LocalDate]("startDate")
-  def endDate = column[LocalDate]("endDate")
-  def price = column[Double]("price")
+  def customerId = column[Int]("customerid")
+  def productId = column[Int]("productid")
+  def hotelName = column[String]("hotelname")
+  def hotelAddress = column[String]("hoteladdress")
+  def personCount = column[Int]("personcount")
+  def roomOrderId = column[String]("roomorderid")
+  def toFlight = column[String]("toflight")
+  def fromFlight = column[String]("fromflight")
+  def startDate = column[LocalDate]("startdate")
+  def endDate = column[LocalDate]("enddate")
+  def price = column[Int]("price")
   def currency = column[String]("currency")
   def baseProjection = customerId ~ productId ~ hotelName ~ hotelAddress ~ personCount ~ roomOrderId ~ toFlight ~ fromFlight ~ startDate ~ endDate ~ price ~ currency
   override def * = id ~: baseProjection <> (Order, Order.unapply _)
@@ -42,7 +42,7 @@ case class Order(
   fromFlight: String,
   startDate: LocalDate,
   endDate: LocalDate,
-  price: Double,
+  price: Int,
   currency: String)
 
   

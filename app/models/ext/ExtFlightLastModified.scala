@@ -6,9 +6,9 @@ import db.QueryBasics.dateTimeMapper
 import org.joda.time.DateTime
 import models.TLocation
 
-object TExtFlightLastModified extends Table[ExtFlightLastModified]("extFlightsLastModified") {
+object TExtFlightLastModified extends Table[ExtFlightLastModified]("extflightslastmodified") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-  def lastModified = column[DateTime]("lastModified")
+  def lastModified = column[DateTime]("lastmodified")
   def tmp = column[Option[Boolean]]("tmp")
   def baseProjection = lastModified ~ tmp
   override def * = id ~: baseProjection <> (ExtFlightLastModified, ExtFlightLastModified.unapply _)

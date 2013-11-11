@@ -4,8 +4,8 @@ import play.api.db.slick.Config.driver.simple._
 
 object TProduct extends Table[Product]("products") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-  def fromLocationId = column[Int]("fromLocationId")
-  def toLocationId = column[Int]("toLocationId")
+  def fromLocationId = column[Int]("fromlocationid")
+  def toLocationId = column[Int]("tolocationid")
   def archived = column[Boolean]("archived")
   def baseProjection = fromLocationId ~ toLocationId ~ archived
   override def * = id ~: baseProjection <> (Product, Product.unapply _)

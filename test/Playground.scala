@@ -10,10 +10,9 @@ import models.TLocation
 import models.TOrder
 import models.TAirline
 import models.THotelgroup
-import models.ext.TExtHotelRoom
+import models.ext._
 import models.ext.TExtFlight
 import models.ext.TExtFlightLastModified
-import models.ext.TExtHotelRoomLastModified
 
 object PrintDDL extends App {
   import play.api.db.slick.Config.driver.simple.Database.threadLocalSession
@@ -29,10 +28,10 @@ object PrintDDL extends App {
       print(TOrder.ddl.createStatements)
       print(TAirline.ddl.createStatements)
       print(THotelgroup.ddl.createStatements)
-      print(TExtHotelRoom.ddl.createStatements)
+      print(TExtHotel.ddl.createStatements)
       print(TExtFlight.ddl.createStatements)
       print(TExtFlightLastModified.ddl.createStatements)
-      print(TExtHotelRoomLastModified.ddl.createStatements)
+      print(TExtHotelLastModified.ddl.createStatements)
     }
   }
 }
