@@ -8,6 +8,7 @@ import play.api.test.FakeApplication
 import play.api.test.Helpers.running
 import org.joda.time.LocalDate
 import org.joda.time.DateMidnight
+import json.BookingResponse
 
 class WorkflowTests extends FunSuite with BeforeAndAfter {
   implicit val context = ExecutionContext.Implicits.global
@@ -33,12 +34,12 @@ class WorkflowTests extends FunSuite with BeforeAndAfter {
         val chosenJourney = journeys.minBy(_.price)
         println(s"chosen journey ${chosenJourney.pretty}")
 
-        val bookingOk = Client.book(chosenJourney)
-        println(s"bookingOk $bookingOk")
+        val (bookingInward,bookingOutward,bookingHotel) = Client.book(chosenJourney)
+        val bookings:Seq[Option[BookingResponse]]=Seq(bookingInward,bookingOutward,bookingHotel)
+        println(s"bookingOutward=$bookingOutward, bookingInward=$bookingInward, bookinHotel=$bookingHotel")
 
-        val cancellingOk = Client.cancel(chosenJourney)
+        val cancellingOk = Client.cancel(bookings.flatten)
         println(s"cancellingOk $cancellingOk")
-
       }
     }
   }

@@ -6,13 +6,13 @@ import controllers.JsonDeSerialization._
 import controllers.JsonDeSerialization.flightWrites
 import controllers.JsonHelper.isoDtf
 import db.QueryBasics.dateTimeMapper
-import db.QueryLibrary.qFlight
+import db.QueryLibrary._
 import db.QueryLibrary.qFlightsWithLocation
 import db.QueryMethods.bookFlightSeats
 import db.QueryMethods.cancelFlightSeats
 import models.TLocation
 import models.ext.TExtFlight
-import models.json._
+import json._
 import play.api.Logger.error
 import play.api.Logger.info
 import play.api.Logger.warn
@@ -23,6 +23,7 @@ import play.api.libs.json.Json.toJson
 import play.api.mvc.Controller
 import models.Direction
 import scala.collection.SortedSet
+import play.api.libs.json.Json
 
 object FlightsCtrl extends Controller with CtrlHelper {
 
@@ -32,7 +33,7 @@ object FlightsCtrl extends Controller with CtrlHelper {
     val query = for {
       (_, from, to) <- qFlightsWithLocation(airline)
     } yield (from.iataCode, to.iataCode)
-    val data = query.to[Set].map(e=>Direction(e._1,e._2))
+    val data = query.to[Set].map(e => Direction(e._1, e._2))
     Ok(toJson(data))
   }
 
@@ -57,55 +58,57 @@ object FlightsCtrl extends Controller with CtrlHelper {
 
     // build the complete query including dynamic parts
     val query = for { (flight, from, to) <- qFlightsWithLocation if (flightConditions(flight, to, from)) } yield (flight, from, to)
-//    info("query\n" + query.selectStatement)
+    //    info("query\n" + query.selectStatement)
 
     // perform the query
     val data = query.to[Vector]
 
     // build the json from the returned data
-//    info("data\n\t" + data.mkString("\n\t"))
+    //    info("data\n\t" + data.mkString("\n\t"))
     val json = for ((flight, from, to) <- data) yield {
       new FlightJson(flight, from, to)
     }
     Ok(toJson(json))
   }
 
-  def find(airline: String, id: Int) = DBAction { implicit rs =>
-    info(s"find airline=$airline id=$id")
+  def find(apiUrl: String, id: Int) = DBAction { implicit rs =>
+    info(s"find apiUrl=$apiUrl id=$id")
     implicit val dbSession = rs.dbSession
-    qFlightsWithLocation(airline, id).to[Vector] match {
+    qFlightsWithLocation(apiUrl, id).to[Vector] match {
       // good case: single result
       case Vector(flightWithLocations) =>
-        info(s"Flight for airline $airline adn id $id found $flightWithLocations -> returning 200 (with json body)")
+        info(s"Flight for apiUrl $apiUrl adn id $id found $flightWithLocations -> returning 200 (with json body)")
         val flightJson = new FlightJson(flight = flightWithLocations._1, from = flightWithLocations._2, to = flightWithLocations._3)
         Ok(toJson(flightJson))
       // bad case 1: no result
       case Vector() =>
-        warn(s"No flight for airline $airline and id $id -> returning 404")
+        warn(s"No flight for apiUrl $apiUrl and id $id -> returning 404")
         NotFound
       // error case 1: unexpected result
       case e =>
-        error(s"unknown data for airline $airline and id $id $e returning 500")
+        error(s"unknown data for apiUrl $apiUrl and id $id $e returning 500")
         InternalServerError
     }
   }
 
-  def book(airline: String, id: Int) = DBAction { implicit rs =>
-    val bookingDetails = parse[FlightBookingDetails]
-    info(s"book airline=$airline id=$id bookingDetails=$bookingDetails")
+  def book(apiUrl: String, id: Int) = DBAction { implicit rs =>
+    val bookingDetails = parse[FlightBookingRequest]
+    info(s"book airline=$apiUrl id=$id bookingDetails=$bookingDetails")
     implicit val dbSession = rs.dbSession
-    qFlight(airline, id).to[Vector] match {
+    qFlight(apiUrl, id).to[Vector] match {
       // good case: single result
       case Vector(flight) =>
-        info(s"Flight for airline $airline adn id $id found $flight")
+        info(s"Flight for apiUrl $apiUrl adn id $id found $flight")
         if (flight.availableSeats >= bookingDetails.seats) {
-          if (bookFlightSeats(flight.id, bookingDetails.seats)) {
-            info("booking went well -> returning 201")
-            Created
-          } else {
-            warn("booking failed (was attempted) -> returning 409")
-            // TODO add explanation in body
-            Conflict
+          bookFlightSeats(flight.id, bookingDetails.seats) match {
+            case Some(bookingId) =>
+              info(s"booking went well -> returning 201 and booking id $bookingId in json response")
+              val response = new FlightBookingResponse(apiUrl, bookingId)
+              Created(Json.toJson(response))
+            case None =>
+              warn("booking failed (was attempted) -> returning 409")
+              // TODO add explanation in body
+              Conflict
           }
         } else {
           warn("booking failed (wasn't attempted because not enough seats) -> returning 409")
@@ -114,24 +117,24 @@ object FlightsCtrl extends Controller with CtrlHelper {
         }
       // bad case 1: no result
       case Vector() =>
-        warn(s"No flight for airline $airline and id $id -> returning 404")
+        warn(s"No flight for apiUrl $apiUrl and id $id -> returning 404")
         NotFound
       // error case 1: unexpected result
       case e =>
-        error(s"unknown data for airline $airline and id $id $e -> returning 500")
+        error(s"unknown data for apiUrl $apiUrl and id $id $e -> returning 500")
         InternalServerError
     }
   }
 
-  def cancel(airline: String, id: Int) = DBAction { implicit rs =>
-    val bookingDetails = parse[FlightBookingDetails]
-    info(s"cancel airline=$airline id=$id bookingDetails=$bookingDetails")
+  def cancel(apiUrl: String, bookingId: Int) = DBAction { implicit rs =>
+    info(s"cancel apiUrl=$apiUrl bookingId=$bookingId")
     implicit val dbSession = rs.dbSession
-    qFlight(airline, id).to[Vector] match {
+    qFlightBookingWithFlight(apiUrl, bookingId).to[Vector] match {
       // good case: single result
-      case Vector(flight) =>
-        info(s"Flight for airline $airline adn id $id found $flight")
-        if (cancelFlightSeats(flight.id, bookingDetails.seats)) {
+      case Vector(bookingFlight) =>
+        val (booking, flight) = bookingFlight
+        info(s"Booking and flight for apiUrl $apiUrl and bookingId $bookingId found $booking $flight")
+        if (cancelFlightSeats(flight, booking)) {
           info("cancelling went well -> returning 201")
           Created
         } else {
@@ -141,11 +144,11 @@ object FlightsCtrl extends Controller with CtrlHelper {
         }
       // bad case 1: no result
       case Vector() =>
-        warn(s"No flight for airline $airline and id $id -> returnig 404")
+        warn(s"No booking and flight for apiUrl $apiUrl and bookingId $bookingId -> returnig 404")
         NotFound
       // error case 1: unexpected result
       case e =>
-        error(s"unknown data for airline $airline and id $id $e -> returnig 500")
+        error(s"unknown data for apiUrl $apiUrl and bookingId $bookingId $e -> returnig 500")
         InternalServerError
     }
   }

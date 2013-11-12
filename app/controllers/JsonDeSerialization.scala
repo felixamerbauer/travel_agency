@@ -6,7 +6,7 @@ import play.api.libs.json._
 import play.api.libs.json.Json.reads
 import play.api.libs.json.Json.writes
 import controllers.JsonHelper._
-import models.json._
+import json._
 import models.Direction
 import models.Location
 
@@ -29,10 +29,16 @@ object JsonDeSerialization {
   implicit val hotelReads = reads[HotelJson]
   implicit val hotelWrites = writes[HotelJson]
 
-  implicit val flightBookingDetailsReads = reads[FlightBookingDetails]
-  implicit val flightBookingDetailsWrites = writes[FlightBookingDetails]
+  implicit val flightBookingRequestReads = reads[FlightBookingRequest]
+  implicit val flightBookingRequestWrites = writes[FlightBookingRequest]
 
-  implicit val hotelBookingDetailsReads = reads[HotelBookingDetails]
-  implicit val hotelBookingDetailsWrites = writes[HotelBookingDetails]
+  implicit val hotelBookingRequestReads = reads[HotelBookingRequest]
+  implicit val hotelBookingRequestWrites = writes[HotelBookingRequest]
+
+  implicit val flightBookingResponseReads = reads[FlightBookingResponse]
+  implicit val flightBookingResponseWrites = writes[FlightBookingResponse]
+
+  implicit val hotelBookingResponseReads = reads[HotelBookingResponse]
+  implicit val hotelBookingResponseWrites = writes[HotelBookingResponse]
 
 }

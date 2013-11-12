@@ -29,6 +29,11 @@ object QueryLibrary {
     flight <- qExtFlight if (flight.id === flightId && flight.apiUrl === apiUrl)
   } yield flight
 
+  def qFlightBookingWithFlight(apiUrl: String, bookingId: Int) = for {
+    booking <- qExtFlightBooking if (booking.id === bookingId)
+    flight <- qExtFlight if (flight.apiUrl === apiUrl && flight.id === booking.extFlightId)
+  } yield (booking, flight)
+
   def qHotel(apiUrl: String, hotelId: Int) = for {
     hotel <- qExtHotel if (hotel.id === hotelId && hotel.apiUrl === apiUrl)
   } yield hotel
@@ -47,6 +52,11 @@ object QueryLibrary {
     hotel <- qExtHotel if (hotel.id === id && hotel.apiUrl === api)
     location <- qLocation if (location.id === hotel.locationId)
   } yield (hotel, location)
+
+  def qHotelBookingWithHotel(apiUrl: String, bookingId: Int) = for {
+    booking <- qExtHotelBooking if (booking.id === bookingId)
+    hotel <- qExtHotel if (hotel.apiUrl === apiUrl && hotel.id === booking.extHotelId)
+  } yield (booking, hotel)
 
   val qProductsWithLocation = for {
     product <- qProduct

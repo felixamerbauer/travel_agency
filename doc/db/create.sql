@@ -8,8 +8,10 @@ DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS airlines CASCADE;
 DROP TABLE IF EXISTS hotelgroups CASCADE;
 DROP TABLE IF EXISTS extHotels CASCADE;
-DROP TABLE IF EXISTS extFlights CASCADE;
+DROP TABLE IF EXISTS extHotelBookings CASCADE;
 DROP TABLE IF EXISTS extHotelsLastmodified CASCADE;
+DROP TABLE IF EXISTS extFlights CASCADE;
+DROP TABLE IF EXISTS extFlightBookings CASCADE;
 DROP TABLE IF EXISTS extFlightsLastmodified CASCADE;
 
 CREATE TABLE users (
@@ -93,6 +95,18 @@ CREATE TABLE extHotels (
   currency       CHAR(3) NOT NULL
 );
 
+CREATE TABLE extHotelBookings (
+  id             SERIAL PRIMARY KEY,
+  extHotelId      INTEGER REFERENCES extHotels NOT NULL,
+  rooms		     TEXT NOT NULL
+);
+
+CREATE TABLE extHotelsLastmodified (
+  id           SERIAL PRIMARY KEY,
+  lastModified TIMESTAMP NOT NULL,
+  tmp          BOOLEAN
+);
+
 CREATE TABLE extFlights (
   id               SERIAL PRIMARY KEY,
   apiUrl           TEXT NOT NULL, -- for differentiation of REST services
@@ -105,12 +119,11 @@ CREATE TABLE extFlights (
   currency         CHAR(3) NOT NULL
 );
 
-CREATE TABLE extHotelsLastmodified (
-  id           SERIAL PRIMARY KEY,
-  lastModified TIMESTAMP NOT NULL,
-  tmp          BOOLEAN
+CREATE TABLE extFlightBookings (
+  id             SERIAL PRIMARY KEY,
+  extFlightId    INTEGER REFERENCES extFlights NOT NULL,
+  seats		     TEXT NOT NULL
 );
-
 
 CREATE TABLE extFlightsLastmodified (
   id           SERIAL PRIMARY KEY,

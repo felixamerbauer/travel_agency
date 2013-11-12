@@ -33,6 +33,8 @@ class DBTests extends FunSuite with BeforeAndAfter {
         // TODO empty tables
         val tables = Seq(qOrder,
           qAirline,
+          qExtFlightBooking,
+          qExtHotelBooking,
           qHotelgroup,
           qExtHotel,
           qExtFlight,
@@ -113,13 +115,13 @@ class DBTests extends FunSuite with BeforeAndAfter {
         val ordersDb = qOrder.to[Seq]
         assert(orders === ordersDb.map(_.copy(id = -1)))
         // airline
-        val airlines = Seq("A", "B", "C").map(e => Airline(name = s"Airline$e", apiUrl = s"airline$e"))
+        val airlines = Seq("A", "B", "C").map(e => Airline(name = s"Airline$e", apiUrl = s"$e"))
         println("Inserting\n\t" + airlines.mkString("\n\t"))
         airlines foreach TAirline.autoInc.insert
         val airlinesDb = qAirline.to[Seq]
         assert(airlines === airlinesDb.map(_.copy(id = -1)))
         // hotelgroup
-        val hotelGroups = Seq("X", "Y", "Z").map(e => Hotelgroup(name = s"Hotelgroup$e", apiUrl = s"hg$e"))
+        val hotelGroups = Seq("X", "Y", "Z").map(e => Hotelgroup(name = s"Hotelgroup$e", apiUrl = s"$e"))
         println("Inserting\n\t" + hotelGroups.mkString("\n\t"))
         hotelGroups foreach THotelgroup.autoInc.insert
         val hotelGroupsDb = qHotelgroup.to[Seq]
@@ -183,6 +185,21 @@ class DBTests extends FunSuite with BeforeAndAfter {
         TExtHotelLastModified.autoInc.insert(extHotelLastModified)
         val extHotelLastModifiedDb = Query(TExtHotelLastModified).first
         assert(extHotelLastModified === extHotelLastModifiedDb.copy(id = -1))
+        // extFlightBooking
+        val extFlightBooking = ExtFlightBooking(extFlightId = extFlightsDb.head.id, seats = 1)
+        println(s"Inserting $extFlightBooking")
+        TExtFlightBooking.insert(extFlightBooking)
+        val extFlightBookingDb = qExtFlightBooking.to[Seq].head
+        assert(extFlightBooking === extFlightBooking.copy(id = -1))
+        qExtFlightBooking.delete
+        // extFlightBooking
+        val extHotelBooking = ExtHotelBooking(extHotelId = extHotelDb.head.id, rooms = 1)
+        println(s"Inserting $extHotelBooking")
+        TExtHotelBooking.insert(extHotelBooking)
+        val extHotelBookingDb = qExtHotelBooking.to[Seq].head
+        assert(extHotelBooking === extHotelBookingDb.copy(id = -1))
+        qExtHotelBooking.delete
+
       }
     }
 

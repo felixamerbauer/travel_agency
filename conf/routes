@@ -4,49 +4,49 @@
 
 # Two ways to define routes
 #controllers.Assets.at(path="/public", file="index.html")
-GET    /                                           controllers.Application.index(any = "none")
+GET      /                                              controllers.Application.index(any = "none")
 
 
 # Admin-SignIns
 # http://127.0.0.1:9000/airline/austrian/flights?from=SYD&to=BER&start=2013-11-16T15:00:00%2B01:00&end=2013-11-16T15:00:00%2B01:00
-GET    /airline/:airline/directions                controllers.ext.FlightsCtrl.directions(airline:String)
+GET      /airline/:apiUrl/directions                    controllers.ext.FlightsCtrl.directions(apiUrl:String)
 
-GET    /airline/:airline/flights                   controllers.ext.FlightsCtrl.list(airline:String, from:Option[String] ?= None, to:Option[String] ?= None, start:Option[String] ?= None, end:Option[String] ?= None)
+GET      /airline/:apiUrl/flights                       controllers.ext.FlightsCtrl.list(apiUrl:String, from:Option[String] ?= None, to:Option[String] ?= None, start:Option[String] ?= None, end:Option[String] ?= None)
 
-GET    /airline/:airline/flights/:id               controllers.ext.FlightsCtrl.find(airline:String, id: Int)
+GET      /airline/:apiUrl/flights/:id                   controllers.ext.FlightsCtrl.find(apiUrl:String, id: Int)
 
-POST   /airline/:airline/flights/book/:id          controllers.ext.FlightsCtrl.book(airline:String, id: Int)
+POST     /airline/:apiUrl/flights/book/:id              controllers.ext.FlightsCtrl.book(apiUrl:String, id: Int)
 
-POST   /airline/:airline/flights/delete/:id        controllers.ext.FlightsCtrl.cancel(airline:String, id: Int)
+DELETE     /airline/:apiUrl/flights/cancel/:bookingId     controllers.ext.FlightsCtrl.cancel(apiUrl:String, bookingId: Int)
 
-GET    /hotelgroup/:hotelgroup/locations           controllers.ext.HotelsCtrl.locations(hotelgroup:String)
+GET      /hotelgroup/:apiUrl/locations                  controllers.ext.HotelsCtrl.locations(apiUrl:String)
 
-GET    /hotelgroup/:hotelgroup/hotels              controllers.ext.HotelsCtrl.list(hotelgroup:String, location:Option[String] ?= None, start:Option[String] ?= None, end:Option[String] ?= None)
+GET      /hotelgroup/:apiUrl/hotels                     controllers.ext.HotelsCtrl.list(apiUrl:String, location:Option[String] ?= None, start:Option[String] ?= None, end:Option[String] ?= None)
 
-GET    /hotelgroup/:hotelgroup/hotels/:id          controllers.ext.HotelsCtrl.find(hotelgroup:String, id: Int)
+GET      /hotelgroup/:apiUrl/hotels/:id                 controllers.ext.HotelsCtrl.find(apiUrl:String, id: Int)
 
-POST   /hotelgroup/:hotelgroup/hotels/book/:id     controllers.ext.HotelsCtrl.book(hotelgroup:String, id: Int)
+POST     /hotelgroup/:apiUrl/hotels/book/:id            controllers.ext.HotelsCtrl.book(apiUrl:String, id: Int)
 
-POST   /hotelgroup/:hotelgroup/hotels/delete/:id   controllers.ext.HotelsCtrl.cancel(hotelgroup:String, id: Int)
+DELETE   /hotelgroup/:apiUrl/hotels/cancel/:bookingId   controllers.ext.HotelsCtrl.cancel(apiUrl:String, bookingId: Int)
 
 # handle other potential get requests
-GET    /airline/*any                               controllers.Application.http404(any)
+GET      /airline/*any                                  controllers.Application.http404(any)
 
-GET    /hotelgroup/*any                            controllers.Application.http404(any)
+GET      /hotelgroup/*any                               controllers.Application.http404(any)
 
-POST   /airline/*any                               controllers.Application.http404(any)
+POST     /airline/*any                                  controllers.Application.http404(any)
 
-POST   /hotelgroup/*any                            controllers.Application.http404(any)
+POST     /hotelgroup/*any                               controllers.Application.http404(any)
 
 # Travel Booking Workflow
 
-GET    /travel/search                              controllers.Application.travelSearch
+GET      /travel/search                                 controllers.Application.travelSearch
 
-GET    /travel/list                                controllers.Application.travelList
+GET      /travel/list                                   controllers.Application.travelList
 
-GET    /travel/booking                             controllers.Application.travelBooking
+GET      /travel/booking                                controllers.Application.travelBooking
 
-GET    /travel/bookingconfirmation                 controllers.Application.travelBookingConfirmation
+GET      /travel/bookingconfirmation                    controllers.Application.travelBookingConfirmation
 
 # Login/Logout
 # GET      /isUser                                controllers.SecurityController.isUser
@@ -58,7 +58,7 @@ GET    /travel/bookingconfirmation                 controllers.Application.trave
 # POST     /logout                                 controllers.SecurityController.logout
 
 # Map static resources from the /public folder to the /assets URL path
-GET    /assets/*file                               controllers.Assets.at(path="/public", file)
+GET      /assets/*file                                  controllers.Assets.at(path="/public", file)
 
-GET    /*any                                       controllers.Application.index(any)
+GET      /*any                                          controllers.Application.index(any)
 

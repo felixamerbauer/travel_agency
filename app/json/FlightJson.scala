@@ -1,4 +1,4 @@
-package models.json
+package json
 
 import org.joda.time.DateTime
 

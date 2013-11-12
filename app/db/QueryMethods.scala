@@ -2,64 +2,62 @@ package db
 
 import com.github.t3hnar.bcrypt.BCrypt
 import com.github.t3hnar.bcrypt.Password
-
 import db.QueryBasics._
 import play.api.Logger.info
 import play.api.Logger.warn
-import play.api.db.slick.Config.driver.simple.Session
-import play.api.db.slick.Config.driver.simple.columnExtensionMethods
-import play.api.db.slick.Config.driver.simple.productQueryToUpdateInvoker
-import play.api.db.slick.Config.driver.simple.queryToQueryInvoker
-import play.api.db.slick.Config.driver.simple.valueToConstColumn
+import play.api.db.slick.Config.driver.simple._
+import models.ext._
+import java.sql._
 
 object QueryMethods {
   val defaultPassword = "password".bcrypt(BCrypt.gensalt())
 
-  def bookFlightSeats(id: Int, requiredSeats: Int)(implicit session: Session): Boolean = session.withTransaction {
+  def bookFlightSeats(id: Int, requiredSeats: Int)(implicit session: Session): Option[Int] = session.withTransaction {
     val qFlight = for {
       flight <- qExtFlight.where(_.id === id)
     } yield (flight)
     qFlight.to[Vector] match {
       case Vector(flight) =>
         if (flight.availableSeats >= requiredSeats) {
+          // 1) reduce number of seats
           val newAvailableSeats = flight.availableSeats - requiredSeats
           info(s"Enough seats available, ${flight.availableSeats} >= $requiredSeats, booking now (reducing available seats to $newAvailableSeats)")
           val qAvailableSeats = for {
             flight <- qExtFlight.where(_.id === id)
           } yield (flight.availableSeats)
           qAvailableSeats.update(newAvailableSeats)
-          true
+          // 2) store booking
+          val flightBooking = ExtFlightBooking(extFlightId = id, seats = requiredSeats)
+          val flightBookingId = TExtFlightBooking.autoInc.insert(flightBooking)
+          info("Inserted flight booking " + flightBooking.copy(id = flightBookingId))
+          Some(flightBookingId)
         } else {
           warn(s"Sorry not enough seats ${flight.availableSeats} < $requiredSeats for flight $flight")
-          false
+          None
         }
       case e =>
         warn("Unexpected result " + e)
-        false
+        None
     }
 
   }
 
-  def cancelFlightSeats(id: Int, cancelledSeats: Int)(implicit session: Session): Boolean = session.withTransaction {
-    val qFlight = for {
-      flight <- qExtFlight.where(_.id === id)
-    } yield (flight)
-    qFlight.to[Vector] match {
-      case Vector(flight) =>
-        val newAvailableSeats = flight.availableSeats + cancelledSeats
-        info(s"New seats available, ${flight.availableSeats} + $cancelledSeats = $newAvailableSeats, cancelling now")
-        val qAvailableSeats = for {
-          flight <- qExtFlight.where(_.id === id)
-        } yield (flight.availableSeats)
-        qAvailableSeats.update(newAvailableSeats)
-        true
-      case e =>
-        warn("Unexpected result " + e)
+  def cancelFlightSeats(flight: ExtFlight, booking: ExtFlightBooking)(implicit session: Session): Boolean = session.withTransaction {
+    try {
+      val newAvailableSeats = flight.availableSeats + booking.seats
+      info(s"New seats available, ${flight.availableSeats} + $booking.seats = $newAvailableSeats, cancelling now")
+      qExtFlight.where(_.id === flight.id).map(_.availableSeats).update(newAvailableSeats)
+      val rows = qExtFlightBooking.where(_.id === booking.id).delete
+      if (rows != 1) throw new SQLException(s"Deleting booking failed (rows=$rows)")
+      true
+    } catch {
+      case e: SQLException =>
+        warn(s"Error while cancelling flight $flight and booking $booking")
         false
     }
   }
 
-  def bookHotelRooms(id: Int, requiredRooms: Int)(implicit session: Session): Boolean = session.withTransaction {
+  def bookHotelRooms(id: Int, requiredRooms: Int)(implicit session: Session): Option[Int] = session.withTransaction {
     val qHotel = for {
       hotel <- qExtHotel.where(_.id === id)
     } yield (hotel)
@@ -72,32 +70,32 @@ object QueryMethods {
             hotel <- qExtHotel.where(_.id === id)
           } yield (hotel.availableRooms)
           qAvailableRooms.update(newAvailableRooms)
-          true
+          // 2) store booking
+          val hotelBooking = ExtHotelBooking(extHotelId = id, rooms = requiredRooms)
+          val hotelBookingId = TExtHotelBooking.autoInc.insert(hotelBooking)
+          info("Inserted flight booking " + hotelBooking.copy(id = hotelBookingId))
+          Some(hotelBookingId)
         } else {
           warn(s"Sorry not enough rooms ${hotel.availableRooms} < requiredRooms for hotel $hotel")
-          false
+          None
         }
       case e =>
         warn("Unexpected result " + e)
-        false
+        None
     }
   }
 
-  def cancelHotelRooms(id: Int, cancelledRooms: Int)(implicit session: Session): Boolean = session.withTransaction {
-    val qHotel = for {
-      hotel <- qExtHotel.where(_.id === id)
-    } yield (hotel)
-    qHotel.to[Vector] match {
-      case Vector(hotel) =>
-        val newAvailableRooms = hotel.availableRooms + cancelledRooms
-        info(s"New rooms available, ${hotel.availableRooms} + $cancelledRooms = $newAvailableRooms, cancelling now")
-        val qAvailableRooms = for {
-          hotel <- qExtHotel.where(_.id === id)
-        } yield (hotel.availableRooms)
-        qAvailableRooms.update(newAvailableRooms)
-        true
-      case e =>
-        warn("Unexpected result " + e)
+  def cancelHotelRooms(hotel: ExtHotel, booking: ExtHotelBooking)(implicit session: Session): Boolean = session.withTransaction {
+    try {
+      val newAvailableRooms = hotel.availableRooms + booking.rooms
+      info(s"New rooms available, ${hotel.availableRooms} + ${booking.rooms} = $newAvailableRooms, cancelling now")
+      qExtHotel.where(_.id === hotel.id).map(_.availableRooms).update(newAvailableRooms)
+      val rows = qExtHotelBooking.where(_.id === booking.id).delete
+      if (rows != 1) throw new SQLException(s"Deleting booking failed (rows=$rows)")
+      true
+    } catch {
+      case e: SQLException =>
+        warn(s"Error while cancelling flight $hotel and booking $booking")
         false
     }
   }

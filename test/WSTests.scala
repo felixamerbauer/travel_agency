@@ -4,7 +4,7 @@ import scala.concurrent.duration.DurationInt
 import org.scalatest.BeforeAndAfter
 import org.scalatest.FunSuite
 import controllers.JsonDeSerialization._
-import models.json._
+import json._
 import play.api.libs.json.Json
 import play.api.libs.ws.WS
 import org.scalatest.Finders

@@ -36,7 +36,9 @@ object QueryBasics {
   val qProduct = Query(TProduct)
   val qUser = Query(TUser)
   val qExtFlight = Query(TExtFlight)
+  val qExtFlightBooking = Query(TExtFlightBooking)
   val qExtFlightLastModified = Query(TExtFlightLastModified)
   val qExtHotel = Query(TExtHotel)
+  val qExtHotelBooking = Query(TExtHotelBooking)
   val qExtHotelLastModified = Query(TExtHotelLastModified)
 }

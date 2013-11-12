@@ -14,7 +14,7 @@ import play.api.Logger._
 import models.Location
 import org.joda.time.LocalDate
 import org.joda.time.DateMidnight
-import models.json._
+import json._
 import org.joda.time.Duration
 import play.api.libs.json.JsValue
 
@@ -153,7 +153,7 @@ object Client {
     packages
   }
 
-  def book(journey: Journey): Boolean = {
+  def book(journey: Journey): Tuple3[Option[FlightBookingResponse], Option[FlightBookingResponse], Option[HotelBookingResponse]] = {
     info(s"book $journey")
     def post(url: String, data: JsValue): Response = {
       debug(s"post url=$url data=$data")
@@ -161,64 +161,54 @@ object Client {
       Await.result(call, 20.seconds)
     }
 
-    def bookFlight(flight: FlightJson) = {
+    def bookFlight(flight: FlightJson): Tuple2[Int, Option[FlightBookingResponse]] = {
       val url = flight.links.find(_.rel == "book").get.href
-      val data = Json.toJson(FlightBookingDetails(seats = journey.persons))
+      val data = Json.toJson(FlightBookingRequest(seats = journey.persons))
       val result = post(url, data)
       info("Status " + result.status)
-      result.status
+      if (result.status == 201) {
+        (result.status, Some(Json.fromJson[FlightBookingResponse](result.json).get))
+      } else (result.status, None)
     }
 
-    def bookHotel(hotel: HotelJson) = {
+    def bookHotel(hotel: HotelJson): Tuple2[Int, Option[HotelBookingResponse]] = {
       val url = hotel.links.find(_.rel == "book").get.href
-      val data = Json.toJson(HotelBookingDetails(rooms = journey.rooms))
+      val data = Json.toJson(HotelBookingRequest(rooms = journey.rooms))
       val result = post(url, data)
       info("Status " + result.status)
-      result.status
+      if (result.status == 201) {
+        (result.status, Some(Json.fromJson[HotelBookingResponse](result.json).get))
+      } else (result.status, None)
     }
 
     // book outward flight
-    val outward = bookFlight(journey.outward)
+    val (outwardStatus, outwardResponse) = bookFlight(journey.outward)
     // book inward flight
-    val inward = bookFlight(journey.inward)
+    val (inwardStatus, inwardResponse) = bookFlight(journey.inward)
     // book hotel
-    val hotel = bookHotel(journey.hotel)
-    val success = Seq(outward, inward, hotel).forall(_ == 201)
-    info(s"Booking summary outward=$outward inward=$inward hotel=$hotel -> success=$success")
-    success
+    val (hotelStatus, hotelResponse) = bookHotel(journey.hotel)
+    val success = Seq(outwardStatus, inwardStatus, hotelStatus).forall(_ == 201)
+    info(s"Booking summary outward=$outwardStatus/outwardResponse inward=$inwardStatus/$inwardResponse hotel=$hotelStatus/$hotelResponse -> success=$success")
+    (outwardResponse, inwardResponse, hotelResponse)
   }
 
-  def cancel(journey: Journey): Boolean = {
-    info(s"cancel $journey")
+  def cancel(bookings: Seq[BookingResponse]): Boolean = {
+    info(s"cancel ${bookings.mkString(",")}")
     def delete(url: String): Response = {
       debug(s"delete url=$url")
       val call = WS.url(url).delete
       Await.result(call, 20.seconds)
     }
 
-    def cancelFlight(flight: FlightJson) = {
-      val url = flight.links.find(_.rel == "book").get.href
+    val status = bookings.map { booking =>
+      val url = booking.links.find(_.rel == "cancel").get.href
       val result = delete(url)
-      info("Status " + result.status)
+      info(s"Status $url -> ${result.status}")
       result.status
     }
-
-    def cancelHotel(hotel: HotelJson) = {
-      val url = hotel.links.find(_.rel == "book").get.href
-      val result = delete(url)
-      info("Status " + result.status)
-      result.status
-    }
-
-    // cancel outward flight
-    val outward = cancelFlight(journey.outward)
-    // cancel inward flight
-    val inward = cancelFlight(journey.inward)
-    // cancel hotel
-    val hotel = cancelHotel(journey.hotel)
-    val success = Seq(outward, inward, hotel).forall(_ == 201)
-    info(s"Cancel summary outward=$outward inward=$inward hotel=$hotel -> success=$success")
-    success
+    val success = status.forall(_ == 201)
+    info(s"Cancel summary ${status.mkString("/")} -> success=$success")
+    true
   }
 
 }

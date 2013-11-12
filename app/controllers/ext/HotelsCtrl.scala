@@ -16,7 +16,7 @@ import db.QueryMethods._
 import db.QueryMethods.cancelFlightSeats
 import models.TLocation
 import models.ext.TExtFlight
-import models.json._
+import json._
 import play.api.Logger.error
 import play.api.Logger.info
 import play.api.Logger.warn
@@ -26,6 +26,7 @@ import play.api.db.slick.DBAction
 import play.api.libs.json.Json.toJson
 import play.api.mvc.Controller
 import models.ext._
+import play.api.libs.json.Json
 
 object HotelsCtrl extends Controller with CtrlHelper {
 
@@ -93,22 +94,24 @@ object HotelsCtrl extends Controller with CtrlHelper {
     }
   }
 
-  def book(hotelgroup: String, id: Int) = DBAction { implicit rs =>
-    val bookingDetails = parse[HotelBookingDetails]
-    info(s"book hotelgroup=$hotelgroup id=$id bookingDetails=$bookingDetails")
+  def book(apiUrl: String, id: Int) = DBAction { implicit rs =>
+    val bookingDetails = parse[HotelBookingRequest]
+    info(s"book apiUrl=$apiUrl id=$id bookingDetails=$bookingDetails")
     implicit val dbSession = rs.dbSession
-    qHotel(hotelgroup, id).to[Vector] match {
+    qHotel(apiUrl, id).to[Vector] match {
       // good case: single result
       case Vector(hotel) =>
-        info(s"Flight for airline $hotelgroup and id $id found $hotel")
+        info(s"Flight for apiUrl $apiUrl and id $id found $hotel")
         if (hotel.availableRooms >= bookingDetails.rooms) {
-          if (bookHotelRooms(hotel.id, bookingDetails.rooms)) {
-            info("booking went well -> returning 201")
-            Created
-          } else {
-            warn("booking failed (was attempted) -> returning 409")
-            // TODO add explanation in body
-            Conflict
+          bookHotelRooms(hotel.id, bookingDetails.rooms) match {
+            case Some(bookingId) =>
+              info(s"booking went well -> returning 201 and booking id $bookingId in json body")
+              val response = new HotelBookingResponse(apiUrl, bookingId)
+              Created(Json.toJson(response))
+            case None =>
+              warn("booking failed (was attempted) -> returning 409")
+              // TODO add explanation in body
+              Conflict
           }
         } else {
           warn("booking failed (wasn't attempted because not enough seats) -> returning 409")
@@ -117,24 +120,24 @@ object HotelsCtrl extends Controller with CtrlHelper {
         }
       // bad case 1: no result
       case Vector() =>
-        warn(s"No hotel for hotelgroup $hotelgroup and id $id -> returning 404")
+        warn(s"No hotel for apiUrl $apiUrl and id $id -> returning 404")
         NotFound
       // error case 1: unexpected result
       case e =>
-        error(s"unknown data for hotelgroup $hotelgroup and id $id $e -> returning 500")
+        error(s"unknown data for apiUrl $apiUrl and id $id $e -> returning 500")
         InternalServerError
     }
   }
 
-  def cancel(hotelgroup: String, id: Int) = DBAction { implicit rs =>
-    val bookingDetails = parse[HotelBookingDetails]
-    info(s"cancel hotelgroup=$hotelgroup id=$id bookingDetails=$bookingDetails")
+  def cancel(apiUrl: String, bookingId: Int) = DBAction { implicit rs =>
+    info(s"cancel apiUrl=$apiUrl bookingId=$bookingId")
     implicit val dbSession = rs.dbSession
-    qHotel(hotelgroup, id).to[Vector] match {
+    qHotelBookingWithHotel(apiUrl, bookingId).to[Vector] match {
       // good case: single result
-      case Vector(hotel) =>
-        info(s"Hotel for hotelgroup $hotelgroup and id $id found $hotel")
-        if (cancelHotelRooms(hotel.id, bookingDetails.rooms)) {
+      case Vector(bookingHotel) =>
+        val (booking, hotel) = bookingHotel
+        info(s"Hotel and booking for hotelgroup $apiUrl and bookkingId $bookingId found $hotel $booking")
+        if (cancelHotelRooms(hotel, booking)) {
           info("cancelling went well -> returning 201")
           Created
         } else {
@@ -144,11 +147,11 @@ object HotelsCtrl extends Controller with CtrlHelper {
         }
       // bad case 1: no result
       case Vector() =>
-        warn(s"No hotel for hotelgroup $hotelgroup and id $id -> returnig 404")
+        warn(s"No hotel for hotelgroup $apiUrl and bookingId $bookingId -> returnig 404")
         NotFound
       // error case 1: unexpected result
       case e =>
-        error(s"unknown data for hotelgroup $hotelgroup and id $id $e -> returnig 500")
+        error(s"unknown data for hotelgroup $apiUrl and $bookingId $bookingId $e -> returnig 500")
         InternalServerError
     }
   }
