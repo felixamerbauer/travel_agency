@@ -19,14 +19,15 @@ import org.joda.time.DateTime
 import models.ext.ExtFlightLastModified
 import models.ext.TExtFlightLastModified
 import models.ext._
-import scala.util.Random
+import scala.util.Random._
 import org.joda.time.DateMidnight
 
 class DBTests extends FunSuite with BeforeAndAfter {
 
   test("read write to all tables") {
     running(FakeApplication()) {
-      Random.setSeed(1234)
+      // initialize random seed so we get consitent results
+      setSeed(1234)
 
       db.withSession {
         // TODO empty tables
@@ -64,23 +65,33 @@ class DBTests extends FunSuite with BeforeAndAfter {
         val customersDb = qCustomer.to[Seq]
         assert(customers === customersDb.map(_.copy(id = -1)))
         // location
-        val locations = for {
+        val startLocations = for {
           (iata, fullName) <- Seq(
             ("VIE", "Wien"),
-            ("BER", "Berlin"),
-            ("JNB", "Johannesburg"),
+            //            ("BER", "Berlin"),
+            ("CDG", "Paris"),
+            ("LHR", "Heathrow"))
+        } yield { Location(iataCode = iata, fullName = fullName) }
+        val endLocations = for {
+          (iata, fullName) <- Seq(
+            //            ("JNB", "Johannesburg"),
             ("JFK", "New York"),
             ("PEK", "Peking"),
             ("SYD", "Sydney"))
         } yield { Location(iataCode = iata, fullName = fullName) }
-        println("Inserting\n\t" + locations.mkString("\n\t"))
-        locations foreach TLocation.autoInc.insert
-        val locationsDb = qLocation.to[Seq]
-        assert(locations === locationsDb.map(_.copy(id = -1)))
+        println("Inserting start locations\n\t" + startLocations.mkString("\n\t"))
+        startLocations foreach TLocation.autoInc.insert
+        println("Inserting end locations\n\t" + endLocations.mkString("\n\t"))
+        endLocations foreach TLocation.autoInc.insert
+        val allLocationsDb = qLocation.to[Seq]
+        val startLocationsDb = allLocationsDb.filter(l => startLocations.exists(_.iataCode == l.iataCode))
+        val endLocationsDb = allLocationsDb.filter(l => endLocations.exists(_.iataCode == l.iataCode))
+        assert((startLocations) === startLocationsDb.map(_.copy(id = -1)))
+        assert((endLocations) === endLocationsDb.map(_.copy(id = -1)))
         // product
         val products = for {
-          from <- locationsDb
-          to <- locationsDb
+          from <- startLocationsDb
+          to <- endLocationsDb
         } yield (Product(fromLocationId = from.id, toLocationId = to.id: Int, archived = false))
         println("Inserting\n\t" + products.mkString("\n\t"))
         products foreach TProduct.autoInc.insert
@@ -114,29 +125,52 @@ class DBTests extends FunSuite with BeforeAndAfter {
         val hotelGroupsDb = qHotelgroup.to[Seq]
         assert(hotelGroups === hotelGroupsDb.map(_.copy(id = -1)))
         // extHotel
-        val extHotel = 0 to 30 map { idx =>
-          ExtHotel(apiUrl = hotelGroupsDb(idx % hotelGroupsDb.size).apiUrl, hotelName = s"hotelName$idx", locationId = locationsDb(idx % locationsDb.size).id,
-            startDate = new DateMidnight(2013, 12, 24).plusDays(idx),
-            endDate = new DateMidnight(2013, 12, 24).plusDays(idx + 1 + idx % 14),
-            personCount = 1, availableRooms = 1, price = (idx + 1) * 10, currency = "EUR")
-
+        val extHotel = for {
+          startDay <- 0 until 7
+          endDay <- (startDay + 1) to 7
+          locationIdx <- 0 until endLocationsDb.size
+          hotelGroupsIdx <- 0 until hotelGroupsDb.size
+        } yield {
+          ExtHotel(apiUrl = hotelGroupsDb(hotelGroupsIdx).apiUrl, hotelName = s"hotelName${nextInt(100)}", locationId = endLocationsDb(locationIdx).id,
+            startDate = new DateMidnight(2013, 12, 24).plusDays(startDay),
+            endDate = new DateMidnight(2013, 12, 24).plusDays(endDay),
+            availableRooms = 10, price = (nextInt(91) + 10) * (endDay - startDay), currency = "EUR")
         }
         println("Inserting\n\t" + extHotel.mkString("\n\t"))
         extHotel foreach TExtHotel.autoInc.insert
         val extHotelDb = qExtHotel.to[Seq]
         assert(extHotel === extHotelDb.map(_.copy(id = -1)))
-        // extFlight
-        val extFlights = 0 to 30 map { idx =>
-          ExtFlight(apiUrl = airlinesDb(idx % airlinesDb.size).apiUrl, airlineName = airlinesDb(idx % airlinesDb.size).name,
-            fromLocationId = locationsDb(Random.nextInt(locationsDb.size)).id,
-            toLocationId = locationsDb(Random.nextInt(locationsDb.size)).id,
-            dateTime = new DateTime(2013, 12, 24, 20, 15).plusDays(idx % 14),
-            availableSeats = 10, price = (idx + 1) * 10, currency = "EUR")
+        // extFlight - outward
+        val extFlightsOutward = for {
+          day <- 0 to 7
+          airlineIdx <- 0 until airlinesDb.size
+          startLocationIdx <- 0 until startLocationsDb.size
+          endLocationIdx <- 0 until endLocationsDb.size
+        } yield {
+          ExtFlight(apiUrl = airlinesDb(airlineIdx).apiUrl, airlineName = airlinesDb(airlineIdx).name,
+            fromLocationId = startLocationsDb(startLocationIdx).id,
+            toLocationId = endLocationsDb(endLocationIdx).id,
+            dateTime = new DateTime(2013, 12, 24, 20, 15).plusDays(day % 14),
+            availableSeats = 10, price = nextInt(991) + 10, currency = "EUR")
         }
-        extFlights foreach TExtFlight.autoInc.insert
-        println("Inserting\n\t" + extFlights.mkString("\n\t"))
+        val extFlightsInward = for {
+          day <- 0 to 7
+          airlineIdx <- 0 until airlinesDb.size
+          startLocationIdx <- 0 until startLocationsDb.size
+          endLocationIdx <- 0 until endLocationsDb.size
+        } yield {
+          ExtFlight(apiUrl = airlinesDb(airlineIdx).apiUrl, airlineName = airlinesDb(airlineIdx).name,
+            fromLocationId = endLocationsDb(endLocationIdx).id,
+            toLocationId = startLocationsDb(startLocationIdx).id,
+            dateTime = new DateTime(2013, 12, 24, 20, 15).plusDays(day),
+            availableSeats = 10, price = nextInt(991) + 10, currency = "EUR")
+        }
+        println("Inserting outward\n\t" + extFlightsOutward.mkString("\n\t"))
+        extFlightsOutward foreach TExtFlight.autoInc.insert
+        println("Inserting inward\n\t" + extFlightsInward.mkString("\n\t"))
+        extFlightsInward foreach TExtFlight.autoInc.insert
         val extFlightsDb = qExtFlight.to[Seq]
-        assert(extFlights === extFlightsDb.map(_.copy(id = -1)))
+        assert((extFlightsOutward ++ extFlightsInward) === extFlightsDb.map(_.copy(id = -1)))
         // extFlightLastModified
         val extFlightLastModified = ExtFlightLastModified(lastModified = new DateTime(2013, 11, 1, 20, 15))
         println("Inserting\n\t" + extFlightLastModified)

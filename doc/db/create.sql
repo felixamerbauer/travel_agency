@@ -88,7 +88,6 @@ CREATE TABLE extHotels (
   locationId     INTEGER NOT NULL REFERENCES locations,
   startDate      DATE NOT NULL,
   endDate        DATE NOT NULL,
-  personCount    INTEGER NOT NULL, -- how many persons can sleep in this room
   availableRooms INTEGER NOT NULL,  -- how many rooms of this type are available at the moment
   price          INTEGER NOT NULL CHECK (price >= 0),
   currency       CHAR(3) NOT NULL

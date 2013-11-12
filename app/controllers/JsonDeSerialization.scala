@@ -32,4 +32,7 @@ object JsonDeSerialization {
   implicit val flightBookingDetailsReads = reads[FlightBookingDetails]
   implicit val flightBookingDetailsWrites = writes[FlightBookingDetails]
 
+  implicit val hotelBookingDetailsReads = reads[HotelBookingDetails]
+  implicit val hotelBookingDetailsWrites = writes[HotelBookingDetails]
+
 }

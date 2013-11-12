@@ -29,7 +29,11 @@ object QueryLibrary {
     flight <- qExtFlight if (flight.id === flightId && flight.apiUrl === apiUrl)
   } yield flight
 
-  def qHotelWithLocation = for {
+  def qHotel(apiUrl: String, hotelId: Int) = for {
+    hotel <- qExtHotel if (hotel.id === hotelId && hotel.apiUrl === apiUrl)
+  } yield hotel
+
+  val qHotelWithLocation = for {
     hotel <- qExtHotel
     location <- qLocation if (location.id === hotel.locationId)
   } yield (hotel, location)
@@ -38,9 +42,21 @@ object QueryLibrary {
     hotel <- qExtHotel if (hotel.apiUrl === api)
     location <- qLocation if (location.id === hotel.locationId)
   } yield (hotel, location)
-  
+
   def qHotelWithLocation(api: String, id: Int) = for {
     hotel <- qExtHotel if (hotel.id === id && hotel.apiUrl === api)
     location <- qLocation if (location.id === hotel.locationId)
   } yield (hotel, location)
+
+  val qProductsWithLocation = for {
+    product <- qProduct
+    from <- qLocation if (from.id === product.fromLocationId)
+    to <- qLocation if (to.id === product.fromLocationId)
+  } yield (product, from, to)
+
+  val qActiveProductsOnlyLocationsIata = for {
+    product <- qProduct if (product.archived === false)
+    from <- qLocation if (from.id === product.fromLocationId)
+    to <- qLocation if (to.id === product.toLocationId)
+  } yield (from.iataCode, to.iataCode)
 }

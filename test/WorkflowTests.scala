@@ -11,7 +11,7 @@ import org.joda.time.DateMidnight
 
 class WorkflowTests extends FunSuite with BeforeAndAfter {
   implicit val context = ExecutionContext.Implicits.global
-  
+
   implicit def tuple3ToDateMidnight(t: Tuple3[Int, Int, Int]): DateMidnight = {
     val (year, month, day) = t
     new DateMidnight(year, month, day)
@@ -22,8 +22,23 @@ class WorkflowTests extends FunSuite with BeforeAndAfter {
 
       db.withSession {
         val directions = Client.fetchDirections
-        println(s"directions\n${directions.mkString("\n")}")
-        Client.checkAvailability("JFK", (2013, 12, 24), (2014, 1, 15), 5, 7)
+        println(s"directions\n\t${directions.mkString("\n\t")}")
+        // choose first
+        val chosenDirection = directions.head
+        println(s"chosen direction $chosenDirection")
+
+        val journeys = Client.checkAvailability(chosenDirection.from, chosenDirection.to, (2013, 12, 24), (2013, 12, 26), rooms = 1, persons = 2)
+        println(s"packages\n\t${journeys.map(_.pretty).mkString("\n\t")}")
+        // choose cheapest
+        val chosenJourney = journeys.minBy(_.price)
+        println(s"chosen journey ${chosenJourney.pretty}")
+
+        val bookingOk = Client.book(chosenJourney)
+        println(s"bookingOk $bookingOk")
+
+        val cancellingOk = Client.cancel(chosenJourney)
+        println(s"cancellingOk $cancellingOk")
+
       }
     }
   }

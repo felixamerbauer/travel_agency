@@ -63,7 +63,7 @@ object FlightsCtrl extends Controller with CtrlHelper {
     val data = query.to[Vector]
 
     // build the json from the returned data
-    info("data\n\t" + data.mkString("\n\t"))
+//    info("data\n\t" + data.mkString("\n\t"))
     val json = for ((flight, from, to) <- data) yield {
       new FlightJson(flight, from, to)
     }

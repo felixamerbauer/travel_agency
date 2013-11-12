@@ -12,7 +12,7 @@ import controllers.JsonHelper.isoDtf
 import db.QueryBasics._
 import db.QueryLibrary._
 import db.QueryLibrary.qFlightsWithLocation
-import db.QueryMethods.bookFlightSeats
+import db.QueryMethods._
 import db.QueryMethods.cancelFlightSeats
 import models.TLocation
 import models.ext.TExtFlight
@@ -31,7 +31,7 @@ object HotelsCtrl extends Controller with CtrlHelper {
 
   // http://127.0.0.1:9000/hotelgroup/hgX/locations
   def locations(apiUrl: String) = DBAction { implicit rs =>
-    info(s"apiUrl=$apiUrl")
+    info(s"locations apiUrl=$apiUrl")
     implicit val dbSession = rs.dbSession
     val query = for {
       (_, location) <- qHotelWithLocation(apiUrl)
@@ -51,21 +51,21 @@ object HotelsCtrl extends Controller with CtrlHelper {
     def hotelroomConditions(room: TExtHotel.type, locationDb: TLocation.type): Column[Boolean] = {
       val conditions: List[Column[Boolean]] = List(
         Some(room.apiUrl === apiUrl),
-        startDate map (room.startDate === _),
-        endDate map (room.endDate === _),
+        startDate map (room.startDate >= _),
+        endDate map (room.endDate <= _),
         location map (locationDb.iataCode === _)).flatten
       conditions.reduce(_ && _)
     }
 
     // build the complete query including dynamic parts
     val query = for { (hotelRoom, location) <- qHotelWithLocation if (hotelroomConditions(hotelRoom, location)) } yield (hotelRoom, location)
-//    info("query\n" + query.selectStatement)
+    //    info("query\n" + query.selectStatement)
 
     // perform the query
     val data = query.to[Vector]
 
     // build the json from the returned data
-    info("data\n\t" + data.mkString("\n\t"))
+    //    info("data\n\t" + data.mkString("\n\t"))
     val json = for ((hotelRoom, location) <- data) yield {
       new HotelJson(hotelRoom, location)
     }
@@ -94,11 +94,63 @@ object HotelsCtrl extends Controller with CtrlHelper {
   }
 
   def book(hotelgroup: String, id: Int) = DBAction { implicit rs =>
-    Ok("")
+    val bookingDetails = parse[HotelBookingDetails]
+    info(s"book hotelgroup=$hotelgroup id=$id bookingDetails=$bookingDetails")
+    implicit val dbSession = rs.dbSession
+    qHotel(hotelgroup, id).to[Vector] match {
+      // good case: single result
+      case Vector(hotel) =>
+        info(s"Flight for airline $hotelgroup and id $id found $hotel")
+        if (hotel.availableRooms >= bookingDetails.rooms) {
+          if (bookHotelRooms(hotel.id, bookingDetails.rooms)) {
+            info("booking went well -> returning 201")
+            Created
+          } else {
+            warn("booking failed (was attempted) -> returning 409")
+            // TODO add explanation in body
+            Conflict
+          }
+        } else {
+          warn("booking failed (wasn't attempted because not enough seats) -> returning 409")
+          // TODO add explanation in body
+          Conflict
+        }
+      // bad case 1: no result
+      case Vector() =>
+        warn(s"No hotel for hotelgroup $hotelgroup and id $id -> returning 404")
+        NotFound
+      // error case 1: unexpected result
+      case e =>
+        error(s"unknown data for hotelgroup $hotelgroup and id $id $e -> returning 500")
+        InternalServerError
+    }
   }
 
   def cancel(hotelgroup: String, id: Int) = DBAction { implicit rs =>
-    Ok("")
+    val bookingDetails = parse[HotelBookingDetails]
+    info(s"cancel hotelgroup=$hotelgroup id=$id bookingDetails=$bookingDetails")
+    implicit val dbSession = rs.dbSession
+    qHotel(hotelgroup, id).to[Vector] match {
+      // good case: single result
+      case Vector(hotel) =>
+        info(s"Hotel for hotelgroup $hotelgroup and id $id found $hotel")
+        if (cancelHotelRooms(hotel.id, bookingDetails.rooms)) {
+          info("cancelling went well -> returning 201")
+          Created
+        } else {
+          warn("cancelling failed (was attempted) -> returning 409")
+          // TODO add explanation in body
+          Conflict
+        }
+      // bad case 1: no result
+      case Vector() =>
+        warn(s"No hotel for hotelgroup $hotelgroup and id $id -> returnig 404")
+        NotFound
+      // error case 1: unexpected result
+      case e =>
+        error(s"unknown data for hotelgroup $hotelgroup and id $id $e -> returnig 500")
+        InternalServerError
+    }
   }
 
 }

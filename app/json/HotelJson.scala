@@ -5,6 +5,7 @@ import controllers.JsonHelper.isoDtf
 import models.Location
 import models.ext.ExtHotel
 import org.joda.time.DateMidnight
+import org.joda.time.Duration
 
 case class HotelJson(
   links: Seq[Link],
@@ -12,7 +13,8 @@ case class HotelJson(
   endDate: DateMidnight,
   location: String,
   availableRooms: Int,
-  personCount: Int) {
+  price: Int,
+  currency: String) {
   def this(hotel: ExtHotel, location: Location) = this(
     links = Seq(
       Link(
@@ -25,9 +27,12 @@ case class HotelJson(
     location = location.iataCode,
     endDate = hotel.endDate,
     availableRooms = hotel.availableRooms,
-    personCount = hotel.personCount)
+    price = hotel.price,
+    currency = hotel.currency)
 
-  def pretty = s"$location ${isoDtf.print(startDate)} - ${isoDtf.print(endDate)} rooms=$availableRooms persons=$personCount"
+  lazy val duration = new Duration(startDate, endDate)
+
+  def pretty = s"$location ${isoDtf.print(startDate)} - ${isoDtf.print(endDate)} rooms=$availableRooms price=$price $currency ${links(0).href}"
 
 }
 
