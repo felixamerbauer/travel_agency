@@ -6,6 +6,7 @@ import models.Location
 import models.ext.ExtHotel
 import org.joda.time.DateMidnight
 import org.joda.time.Duration
+import controllers.Client.baseUrl
 
 case class HotelJson(
   links: Seq[Link],
@@ -19,10 +20,10 @@ case class HotelJson(
     links = Seq(
       Link(
         rel = "self",
-        href = s"http://127.0.0.1:9000/hotelgroup/${hotel.apiUrl}/hotels/${hotel.id}"),
+        href = s"$baseUrl/hotelgroup/${hotel.apiUrl}/hotels/${hotel.id}"),
       Link(
         rel = "book",
-        href = s"http://127.0.0.1:9000/hotelgroup/${hotel.apiUrl}/hotels/book/${hotel.id}")),
+        href = s"$baseUrl/hotelgroup/${hotel.apiUrl}/hotels/book/${hotel.id}")),
     startDate = hotel.startDate,
     location = location.iataCode,
     endDate = hotel.endDate,
@@ -35,4 +36,4 @@ case class HotelJson(
   def pretty = s"$location ${isoDtf.print(startDate)} - ${isoDtf.print(endDate)} rooms=$availableRooms price=$price $currency ${links(0).href}"
 
 }
-
+ 

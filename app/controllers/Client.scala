@@ -19,6 +19,8 @@ import org.joda.time.Duration
 import play.api.libs.json.JsValue
 
 object Client {
+  val baseUrl="http://127.0.0.1:9000"
+  
   case class Journey(hotel: HotelJson, outward: FlightJson, inward: FlightJson, persons: Int, rooms: Int) {
     val price = (hotel.price + outward.price + inward.price) * 2
     lazy val pretty = s"${hotel.pretty} - ${outward.pretty} - ${inward.pretty} - persons=$persons rooms=$rooms"
@@ -42,7 +44,7 @@ object Client {
     val (airlineApiUrls, hotelgroupApiUrls) = fetchApiUrls
     // airlines
     val directions = (for (airlineApiUrl <- airlineApiUrls) yield {
-      val result = get(s"http://127.0.0.1:9000/airline/$airlineApiUrl/directions")
+      val result = get(s"$baseUrl/airline/$airlineApiUrl/directions")
       Json.fromJson[Seq[Direction]](result.json).get
     }).flatten
     info(s"directions ${directions.size}")
@@ -50,7 +52,7 @@ object Client {
     info(s"directionsDistinct ${directionsDistinct.size}")
     // hotelgroups
     val locations = (for (hotelgroupApiUrl <- hotelgroupApiUrls) yield {
-      val result = get(s"http://127.0.0.1:9000/hotelgroup/$hotelgroupApiUrl/locations")
+      val result = get(s"$baseUrl/hotelgroup/$hotelgroupApiUrl/locations")
       Json.fromJson[Seq[String]](result.json).get
     }).flatten
     info(s"locations ${locations.size}")
@@ -93,7 +95,7 @@ object Client {
         ("to", location),
         ("start", JsonHelper.isoDtf.print(start)),
         ("end", JsonHelper.isoDtf.print(start.toDateTime().plusDays(1).minus(1000))))
-      val url = s"http://127.0.0.1:9000/airline/$airlineApiUrl/flights"
+      val url = s"$baseUrl/airline/$airlineApiUrl/flights"
       val result = get(url, queryParams)
       Json.fromJson[Seq[FlightJson]](result.json).get
     }).flatten
@@ -106,7 +108,7 @@ object Client {
         ("to", from),
         ("start", JsonHelper.isoDtf.print(end)),
         ("end", JsonHelper.isoDtf.print(end.toDateTime().plusDays(1).minus(1000))))
-      val url = s"http://127.0.0.1:9000/airline/$airlineApiUrl/flights"
+      val url = s"$baseUrl/airline/$airlineApiUrl/flights"
       val result = get(url, queryParams)
       Json.fromJson[Seq[FlightJson]](result.json).get
     }).flatten
@@ -114,7 +116,7 @@ object Client {
     debug(inwardFlights.map(_.pretty).mkString("\n\t", "\n\t", ""))
     // Hotel
     val hotels = (for (hotelgroupApiUrl <- hotelgroupApiUrls) yield {
-      val url = s"http://127.0.0.1:9000/hotelgroup/$hotelgroupApiUrl/hotels"
+      val url = s"$baseUrl/hotelgroup/$hotelgroupApiUrl/hotels"
       val queryParams = Seq(
         ("location", location),
         ("start", JsonHelper.isoDtf.print(start)),

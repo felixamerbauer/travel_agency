@@ -17,7 +17,7 @@ GET      /airline/:apiUrl/flights/:id                   controllers.ext.FlightsC
 
 POST     /airline/:apiUrl/flights/book/:id              controllers.ext.FlightsCtrl.book(apiUrl:String, id: Int)
 
-DELETE     /airline/:apiUrl/flights/cancel/:bookingId     controllers.ext.FlightsCtrl.cancel(apiUrl:String, bookingId: Int)
+DELETE   /airline/:apiUrl/flights/cancel/:bookingId     controllers.ext.FlightsCtrl.cancel(apiUrl:String, bookingId: Int)
 
 GET      /hotelgroup/:apiUrl/locations                  controllers.ext.HotelsCtrl.locations(apiUrl:String)
 

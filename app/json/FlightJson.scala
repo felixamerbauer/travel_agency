@@ -5,6 +5,7 @@ import org.joda.time.DateTime
 import controllers.JsonHelper.isoDtf
 import models.Location
 import models.ext.ExtFlight
+import controllers.Client.baseUrl
 
 case class FlightJson(
   links: Seq[Link],
@@ -19,10 +20,10 @@ case class FlightJson(
       links = Seq(
         Link(
           rel = "self",
-          href = s"http://127.0.0.1:9000/airline/${flight.apiUrl}/flights/${flight.id}"),
+          href = s"$baseUrl/airline/${flight.apiUrl}/flights/${flight.id}"),
         Link(
           rel = "book",
-          href = s"http://127.0.0.1:9000/airline/${flight.apiUrl}/flights/book/${flight.id}")),
+          href = s"$baseUrl/airline/${flight.apiUrl}/flights/book/${flight.id}")),
       from = from.iataCode,
       to = to.iataCode,
       dateTime = flight.dateTime,
