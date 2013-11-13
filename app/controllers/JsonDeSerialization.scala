@@ -7,7 +7,6 @@ import play.api.libs.json.Json.reads
 import play.api.libs.json.Json.writes
 import controllers.JsonHelper._
 import json._
-import models.Direction
 import models.Location
 
 // order matters!
@@ -22,6 +21,9 @@ object JsonDeSerialization {
 
   implicit val directionReads = reads[Direction]
   implicit val directionWrites = writes[Direction]
+
+  implicit val hotelLocationReads = reads[HotelLocation]
+  implicit val hotelLocationWrites = writes[HotelLocation]
 
   implicit val locationReads = reads[Location]
   implicit val locationWrites = writes[Location]

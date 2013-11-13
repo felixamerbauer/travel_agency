@@ -8,7 +8,6 @@ import json._
 import play.api.libs.json.Json
 import play.api.libs.ws.WS
 import org.scalatest.Finders
-import models.Direction
 
 class WSTests extends FunSuite with BeforeAndAfter {
   implicit val context = ExecutionContext.Implicits.global

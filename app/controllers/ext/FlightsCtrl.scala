@@ -21,7 +21,6 @@ import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick.DBAction
 import play.api.libs.json.Json.toJson
 import play.api.mvc.Controller
-import models.Direction
 import scala.collection.SortedSet
 import play.api.libs.json.Json
 

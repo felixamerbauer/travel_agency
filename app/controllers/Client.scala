@@ -1,6 +1,6 @@
 package controllers
 import play.api.db.slick.Session
-import models.Direction
+import json.Direction
 import play.api.libs.ws.WS
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
@@ -53,7 +53,7 @@ object Client {
     // hotelgroups
     val locations = (for (hotelgroupApiUrl <- hotelgroupApiUrls) yield {
       val result = get(s"$baseUrl/hotelgroup/$hotelgroupApiUrl/locations")
-      Json.fromJson[Seq[String]](result.json).get
+      Json.fromJson[Seq[HotelLocation]](result.json).get
     }).flatten
     info(s"locations ${locations.size}")
     val locationsDistinct = locations.toSet
@@ -61,7 +61,7 @@ object Client {
     // we take only directions where there 
     // is a hotel available on at least one side of the direction
     val directionsWithLocation = directionsDistinct.filter { direction =>
-      locations.exists(location => location == direction.from || location == direction.to)
+      locations.exists(location => location.location == direction.from || location.location == direction.to)
     }
     info(s"directionsWithLocation ${directionsWithLocation.size}")
     debug(directionsWithLocation.mkString("\n\t", "\n\t", ""))

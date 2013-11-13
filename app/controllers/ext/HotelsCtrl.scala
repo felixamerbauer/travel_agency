@@ -37,7 +37,7 @@ object HotelsCtrl extends Controller with CtrlHelper {
     val query = for {
       (_, location) <- qHotelWithLocation(apiUrl)
     } yield (location.iataCode)
-    val data = query.to[Set]
+    val data = query.to[Set].map(HotelLocation)
     Ok(toJson(data))
   }
 
