@@ -42,6 +42,8 @@ POST     /hotelgroup/*any                               controllers.Application.
 
 GET      /travel/search                                 controllers.Application.travelSearch
 
+POST     /travel/search                                 controllers.Application.travelSearchPost
+
 GET      /travel/list                                   controllers.Application.travelList
 
 GET      /travel/booking                                controllers.Application.travelBooking
