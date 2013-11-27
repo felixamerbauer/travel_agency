@@ -1,4 +1,4 @@
-@(loginForm: Form[views.formdata.LoginFormData])
-@main(title = "Booking Confirmation", loginForm) { 
+@(loginForm: Form[views.formdata.LoginFormData], authenticated:Boolean)
+@main(title = "Booking Confirmation", authenticated, loginForm) { 
 Booking Confirmation
 }

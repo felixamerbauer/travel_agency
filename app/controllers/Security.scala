@@ -13,6 +13,8 @@ import play.api.mvc.Action
 import play.api.mvc.Controller
 import views.formdata.LoginFormData
 import views.html._
+import play.api.mvc.Request
+import play.api.mvc.AnyContent
 
 object Security extends Controller {
 
@@ -20,25 +22,33 @@ object Security extends Controller {
     mapping(
       "email" -> text,
       "password" -> text)(LoginFormData.apply)(LoginFormData.unapply))
+  def authenticated(implicit request: Request[AnyContent]): Boolean = {
+    info("session data " + request.session.data)
+    request.session.get("user").isDefined
+  }
 
   def login = Action { implicit request =>
     val filledForm: Form[LoginFormData] = loginForm.bindFromRequest
     filledForm.fold(
       formWithErrors => {
-        info("form hat errors")
-        Ok(index(loginForm))
+        info(s"form hat errors ${formWithErrors.data}")
+        Redirect("/")
       },
       loginData => {
         info(s"form is ok '${loginData.email}'/'${loginData.password}'")
         if (loginData.email == "top" && loginData.password == "secret") {
           info("Storing user login in session")
-          Ok(index(loginForm)).withSession(
+          Redirect("/").withSession(
             "user" -> loginData.email)
         } else {
           info("wrong password")
-          Ok(index(loginForm))
+          Redirect("/")
         }
       })
+  }
+  def logout = Action { implicit request =>
+    info("logout")
+    Redirect("/").withNewSession
   }
 
 }

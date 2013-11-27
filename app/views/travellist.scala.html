@@ -1,4 +1,4 @@
-@(loginForm: Form[views.formdata.LoginFormData])
-@main(title = "List", loginForm) { 
+@(loginForm: Form[views.formdata.LoginFormData], authenticated:Boolean)
+@main(title = "List", authenticated, loginForm) { 
 List
 }

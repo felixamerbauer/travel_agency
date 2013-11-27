@@ -1,5 +1,5 @@
-@(loginForm: Form[views.formdata.LoginFormData])
-@main(title = "Search", loginForm) { 
+@(loginForm: Form[views.formdata.LoginFormData], authenticated:Boolean)
+@main(title = "Search",authenticated, loginForm) { 
 
 <!-- Main jumbotron for a primary marketing message or call to action -->
 <div class="jumbotron">

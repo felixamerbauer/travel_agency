@@ -3,18 +3,19 @@
   searchForm: Form[views.formdata.SearchFormData],
   from:scala.collection.immutable.Map[String,Boolean],	
   to:scala.collection.immutable.Map[String,Boolean],
-  travellers:scala.collection.immutable.Map[String,Boolean])
+  travellers:scala.collection.immutable.Map[String,Boolean], 
+  authenticated:Boolean)
   
 @import helper.form 
 @import bootstrap3._
 
-@main(title = "Search",loginForm) { 
+@main(title = "Search",authenticated, loginForm) { 
 
 <!-- Main jumbotron for a primary marketing message or call to action -->
 <div class="jumbotron">
 	<div class="container">
 		<h1>Weihnachtsaktion!</h1>
-		<p>Wollen Sie Weihnachten lieber bei Sonne, Strand und Meer feiern? Mit unseren Weihnachtsangeboten fliegen Sie besonders gÃ¼nstig nach Gran Canaria, Lanzarote oder Teneriffa.</p>
+		<p>Wollen Sie Weihnachten lieber bei Sonne, Strand und Meer feiern? Mit unseren Weihnachtsangeboten fliegen Sie besonders gÃƒÂ¼nstig nach Gran Canaria, Lanzarote oder Teneriffa.</p>
         <p><a class="btn btn-success btn-lg" role="button">Mehr erfahren &raquo;</a></p>
 	</div>
 </div>
@@ -46,7 +47,7 @@
           		@date(searchForm("start"),
 	          		label="Hinreise")
     	      	@date(searchForm("end"),
-        	  		label="RÃ¼ckreise")
+        	  		label="RÃƒÂ¼ckreise")
 				@select(searchForm("travellers"),
           			label = "Reisende",
           			optionMap = travellers,
