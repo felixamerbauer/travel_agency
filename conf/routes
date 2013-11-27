@@ -51,7 +51,7 @@ GET      /travel/booking                                controllers.Application.
 GET      /travel/bookingconfirmation                    controllers.Application.travelBookingConfirmation
 
 # Login/Logout
-# GET      /isUser                                controllers.SecurityController.isUser
+POST     /login                                         controllers.Security.login
 
 # GET      /isAdmin                                controllers.SecurityController.isAdmin
 

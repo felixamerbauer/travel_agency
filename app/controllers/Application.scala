@@ -11,12 +11,13 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.mvc.Action
 import play.api.mvc.Controller
+import controllers.Security.loginForm
 
 object Application extends Controller {
 
   def index(any: String) = Cached("homePage") {
     Action {
-      Ok(views.html.index())
+      Ok(views.html.index(loginForm))
     }
   }
   private val searchForm = Form(
@@ -32,24 +33,24 @@ object Application extends Controller {
 
   def travelSearch = Action {
     val data = SearchFormData()
-    Ok(views.html.travelsearch(searchForm, from, to, travellers))
+    Ok(views.html.travelsearch(loginForm, searchForm, from, to, travellers))
   }
 
   def travelSearchPost = Action {
     val data = SearchFormData()
-    Ok(views.html.travelsearch(searchForm, from, to, travellers))
+    Ok(views.html.travelsearch(loginForm, searchForm, from, to, travellers))
   }
 
   def travelList = Action {
-    Ok(views.html.travellist())
+    Ok(views.html.travellist(loginForm))
   }
 
   def travelBooking = Action {
-    Ok(views.html.travelbooking())
+    Ok(views.html.travelbooking(loginForm))
   }
 
   def travelBookingConfirmation = Action {
-    Ok(views.html.travelbookingconfirmation())
+    Ok(views.html.travelbookingconfirmation(loginForm))
   }
 
   def http404(any: String) = Action { NotFound }
