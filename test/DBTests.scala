@@ -56,11 +56,11 @@ class DBTests extends FunSuite with BeforeAndAfter {
         assert(users === usersDb.map(_.copy(id = -1)))
         // customer
         val customers = usersDb map { userDb =>
-          Customer(userId = userDb.id, firstName = s"firstName${userDb.id}", lastName = "lastName${userDb.id}",
-            birthDate = new DateMidnight(2013, 12, 24), sex = "m", street = "street",
+          Customer(userId = userDb.id, firstName = s"firstName${userDb.id}", lastName = s"lastName${userDb.id}",
+            birthDate = new DateMidnight(2013, 12, 24), sex = Seq("m", "f")(nextInt(2)), street = "street",
             zipCode = "1234", city = "city", country = "country",
-            phoneNumber = "+43 1234567", creditCardCompany = "", creditCardNumber = "",
-            creditCardExpireDate = new DateMidnight(2016, 1, 1), creditCardVerificationCode = "")
+            phoneNumber = "+43 1234567", creditCardCompany = Seq("MasterCard", "Visa")(nextInt(2)), creditCardNumber = "1234432112344321",
+            creditCardExpireDate = new DateMidnight(2016, 1, 1), creditCardVerificationCode = "123")
         }
         println("Inserting\n\t" + customers.mkString("\n\t"))
         customers foreach TCustomer.autoInc.insert

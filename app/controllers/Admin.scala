@@ -14,7 +14,7 @@ import play.api.Logger.info
 import play.api.Logger.warn
 import play.api.Play.current
 import play.api.data.Form
-import play.api.data.Forms.boolean
+import play.api.data.Forms._
 import play.api.data.Forms.mapping
 import play.api.data.Forms.text
 import play.api.db.slick.Config.driver.simple._
@@ -29,6 +29,8 @@ import views.formdata.AdminHotelgroupFormData
 import views.formdata.AdminProductFormData
 import views.html.admin
 import models.TProduct
+import views.formdata.AdminCustomerFormData
+import views.formdata.Commons._
 
 object Admin extends Controller {
 
@@ -50,6 +52,25 @@ object Admin extends Controller {
       "from" -> text,
       "to" -> text,
       "archived" -> boolean)(AdminProductFormData.apply)(AdminProductFormData.unapply))
+
+  private val customerForm = Form(
+    mapping(
+      "id" -> text,
+      "firstName" -> text,
+      "lastName" -> text,
+      "email" -> text,
+      "password" -> text,
+      "birthDate" -> text,
+      "sex" -> list(text),
+      "street" -> text,
+      "zipCode" -> text,
+      "city" -> text,
+      "country" -> text,
+      "phoneNumber" -> text,
+      "creditCardCompany" -> list(text),
+      "creditCardNumber" -> text,
+      "creditCardExpireDate" -> text,
+      "creditCardVerificationCode" -> text)(AdminCustomerFormData.apply)(AdminCustomerFormData.unapply))
 
   def airlines = DBAction { implicit rs =>
     implicit val dbSession = rs.dbSession
@@ -103,17 +124,20 @@ object Admin extends Controller {
     id match {
       case Some(id) =>
         implicit val dbSession = rs.dbSession
-        val data = qAirline.where(_.id === id).to[Vector]
+        val data = qUserWithCustomer(id).to[Vector]
         data match {
           case Seq(item) =>
-            val filled = airlineForm.fill(new AdminAirlineFormData(item))
-            Ok(admin.airline(loginForm, authenticated, filled))
+            val (user, customer) = item
+            val filled = customerForm.fill(new AdminCustomerFormData(user, customer))
+             
+            val sexesSelect = sexes + (if("m"==customer.sex) ("Männlich" -> true) else ("Weiblich" -> true))
+            Ok(admin.customer(loginForm, authenticated, filled, sexesSelect, creditCardCompanies + (customer.creditCardCompany -> true)))
           case _ =>
-            warn(s"Couldn't find airline for id $id")
-            Redirect(routes.Admin.airlines)
+            warn(s"Couldn't find customer for id $id")
+            Redirect(routes.Admin.customers)
         }
       case None =>
-        Ok(admin.airline(loginForm, authenticated, airlineForm))
+        Ok(admin.customer(loginForm, authenticated, customerForm, sexes /*+ "" -> ""*/ , creditCardCompanies))
     }
   }
 

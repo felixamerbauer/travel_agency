@@ -69,7 +69,7 @@ GET      /admin/product                                 controllers.Admin.produc
 
 POST     /admin/product                                 controllers.Admin.productPost
 
-GET      /admin/customer                                controllers.Admin.customers
+GET      /admin/customers                               controllers.Admin.customers
 
 GET      /admin/customer                                controllers.Admin.customer(id:Option[Int] ?= None)
 

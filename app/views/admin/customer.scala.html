@@ -1,7 +1,10 @@
 @* search Template File *@
 @(loginForm: Form[views.formdata.LoginFormData],	
   authenticated:Option[String],
-  airlineForm:Form[views.formdata.AdminAirlineFormData])
+  customerForm:Form[views.formdata.AdminCustomerFormData],
+  sexes:Map[String,Boolean],
+  creditCardCompanies:Map[String,Boolean]
+  )
   
 @import helper.form 
 @import bootstrap3._
@@ -9,15 +12,26 @@
 @main(title = "Admin-Airlines", authenticated, loginForm) { 
 <div class="container">
 	<div class="col-md-4">
-		@form(routes.Admin.airlinePost, 'class -> "form-horizontal") {
-			@hidden(airlineForm("id")),
-			@text(airlineForm("name"),
-				label = "Name")
-			@text(airlineForm("apiURL"),
-				label = "URL")
+		@form(routes.Admin.customerPost, 'class -> "form-horizontal") {
+			@hidden(customerForm("id")),
+			@text(customerForm("firstName"), label = "Vorname")
+			@text(customerForm("lastName"), label = "Nachname")
+			@text(customerForm("email"), label = "E-Mail")
+			@text(customerForm("password"), label = "Passwort")
+			@date(customerForm("birthDate"), label = "Geburtsdatum")
+			@select(customerForm("sex"), label = "Geschlecht", sexes, false)
+			@text(customerForm("street"), label = "Straße")
+			@text(customerForm("zipCode"),	label = "Postleitzahl")
+			@text(customerForm("city"),	label = "Stadt")
+			@text(customerForm("country"), label = "Land")
+			@text(customerForm("phoneNumber"), label = "Telefonnummer")
+			@select(customerForm("creditCardCompany"), label = "Kreditkartenanbieter", creditCardCompanies, false)
+			@text(customerForm("creditCardNumber"),	label = "Kreditkartennummer")
+			@date(customerForm("creditCardExpireDate"),	label = "Kreditkartenablaufdatum")
+			@text(customerForm("creditCardVerificationCode"),	label = "Kreditkartensicherheitscode")
 			<div class="form-group">
-		    	<button type="submit" class="btn btn-success">@if(airlineForm("id").value.isEmpty) { Anlegen } else { Übernehmen}</button>
-		    	<a class="btn btn-info" href="@routes.Admin.airlines">Abbrechen</a>
+		    	<button type="submit" class="btn btn-success">@if(customerForm("id").value.isEmpty) { Anlegen } else { Übernehmen}</button>
+		    	<a class="btn btn-info" href="@routes.Admin.customers">Abbrechen</a>
 		  	</div>
 		}
 	</div>

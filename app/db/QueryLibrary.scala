@@ -70,7 +70,7 @@ object QueryLibrary {
   val qProductsWithLocation = for {
     product <- qProduct
     from <- qLocation if (from.id === product.fromLocationId)
-    to <- qLocation if (to.id === product.fromLocationId)
+    to <- qLocation if (to.id === product.toLocationId)
   } yield (product, from, to)
 
   val qActiveProductsOnlyLocationsIata = for {

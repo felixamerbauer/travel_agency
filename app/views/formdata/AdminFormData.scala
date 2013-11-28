@@ -53,31 +53,31 @@ case class AdminCustomerFormData(
   email: String = "",
   password: String = "",
   birthDate: String,
-  sex: String = "",
+  sex: List[String] = Nil,
   street: String = "",
   zipCode: String = "",
   city: String = "",
   country: String = "",
   phoneNumber: String = "",
-  creditCardCompany: String = "",
+  creditCardCompany: List[String] = Nil,
   creditCardNumber: String = "",
   creditCardExpireDate: String = "",
   creditCardVerificationCode: String = "") {
-  
-  def this(customer: Customer, user: User) = this(
+
+  def this(user: User,customer: Customer) = this(
     id = user.id.toString,
     firstName = customer.firstName,
     lastName = customer.lastName,
     email = user.email,
     password = "",
     birthDate = customer.birthDate.toString,
-    sex = customer.sex,
+    sex = List(customer.sex),
     street = customer.street,
     zipCode = customer.zipCode,
     city = customer.city,
     country = customer.country,
     phoneNumber = customer.phoneNumber,
-    creditCardCompany = customer.creditCardCompany,
+    creditCardCompany = List(customer.creditCardCompany),
     creditCardNumber = customer.creditCardNumber,
     creditCardExpireDate = customer.creditCardExpireDate.toString,
     creditCardVerificationCode = customer.creditCardVerificationCode)
