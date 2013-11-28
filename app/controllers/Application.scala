@@ -15,7 +15,7 @@ import controllers.Security._
 
 object Application extends Controller {
 
-  def index(any: String) = Action { implicit request =>
+  def index = Action { implicit request =>
     Ok(views.html.index(loginForm, authenticated))
   }
 

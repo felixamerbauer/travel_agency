@@ -1,4 +1,4 @@
-@(title: String, authenticated:Boolean, loginForm: Form[views.formdata.LoginFormData])(content: Html)
+@(title: String, authenticated:Option[String], loginForm: Form[views.formdata.LoginFormData])(content: Html)
 @import helper.form
 <!DOCTYPE html>
 <html lang="en">
@@ -38,19 +38,36 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">&mdash; RV Reisen &mdash;</a>
+          <a class="navbar-brand" href="@routes.Application.index">&mdash; RV Reisen &mdash;</a>
         </div>
-        <div class="navbar-collapse collapse">
-        @if(!authenticated) {
+        @if(authenticated.exists(_ == "admin")) {
+		<ul class="nav navbar-nav">
+	      	<li class="dropdown">
+	        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
+	        <ul class="dropdown-menu">
+	          <li><a href="@routes.Admin.customers">Kunden</a></li>
+	          <li class="divider"></li>
+	          <li><a href="@routes.Admin.products">Produkte</a></li>
+	          <li class="divider"></li>
+	          <li><a href="@routes.Admin.airlines">Airlines</a></li>
+	          <li><a href="@routes.Admin.hotelgroups">Hotelbetreiber</a></li>
+	          <li class="divider"></li>
+	          <li><a href="@routes.Admin.flights">Flüge</a></li>
+	          <li><a href="@routes.Admin.hotels">Hotels</a></li>
+	        </ul>
+	      </li>
+	    </ul>
+	    }        
+        @if(authenticated.isEmpty) {
 			@form(routes.Security.login(), 'class -> "navbar-form navbar-right") {
 	            <div class="form-group">
-	              <input id="@loginForm("email").id" name="@loginForm("email").name" type="text" placeholder="E-Mail" class="form-control">
+	              <input id="@loginForm("email").id" name="@loginForm("email").name" type="text" placeholder="E-Mail" class="form-control input-sm">
 	            </div>
 	            <div class="form-group">
-	              <input id="@loginForm("password").id" name="@loginForm("password").name" type="password" placeholder="Passwort" class="form-control">
+	              <input id="@loginForm("password").id" name="@loginForm("password").name" type="password" placeholder="Passwort" class="form-control input-sm">
 	            </div>
-	            <button type="submit" class="btn btn-success">Anmelden</button>
-	            <a class="btn btn-warning" role="button">Registrieren</a>
+	            <button type="submit" class="btn btn-success btn-sm">Anmelden</button>
+	            <a class="btn btn-warning btn-sm" role="button">Registrieren</a>
 	        }
         } else {
         	@form(routes.Security.logout(), 'class -> "navbar-form navbar-right") {
@@ -60,9 +77,8 @@
         </div><!--/.navbar-collapse -->
       </div>
     </div>
-
 		@content
-      <hr>
+    	 <hr>
 
 	<footer>
 		<p>&copy; Travel Agency 2013</p>

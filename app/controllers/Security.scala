@@ -23,30 +23,31 @@ object Security extends Controller {
       "email" -> text,
       "password" -> text)(LoginFormData.apply)(LoginFormData.unapply))
 
-  def authenticated(implicit request: Request[AnyContent]): Boolean = request.session.get("user").isDefined
+  def authenticated(implicit request: Request[AnyContent]) = request.session.get("user")
 
   def login = Action { implicit request =>
     val filledForm: Form[LoginFormData] = loginForm.bindFromRequest
     filledForm.fold(
       formWithErrors => {
         info(s"form hat errors ${formWithErrors.data}")
-        Redirect("/")
+        Redirect(routes.Application.index)
       },
       loginData => {
         info(s"form is ok '${loginData.email}'/'${loginData.password}'")
+        // special case admin
         if (loginData.email == "top" && loginData.password == "secret") {
           info("Storing user login in session")
-          Redirect("/").withSession(
-            "user" -> loginData.email)
+          Redirect(routes.Application.index).withSession(
+            "user" -> "admin")
         } else {
           info("wrong password")
-          Redirect("/")
+          Redirect(routes.Application.index)
         }
       })
   }
   def logout = Action { implicit request =>
     info("logout")
-    Redirect("/").withNewSession
+    Redirect(routes.Application.index).withNewSession
   }
 
 }

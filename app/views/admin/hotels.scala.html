@@ -1,0 +1,36 @@
+@* search Template File *@
+@(loginForm: Form[views.formdata.LoginFormData],	
+  authenticated:Option[String],
+  hotels:Seq[Tuple2[models.ext.ExtHotel,Location]])
+  
+@import helper.form 
+@import bootstrap3._
+
+@main(title = "Admin-Hotels", authenticated, loginForm) { 
+<div class="container">
+	<table class="table table-striped">
+  		<thead>
+  			<tr>
+  				<th>Name</th>
+  				<th>Ort</th>
+  				<th>Von</th>
+  				<th>Bis</th>
+  				<th>Zimmer</th>
+  				<th>Preis</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+		@for(hotel <- hotels) {
+			<tr>
+				<td>@hotel._1.hotelName</td>
+				<td>@(hotel._2.fullName) (@hotel._2.iataCode)</td>
+				<td>@hotel._1.startDate</td>
+				<td>@hotel._1.endDate</td>
+				<td>@hotel._1.availableRooms</td>
+				<td>@hotel._1.price @hotel._1.currency</td>
+			</tr>
+		}
+  		</tbody>
+	</table>
+</div>
+}

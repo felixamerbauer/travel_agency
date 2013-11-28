@@ -1,12 +1,12 @@
 @* search Template File *@
 @(loginForm: Form[views.formdata.LoginFormData],	
   authenticated:Option[String],
-  airlines:Seq[Airline])
+  hotelgroups:Seq[Hotelgroup])
   
 @import helper.form 
 @import bootstrap3._
 
-@main(title = "Admin-Airlines", authenticated, loginForm) { 
+@main(title = "Admin-Hotelgroups", authenticated, loginForm) { 
 <div class="container">
 	<table class="table table-striped">
   		<thead>
@@ -18,12 +18,12 @@
   			</tr>
   		</thead>
   		<tbody>
-		@for(airline <- airlines) {
+		@for(hotelgroup <- hotelgroups) {
 			<tr>
-				<td>@airline.name</td>
-				<td>@airline.apiUrl</td>
+				<td>@hotelgroup.name</td>
+				<td>@hotelgroup.apiUrl</td>
 				<td>
-					<a class="glyphicon glyphicon-edit" href="/admin/airline?id=@airline.id"></a>
+					<a class="glyphicon glyphicon-edit" href="/admin/hotelgroup?id=@hotelgroup.id"></a>
 				</td>
 				<td>
 					<a class="glyphicon glyphicon-remove" href="#"></a>
@@ -31,7 +31,7 @@
 			</tr>
 		}
 			<tr>
-				<td><a class="glyphicon glyphicon-plus" href="/admin/airline"></a></td>
+				<td><a class="glyphicon glyphicon-plus" href="/admin/hotelgroup"></a></td>
 				<td></td>
 				<td></td>
 				<td></td>

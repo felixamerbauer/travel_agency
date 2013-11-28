@@ -1,7 +1,7 @@
 @* search Template File *@
 @(loginForm: Form[views.formdata.LoginFormData],	
   authenticated:Option[String],
-  airlines:Seq[Airline])
+  products:Seq[Tuple3[Product,Location,Location]])
   
 @import helper.form 
 @import bootstrap3._
@@ -11,19 +11,21 @@
 	<table class="table table-striped">
   		<thead>
   			<tr>
-  				<th>Name</th>
-  				<th>URL</th>
+  				<th>Von</th>
+  				<th>Nach</th>
+  				<th>Archiviert</th>
   				<th></th>
   				<th></th>
   			</tr>
   		</thead>
   		<tbody>
-		@for(airline <- airlines) {
+		@for(product <- products) {
 			<tr>
-				<td>@airline.name</td>
-				<td>@airline.apiUrl</td>
+				<td>@product._2.fullName</td>
+				<td>@product._3.fullName</td>
+				<td>@product._1.archived</td>
 				<td>
-					<a class="glyphicon glyphicon-edit" href="/admin/airline?id=@airline.id"></a>
+					<a class="glyphicon glyphicon-edit" href="/admin/product?id=@product._1.id"></a>
 				</td>
 				<td>
 					<a class="glyphicon glyphicon-remove" href="#"></a>
@@ -31,7 +33,7 @@
 			</tr>
 		}
 			<tr>
-				<td><a class="glyphicon glyphicon-plus" href="/admin/airline"></a></td>
+				<td><a class="glyphicon glyphicon-plus" href="/admin/product"></a></td>
 				<td></td>
 				<td></td>
 				<td></td>

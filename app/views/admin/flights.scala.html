@@ -1,0 +1,36 @@
+@* search Template File *@
+@(loginForm: Form[views.formdata.LoginFormData],	
+  authenticated:Option[String],
+  flights:Seq[Tuple3[models.ext.ExtFlight,Location,Location]])
+  
+@import helper.form 
+@import bootstrap3._
+
+@main(title = "Admin-Flüge", authenticated, loginForm) { 
+<div class="container">
+	<table class="table table-striped">
+  		<thead>
+  			<tr>
+  				<th>Airline</th>
+  				<th>Von</th>
+  				<th>Nach</th>
+  				<th>Zeitpunkt</th>
+  				<th>Sitze</th>
+  				<th>Preis</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+		@for(flight <- flights) {
+			<tr>
+				<td>@flight._1.airlineName</td>
+				<td>@(flight._2.fullName) (@flight._2.iataCode)</td>
+				<td>@(flight._3.fullName) (@flight._3.iataCode)</td>
+				<td>@flight._1.dateTime</td>
+				<td>@flight._1.availableSeats</td>
+				<td>@flight._1.price @flight._1.currency</td>
+			</tr>
+		}
+  		</tbody>
+	</table>
+</div>
+}

@@ -1,29 +1,29 @@
 @* search Template File *@
 @(loginForm: Form[views.formdata.LoginFormData],	
   authenticated:Option[String],
-  airlines:Seq[Airline])
+  customers:Seq[Tuple2[User,Customer]])
   
 @import helper.form 
 @import bootstrap3._
 
-@main(title = "Admin-Airlines", authenticated, loginForm) { 
+@main(title = "Admin-Kunden", authenticated, loginForm) { 
 <div class="container">
 	<table class="table table-striped">
   		<thead>
   			<tr>
-  				<th>Name</th>
-  				<th>URL</th>
-  				<th></th>
-  				<th></th>
+  				<th>Vorname</th>
+  				<th>Nachname</th>
+  				<th>E-Mail</th>
   			</tr>
   		</thead>
   		<tbody>
-		@for(airline <- airlines) {
+		@for(customer <- customers) {
 			<tr>
-				<td>@airline.name</td>
-				<td>@airline.apiUrl</td>
+				<td>@customer._2.firstName</td>
+				<td>@customer._2.lastName</td>
+				<td>@customer._1.email</td>
 				<td>
-					<a class="glyphicon glyphicon-edit" href="/admin/airline?id=@airline.id"></a>
+					<a class="glyphicon glyphicon-edit" href="/admin/customer?id=@customer._2.id"></a>
 				</td>
 				<td>
 					<a class="glyphicon glyphicon-remove" href="#"></a>
@@ -31,7 +31,7 @@
 			</tr>
 		}
 			<tr>
-				<td><a class="glyphicon glyphicon-plus" href="/admin/airline"></a></td>
+				<td><a class="glyphicon glyphicon-plus" href="/admin/customer"></a></td>
 				<td></td>
 				<td></td>
 				<td></td>

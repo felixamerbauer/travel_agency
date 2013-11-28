@@ -4,7 +4,7 @@
 
 # Two ways to define routes
 #controllers.Assets.at(path="/public", file="index.html")
-GET      /                                              controllers.Application.index(any = "none")
+GET      /                                              controllers.Application.index
 
 
 # Admin-SignIns
@@ -57,8 +57,28 @@ GET      /admin/airline                                 controllers.Admin.airlin
 
 POST     /admin/airline                                 controllers.Admin.airlinePost
 
-#POST     /admin/airline/neu                             controllers.Admin.airline(id:Int)
-#GET		/admin/airlines									controllers.Admin.airlines
+GET      /admin/hotelgroups                             controllers.Admin.hotelgroups
+
+GET      /admin/hotelgroup                              controllers.Admin.hotelgroup(id:Option[Int] ?= None)
+
+POST     /admin/hotelgroup                              controllers.Admin.hotelgroupPost
+
+GET      /admin/products                                controllers.Admin.products
+
+GET      /admin/product                                 controllers.Admin.product(id:Option[Int] ?= None)
+
+POST     /admin/product                                 controllers.Admin.productPost
+
+GET      /admin/customer                                controllers.Admin.customers
+
+GET      /admin/customer                                controllers.Admin.customer(id:Option[Int] ?= None)
+
+POST     /admin/customer                                controllers.Admin.customerPost
+
+# Admin Ext
+GET      /admin/flights                                 controllers.Admin.flights
+
+GET      /admin/hotels                                  controllers.Admin.hotels
 
 # Login/Logout
 POST     /login                                         controllers.Security.login
@@ -73,6 +93,3 @@ POST     /logout                                        controllers.Security.log
 
 # Map static resources from the /public folder to the /assets URL path
 GET      /assets/*file                                  controllers.Assets.at(path="/public", file)
-
-GET      /*any                                          controllers.Application.index(any)
-

@@ -6,6 +6,15 @@ import db.QueryBasics.qLocation
 import play.api.db.slick.Config.driver.simple._
 
 object QueryLibrary {
+  def qUserWithCustomer(userId: Int) = for {
+    user <- qUser if (user.id === userId)
+    customer <- qCustomer if (customer.userId === user.id)
+  } yield (user, customer)
+
+  val qUserWithCustomer = for {
+    user <- qUser
+    customer <- qCustomer if (customer.userId === user.id)
+  } yield (user, customer)
 
   val qFlightsWithLocation = for {
     flight <- qExtFlight
@@ -69,4 +78,5 @@ object QueryLibrary {
     from <- qLocation if (from.id === product.fromLocationId)
     to <- qLocation if (to.id === product.toLocationId)
   } yield (from.iataCode, to.iataCode)
+
 }
