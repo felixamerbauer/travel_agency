@@ -50,6 +50,16 @@ GET      /travel/booking                                controllers.Application.
 
 GET      /travel/bookingconfirmation                    controllers.Application.travelBookingConfirmation
 
+# Admin
+GET      /admin/airlines                                controllers.Admin.airlines
+
+GET      /admin/airline                                 controllers.Admin.airline(id:Option[Int] ?= None)
+
+POST     /admin/airline                                 controllers.Admin.airlinePost
+
+#POST     /admin/airline/neu                             controllers.Admin.airline(id:Int)
+#GET		/admin/airlines									controllers.Admin.airlines
+
 # Login/Logout
 POST     /login                                         controllers.Security.login
 

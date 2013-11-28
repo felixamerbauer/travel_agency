@@ -3,7 +3,8 @@
   searchForm: Form[views.formdata.SearchFormData],
   from:scala.collection.immutable.Map[String,Boolean],	
   to:scala.collection.immutable.Map[String,Boolean],
-  travellers:scala.collection.immutable.Map[String,Boolean], 
+  persons:scala.collection.immutable.Map[String,Boolean], 
+  category:scala.collection.immutable.Map[String,Boolean],
   authenticated:Boolean)
   
 @import helper.form 
@@ -15,7 +16,7 @@
 <div class="jumbotron">
 	<div class="container">
 		<h1>Weihnachtsaktion!</h1>
-		<p>Wollen Sie Weihnachten lieber bei Sonne, Strand und Meer feiern? Mit unseren Weihnachtsangeboten fliegen Sie besonders gÃƒÂ¼nstig nach Gran Canaria, Lanzarote oder Teneriffa.</p>
+		<p>Wollen Sie Weihnachten lieber bei Sonne, Strand und Meer feiern? Mit unseren Weihnachtsangeboten fliegen Sie besonders günstig nach Gran Canaria, Lanzarote oder Teneriffa.</p>
         <p><a class="btn btn-success btn-lg" role="button">Mehr erfahren &raquo;</a></p>
 	</div>
 </div>
@@ -34,7 +35,6 @@
         </div>
         <div class="col-md-4">
 			<h2>Traumreise finden</h2>
-			<!-- Search dynamic -->
 			@form(routes.Application.travelSearchPost(), 'class -> "form-horizontal") {
 				@select(searchForm("from"),
     				label = "Abflughafen",
@@ -47,10 +47,18 @@
           		@date(searchForm("start"),
 	          		label="Hinreise")
     	      	@date(searchForm("end"),
-        	  		label="RÃƒÂ¼ckreise")
-				@select(searchForm("travellers"),
-          			label = "Reisende",
-          			optionMap = travellers,
+        	  		label="Rückreise")
+				@select(searchForm("adults"),
+          			label = "Erwachsene",
+          			optionMap = persons,
+          			isMultiple = false)
+				@select(searchForm("children"),
+          			label = "Kinder",
+          			optionMap = persons,
+          			isMultiple = false)
+				@select(searchForm("category"),
+          			label = "Kategorie",
+          			optionMap = category,
           			isMultiple = false)
      		<div class="form-group">
 		    	<button type="submit" class="btn btn-success">Suchen</button>

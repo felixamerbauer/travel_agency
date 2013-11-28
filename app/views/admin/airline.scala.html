@@ -1,0 +1,25 @@
+@* search Template File *@
+@(loginForm: Form[views.formdata.LoginFormData],	
+  authenticated:Boolean,
+  airlineForm:Form[views.formdata.AdminAirlineFormData])
+  
+@import helper.form 
+@import bootstrap3._
+
+@main(title = "Admin-Airlines", authenticated, loginForm) { 
+<div class="container">
+	<div class="col-md-4">
+		@form(routes.Admin.airlinePost, 'class -> "form-horizontal") {
+			@hidden(airlineForm("id")),
+			@text(airlineForm("name"),
+				label = "Name")
+			@text(airlineForm("apiURL"),
+				label = "URL")
+			<div class="form-group">
+		    	<button type="submit" class="btn btn-success">@if(airlineForm("id").value.isEmpty) { Anlegen } else { Übernehmen}</button>
+		    	<a class="btn btn-info" href="@routes.Admin.airlines">Abbrechen</a>
+		  	</div>
+		}
+	</div>
+</div>
+}

@@ -22,10 +22,8 @@ object Security extends Controller {
     mapping(
       "email" -> text,
       "password" -> text)(LoginFormData.apply)(LoginFormData.unapply))
-  def authenticated(implicit request: Request[AnyContent]): Boolean = {
-    info("session data " + request.session.data)
-    request.session.get("user").isDefined
-  }
+
+  def authenticated(implicit request: Request[AnyContent]): Boolean = request.session.get("user").isDefined
 
   def login = Action { implicit request =>
     val filledForm: Form[LoginFormData] = loginForm.bindFromRequest

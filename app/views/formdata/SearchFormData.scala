@@ -4,7 +4,14 @@ import scala.collection.mutable.Buffer
 
 import play.api.data.validation.ValidationError
 
-case class SearchFormData(from: List[String] = Nil, to: List[String] = Nil, start: String = "", end: String = "", travellers: List[String] = Nil) {
+case class SearchFormData(
+  from: List[String] = Nil,
+  to: List[String] = Nil,
+  start: String = "",
+  end: String = "",
+  adults: List[String] = Nil,
+  children: List[String] = Nil,
+  category: List[String] =  Nil) {
 
   //  def this(name: String, password: String, level: GradeLevel, gpa: GradePointAverage, hobbies: Seq[Hobby], majors: Seq[Major]) = this(
   //    name = name,

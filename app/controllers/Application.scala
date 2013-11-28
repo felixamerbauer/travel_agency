@@ -25,19 +25,23 @@ object Application extends Controller {
       "to" -> list(text),
       "start" -> text,
       "end" -> text,
-      "travellers" -> list(text))(SearchFormData.apply)(SearchFormData.unapply))
-  private val travellers = Map("1" -> false, "2" -> true, "3" -> false, "4" -> false, "5" -> false)
+      "adults" -> list(text),
+      "children" -> list(text),
+      "category" -> list(text))(SearchFormData.apply)(SearchFormData.unapply))
+
+  private val persons = Map("1" -> false, "2" -> true, "3" -> false, "4" -> false, "5" -> false)
   private val from = Map("Mailand" -> true, "Madrid" -> false)
   private val to = Map("New York" -> true, "Johannesburg" -> false)
+  private val category = Map("1+" -> false, "2+" -> false, "3+" -> true, "4+" -> false, "5+" -> false)
 
   def travelSearch = Action { implicit request =>
     val data = SearchFormData()
-    Ok(views.html.travelsearch(loginForm, searchForm, from, to, travellers, authenticated))
+    Ok(views.html.travelsearch(loginForm, searchForm, from, to, persons, category, authenticated))
   }
 
   def travelSearchPost = Action { implicit request =>
     val data = SearchFormData()
-    Ok(views.html.travelsearch(loginForm, searchForm, from, to, travellers, authenticated))
+    Ok(views.html.travelsearch(loginForm, searchForm, from, to, persons, category, authenticated))
   }
 
   def travelList = Action { implicit request =>

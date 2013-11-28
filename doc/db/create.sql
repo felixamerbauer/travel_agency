@@ -92,12 +92,12 @@ CREATE TABLE extHotels (
   endDate        DATE NOT NULL,
   availableRooms INTEGER NOT NULL,  -- how many rooms of this type are available at the moment
   price          INTEGER NOT NULL CHECK (price >= 0),
-  currency       CHAR(3) NOT NULL
+  currency       CHAR(3) NOT NULL,
 );
 
 CREATE TABLE extHotelBookings (
   id             SERIAL PRIMARY KEY,
-  extHotelId      INTEGER REFERENCES extHotels NOT NULL,
+  extHotelId     INTEGER REFERENCES extHotels NOT NULL,
   rooms		     TEXT NOT NULL
 );
 
