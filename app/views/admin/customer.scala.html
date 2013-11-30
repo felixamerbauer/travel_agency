@@ -14,6 +14,7 @@
 	<div class="col-md-4">
 		@form(routes.Admin.customerPost, 'class -> "form-horizontal") {
 			@hidden(customerForm("id")),
+			@hidden(customerForm("userId")),
 			@text(customerForm("firstName"), label = "Vorname")
 			@text(customerForm("lastName"), label = "Nachname")
 			@text(customerForm("email"), label = "E-Mail")

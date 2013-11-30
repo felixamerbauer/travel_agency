@@ -31,6 +31,10 @@ import views.html.admin
 import models.TProduct
 import views.formdata.AdminCustomerFormData
 import views.formdata.Commons._
+import models.Customer
+import models.TUser
+import models.User
+import models.TCustomer
 
 object Admin extends Controller {
 
@@ -56,18 +60,19 @@ object Admin extends Controller {
   private val customerForm = Form(
     mapping(
       "id" -> text,
+      "userId" -> text,
       "firstName" -> text,
       "lastName" -> text,
       "email" -> text,
       "password" -> text,
       "birthDate" -> text,
-      "sex" -> list(text),
+      "sex" -> text,
       "street" -> text,
       "zipCode" -> text,
       "city" -> text,
       "country" -> text,
       "phoneNumber" -> text,
-      "creditCardCompany" -> list(text),
+      "creditCardCompany" -> text,
       "creditCardNumber" -> text,
       "creditCardExpireDate" -> text,
       "creditCardVerificationCode" -> text)(AdminCustomerFormData.apply)(AdminCustomerFormData.unapply))
@@ -129,20 +134,20 @@ object Admin extends Controller {
           case Seq(item) =>
             val (user, customer) = item
             val filled = customerForm.fill(new AdminCustomerFormData(user, customer))
-             
-            val sexesSelect = sexes + (if("m"==customer.sex) ("Männlich" -> true) else ("Weiblich" -> true))
+
+            val sexesSelect = sexes + (if ("m" == customer.sex) ("Männlich" -> true) else ("Weiblich" -> true))
             Ok(admin.customer(loginForm, authenticated, filled, sexesSelect, creditCardCompanies + (customer.creditCardCompany -> true)))
           case _ =>
             warn(s"Couldn't find customer for id $id")
             Redirect(routes.Admin.customers)
         }
       case None =>
-        Ok(admin.customer(loginForm, authenticated, customerForm, sexes /*+ "" -> ""*/ , creditCardCompanies))
+        Ok(admin.customer(loginForm, authenticated, customerForm, sexesFirstSelected, creditCardCompaniesFirstSelected))
     }
   }
 
   def customerPost() = DBAction { implicit rs =>
-    val filledForm: Form[AdminAirlineFormData] = airlineForm.bindFromRequest
+    val filledForm: Form[AdminCustomerFormData] = customerForm.bindFromRequest
     filledForm.fold(
       formWithErrors => {
         info(s"form hat errors ${formWithErrors.data}")
@@ -150,11 +155,33 @@ object Admin extends Controller {
       formData => {
         info(s"form is ok $formData")
         implicit val dbSession = rs.dbSession
-        val airline = Airline(id = formData.id.toInt, name = formData.name, apiUrl = formData.apiURL)
-        if (airline.id == -1)
-          TAirline.forInsert.insert(airline)
-        else
-          qAirline.where(_.id === formData.id.toInt).update(airline)
+        val customer = Customer(
+          id = formData.id.toInt,
+          userId = -1,
+          firstName = formData.firstName,
+          lastName = formData.lastName,
+          birthDate = dateFormat.parseDateTime(formData.birthDate).toDateMidnight(),
+          sex = formData.sex,
+          street = formData.street,
+          zipCode = formData.zipCode,
+          city = formData.city,
+          country = formData.country,
+          phoneNumber = formData.phoneNumber,
+          creditCardCompany = formData.creditCardCompany,
+          creditCardNumber = formData.creditCardNumber,
+          creditCardExpireDate = dateFormat.parseDateTime(formData.creditCardExpireDate).toDateMidnight(),
+          creditCardVerificationCode = formData.creditCardVerificationCode)
+        val user = User(
+          id = formData.userId.toInt,
+          email = formData.email,
+          passwordHash = formData.password)
+        if (customer.id == -1) {
+          val userId = TUser.forInsert.insert(user)
+          TCustomer.forInsert.insert(customer.copy(userId = userId))
+        } else {
+          qUser.where(_.id === formData.userId.toInt).update(user)
+          qCustomer.where(_.id === formData.id.toInt).update(customer)
+        }
       })
     Redirect(routes.Admin.airlines)
   }
@@ -216,13 +243,15 @@ object Admin extends Controller {
           case Seq(productFromTo) =>
             val (product, from, to) = productFromTo
             val filled = productForm.fill(new AdminProductFormData(product, from, to))
-            Ok(admin.product(loginForm, authenticated, filled))
+            val locationsFrom = locations + (from.fullName -> true)
+            val locationsTo = locations + (to.fullName -> true)
+            Ok(admin.product(loginForm, authenticated, filled, locationsFrom, locationsTo))
           case _ =>
             warn(s"Couldn't find product for id $id")
             Redirect(routes.Admin.products)
         }
       case None =>
-        Ok(admin.product(loginForm, authenticated, productForm))
+        Ok(admin.product(loginForm, authenticated, productForm, locationsFirstSelected, locationsFirstSelected))
     }
   }
 
@@ -236,7 +265,7 @@ object Admin extends Controller {
         info(s"form is ok $formData")
         implicit val dbSession = rs.dbSession
         val fromId = qLocation.where(_.fullName === formData.from).map(_.id).to[Seq].head
-        val toId = qLocation.where(_.fullName === formData.from).map(_.id).to[Seq].head
+        val toId = qLocation.where(_.fullName === formData.to).map(_.id).to[Seq].head
         val product = Product(id = formData.id.toInt, fromLocationId = fromId, toLocationId = toId, archived = formData.archived)
         if (product.id == -1)
           TProduct.forInsert.insert(product)

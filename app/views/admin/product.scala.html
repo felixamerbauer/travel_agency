@@ -1,7 +1,10 @@
 @* search Template File *@
 @(loginForm: Form[views.formdata.LoginFormData],	
   authenticated:Option[String],
-  productForm:Form[views.formdata.AdminProductFormData])
+  productForm:Form[views.formdata.AdminProductFormData],
+  froms:Map[String,Boolean],
+  tos:Map[String,Boolean]
+  )
   
 @import helper.form 
 @import bootstrap3._
@@ -11,12 +14,9 @@
 	<div class="col-md-4">
 		@form(routes.Admin.productPost, 'class -> "form-horizontal") {
 			@hidden(productForm("id")),
-			@text(productForm("from"),
-				label = "Von")
-			@text(productForm("to"),
-				label = "Nach")
-			@checkbox(productForm("archived"),
-				label = "Archiviert")
+			@select(productForm("from"), "Von", froms, false)
+			@select(productForm("to"), "Nach", tos, false)
+			@checkbox(productForm("archived"), "Archiviert")
 			<div class="form-group">
 		    	<button type="submit" class="btn btn-success">@if(productForm("id").value.isEmpty) { Anlegen } else { Übernehmen}</button>
 		    	<a class="btn btn-info" href="@routes.Admin.products">Abbrechen</a>

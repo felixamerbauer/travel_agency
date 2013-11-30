@@ -8,6 +8,7 @@ import models.Product
 import models.Location
 import models.Customer
 import models.User
+import views.formdata.Commons.dateFormat
 
 case class AdminAirlineFormData(id: String = "-1", name: String = "", apiURL: String = "") {
   def this(airline: Airline) = this(
@@ -48,38 +49,39 @@ case class AdminProductFormData(id: String = "-1", from: String = "", to: String
 
 case class AdminCustomerFormData(
   id: String = "-1",
+  userId: String = "-1",
   firstName: String = "",
   lastName: String = "",
   email: String = "",
   password: String = "",
   birthDate: String,
-  sex: List[String] = Nil,
+  sex: String = "",
   street: String = "",
   zipCode: String = "",
   city: String = "",
   country: String = "",
   phoneNumber: String = "",
-  creditCardCompany: List[String] = Nil,
+  creditCardCompany: String = "",
   creditCardNumber: String = "",
   creditCardExpireDate: String = "",
   creditCardVerificationCode: String = "") {
 
-  def this(user: User,customer: Customer) = this(
+  def this(user: User, customer: Customer) = this(
     id = user.id.toString,
     firstName = customer.firstName,
     lastName = customer.lastName,
     email = user.email,
     password = "",
-    birthDate = customer.birthDate.toString,
-    sex = List(customer.sex),
+    birthDate = dateFormat.print(customer.birthDate),
+    sex = customer.sex,
     street = customer.street,
     zipCode = customer.zipCode,
     city = customer.city,
     country = customer.country,
     phoneNumber = customer.phoneNumber,
-    creditCardCompany = List(customer.creditCardCompany),
+    creditCardCompany = customer.creditCardCompany,
     creditCardNumber = customer.creditCardNumber,
-    creditCardExpireDate = customer.creditCardExpireDate.toString,
+    creditCardExpireDate = dateFormat.print(customer.creditCardExpireDate),
     creditCardVerificationCode = customer.creditCardVerificationCode)
 
   def validate(): Seq[ValidationError] = {
