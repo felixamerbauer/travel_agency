@@ -12,6 +12,7 @@
 @main(title = "Admin-Product", authenticated, loginForm) { 
 <div class="container">
 	<div class="col-md-4">
+		@for(arg <- productForm.errors.flatMap(_.args)) { <div class="alert alert-danger">@arg</div> }
 		@form(routes.Admin.productPost, 'class -> "form-horizontal") {
 			@hidden(productForm("id")),
 			@select(productForm("from"), "Von", froms, false)

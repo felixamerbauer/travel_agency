@@ -35,34 +35,39 @@ import models.Customer
 import models.TUser
 import models.User
 import models.TCustomer
+import play.api.data.validation._
+import scala.collection.mutable.Buffer
+import play.api.data.FormError
 
 object Admin extends Controller {
 
   private val airlineForm = Form(
     mapping(
       "id" -> text,
-      "name" -> text,
-      "apiURL" -> text)(AdminAirlineFormData.apply)(AdminAirlineFormData.unapply))
+      "name" -> nonEmptyText,
+      "apiURL" -> nonEmptyText)(AdminAirlineFormData.apply)(AdminAirlineFormData.unapply).
+      verifying(AdminAirlineFormData.constraints))
 
   private val hotelgroupForm = Form(
     mapping(
       "id" -> text,
-      "name" -> text,
-      "apiURL" -> text)(AdminHotelgroupFormData.apply)(AdminHotelgroupFormData.unapply))
+      "name" -> nonEmptyText,
+      "apiURL" -> nonEmptyText)(AdminHotelgroupFormData.apply)(AdminHotelgroupFormData.unapply))
 
   private val productForm = Form(
     mapping(
       "id" -> text,
-      "from" -> text,
-      "to" -> text,
-      "archived" -> boolean)(AdminProductFormData.apply)(AdminProductFormData.unapply))
+      "from" -> nonEmptyText,
+      "to" -> nonEmptyText,
+      "archived" -> boolean)(AdminProductFormData.apply)(AdminProductFormData.unapply).
+      verifying(AdminProductFormData.constraints))
 
   private val customerForm = Form(
     mapping(
       "id" -> text,
       "userId" -> text,
-      "firstName" -> text,
-      "lastName" -> text,
+      "firstName" -> nonEmptyText,
+      "lastName" -> nonEmptyText,
       "email" -> text,
       "password" -> text,
       "birthDate" -> text,
@@ -106,6 +111,7 @@ object Admin extends Controller {
     filledForm.fold(
       formWithErrors => {
         info(s"form hat errors ${formWithErrors.data}")
+        BadRequest(admin.airline(loginForm, authenticated, formWithErrors))
       },
       formData => {
         info(s"form is ok $formData")
@@ -115,8 +121,8 @@ object Admin extends Controller {
           TAirline.forInsert.insert(airline)
         else
           qAirline.where(_.id === formData.id.toInt).update(airline)
+        Redirect(routes.Admin.airlines)
       })
-    Redirect(routes.Admin.airlines)
   }
 
   def customers = DBAction { implicit rs =>
@@ -260,6 +266,8 @@ object Admin extends Controller {
     filled.fold(
       formWithErrors => {
         info(s"form hat errors ${formWithErrors.data}")
+        // TODO preselect latest selection
+        BadRequest(admin.product(loginForm, authenticated, formWithErrors, locationsFirstSelected, locationsFirstSelected))
       },
       formData => {
         info(s"form is ok $formData")
@@ -271,8 +279,8 @@ object Admin extends Controller {
           TProduct.forInsert.insert(product)
         else
           qProduct.where(_.id === formData.id.toInt).update(product)
-      })
     Redirect(routes.Admin.products)
+      })
   }
 
   def flights = DBAction { implicit rs =>

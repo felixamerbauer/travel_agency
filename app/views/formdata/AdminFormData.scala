@@ -1,7 +1,7 @@
 package views.formdata
 
 import scala.collection.mutable.Buffer
-import play.api.data.validation.ValidationError
+import play.api.data.validation._
 import models.Airline
 import models.Hotelgroup
 import models.Product
@@ -9,17 +9,22 @@ import models.Location
 import models.Customer
 import models.User
 import views.formdata.Commons.dateFormat
+import play.api.data.validation.Constraint
 
 case class AdminAirlineFormData(id: String = "-1", name: String = "", apiURL: String = "") {
   def this(airline: Airline) = this(
     id = airline.id.toString,
     name = airline.name,
     apiURL = airline.apiUrl)
+}
 
-  def validate(): Seq[ValidationError] = {
+object AdminAirlineFormData {
+  val constraints: Constraint[AdminAirlineFormData] = Constraint("constraints")({ data =>
     val errors = Buffer[ValidationError]()
-    null
-  }
+    if (data.name.length() < 3) errors += ValidationError("name", "Name too short")
+    if (data.name.length() > 20) errors += ValidationError("name", "Name too long")
+    if (errors.isEmpty) Valid else Invalid(errors.toSeq)
+  })
 }
 
 case class AdminHotelgroupFormData(id: String = "-1", name: String = "", apiURL: String = "") {
@@ -27,12 +32,9 @@ case class AdminHotelgroupFormData(id: String = "-1", name: String = "", apiURL:
     id = hotelgroup.id.toString,
     name = hotelgroup.name,
     apiURL = hotelgroup.apiUrl)
-
-  def validate(): Seq[ValidationError] = {
-    val errors = Buffer[ValidationError]()
-    null
-  }
 }
+
+object AdminHotelgroupFormData
 
 case class AdminProductFormData(id: String = "-1", from: String = "", to: String = "", archived: Boolean) {
   def this(product: Product, from: Location, to: Location) = this(
@@ -40,11 +42,14 @@ case class AdminProductFormData(id: String = "-1", from: String = "", to: String
     from = from.fullName,
     to = to.fullName,
     archived = product.archived)
-
-  def validate(): Seq[ValidationError] = {
+}
+object AdminProductFormData {
+  def constraints: Constraint[AdminProductFormData] = Constraint("constraints")({ data =>
     val errors = Buffer[ValidationError]()
-    null
-  }
+    if (data.from == data.to)
+      errors += ValidationError("from", "From and to must be different")
+    if (errors.isEmpty) Valid else Invalid(errors.toSeq)
+  })
 }
 
 case class AdminCustomerFormData(
