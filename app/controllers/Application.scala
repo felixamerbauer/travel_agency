@@ -36,24 +36,24 @@ object Application extends Controller {
 
   def travelSearch = Action { implicit request =>
     val data = SearchFormData()
-    Ok(views.html.travelsearch(loginForm, searchForm, from, to, persons, category, authenticated))
+    Ok(views.html.search(loginForm, searchForm, from, to, persons, category, authenticated))
   }
 
   def travelSearchPost = Action { implicit request =>
     val data = SearchFormData()
-    Ok(views.html.travelsearch(loginForm, searchForm, from, to, persons, category, authenticated))
+    Ok(views.html.search(loginForm, searchForm, from, to, persons, category, authenticated))
   }
 
   def travelList = Action { implicit request =>
-    Ok(views.html.travellist(loginForm, authenticated))
+    Ok(views.html.list(loginForm, authenticated))
   }
 
   def travelBooking = Action { implicit request =>
-    Ok(views.html.travelbooking(loginForm, authenticated))
+    Ok(views.html.booking(loginForm, authenticated))
   }
 
   def travelBookingConfirmation = Action { implicit request =>
-    Ok(views.html.travelbookingconfirmation(loginForm, authenticated))
+    Ok(views.html.bookingconfirmation(loginForm, authenticated))
   }
 
   def http404(any: String) = Action { NotFound }
