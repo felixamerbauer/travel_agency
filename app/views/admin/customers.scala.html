@@ -8,12 +8,15 @@
 
 @main(title = "Admin-Kunden", authenticated, loginForm) { 
 <div class="container">
+	<form method="post">
 	<table class="table table-striped">
   		<thead>
   			<tr>
   				<th>Vorname</th>
   				<th>Nachname</th>
   				<th>E-Mail</th>
+  				<th></th>
+  				<th></th>
   			</tr>
   		</thead>
   		<tbody>
@@ -26,7 +29,7 @@
 					<a class="glyphicon glyphicon-edit" href="/admin/customer?id=@customer._2.id"></a>
 				</td>
 				<td>
-					<a class="glyphicon glyphicon-remove" href="#"></a>
+					<button type="submit" formaction="@routes.Admin.customerDelete(customer._2.id)" class="btn btn-default"> <i class="glyphicon glyphicon-remove"></i></button>
 				</td>
 			</tr>
 		}
@@ -35,8 +38,10 @@
 				<td></td>
 				<td></td>
 				<td></td>
+				<td></td>
 			</tr>
   		</tbody>
 	</table>
+	</form>
 </div>
 }

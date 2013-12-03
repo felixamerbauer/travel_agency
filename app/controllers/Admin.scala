@@ -106,6 +106,13 @@ object Admin extends Controller {
     }
   }
 
+  def airlineDelete(id: Int) = DBAction { implicit rs =>
+    info(s"airlineDelete $id")
+    implicit val dbSession = rs.dbSession
+    qAirline.where(_.id === id).delete
+    Redirect(routes.Admin.airlines)
+  }
+
   def airlinePost() = DBAction { implicit rs =>
     val filledForm: Form[AdminAirlineFormData] = airlineForm.bindFromRequest
     filledForm.fold(
@@ -189,7 +196,16 @@ object Admin extends Controller {
           qCustomer.where(_.id === formData.id.toInt).update(customer)
         }
       })
-    Redirect(routes.Admin.airlines)
+    Redirect(routes.Admin.customers)
+  }
+
+  def customerDelete(id: Int) = DBAction { implicit rs =>
+    info(s"customerDelete $id")
+    implicit val dbSession = rs.dbSession
+    val userId = qCustomer.where(_.id === id).map(_.userId).to[Seq].head
+    qCustomer.where(_.id === id).delete
+    qUser.where(_.id === userId).delete
+    Redirect(routes.Admin.customers)
   }
 
   def hotelgroups = DBAction { implicit rs =>
@@ -234,6 +250,15 @@ object Admin extends Controller {
     Redirect(routes.Admin.hotelgroups)
   }
 
+  def hotelgroupDelete(id: Int) = DBAction { implicit rs =>
+    info(s"hotelgroupDelete $id")
+    implicit val dbSession = rs.dbSession
+    qHotelgroup.where(_.id === id).delete
+    Redirect(routes.Admin.hotelgroups)
+  }
+
+  
+  
   def products = DBAction { implicit rs =>
     implicit val dbSession = rs.dbSession
     val data = qProductsWithLocation.to[Vector]
@@ -279,9 +304,17 @@ object Admin extends Controller {
           TProduct.forInsert.insert(product)
         else
           qProduct.where(_.id === formData.id.toInt).update(product)
-    Redirect(routes.Admin.products)
+        Redirect(routes.Admin.products)
       })
   }
+
+  def productDelete(id: Int) = DBAction { implicit rs =>
+    info(s"productDelete $id")
+    implicit val dbSession = rs.dbSession
+    qProduct.where(_.id === id).delete
+    Redirect(routes.Admin.products)
+  }
+
 
   def flights = DBAction { implicit rs =>
     implicit val dbSession = rs.dbSession

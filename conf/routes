@@ -57,11 +57,15 @@ GET      /admin/airline                                 controllers.Admin.airlin
 
 POST     /admin/airline                                 controllers.Admin.airlinePost
 
+POST     /admin/airline/delete/:id                      controllers.Admin.airlineDelete(id:Int)
+
 GET      /admin/hotelgroups                             controllers.Admin.hotelgroups
 
 GET      /admin/hotelgroup                              controllers.Admin.hotelgroup(id:Option[Int] ?= None)
 
 POST     /admin/hotelgroup                              controllers.Admin.hotelgroupPost
+
+POST     /admin/hotelgroup/delete/:id                   controllers.Admin.hotelgroupDelete(id:Int)
 
 GET      /admin/products                                controllers.Admin.products
 
@@ -69,11 +73,15 @@ GET      /admin/product                                 controllers.Admin.produc
 
 POST     /admin/product                                 controllers.Admin.productPost
 
+POST     /admin/product/delete:id                       controllers.Admin.productDelete(id:Int)
+
 GET      /admin/customers                               controllers.Admin.customers
 
 GET      /admin/customer                                controllers.Admin.customer(id:Option[Int] ?= None)
 
 POST     /admin/customer                                controllers.Admin.customerPost
+
+POST     /admin/customer/delete:id                      controllers.Admin.customerDelete(id:Int)
 
 # Admin Ext
 GET      /admin/flights                                 controllers.Admin.flights
