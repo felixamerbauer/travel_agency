@@ -2,10 +2,11 @@ package models.ext
 
 import play.api.db.slick.Config.driver.simple._
 import org.joda.time.LocalDate
-import db.QueryBasics.localdateMapper
+import db.QueryBasics._
 import models.TLocation
 import scala.slick.lifted.Projection7
 import org.joda.time.DateMidnight
+import db.Currency
 
 object TExtHotel extends Table[ExtHotel]("exthotels") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
@@ -16,7 +17,7 @@ object TExtHotel extends Table[ExtHotel]("exthotels") {
   def endDate = column[DateMidnight]("enddate")
   def availableRooms = column[Int]("availablerooms")
   def price = column[Int]("price")
-  def currency = column[String]("currency")
+  def currency = column[Currency]("currency")
 
   def baseProjection = apiUrl ~ hotelName ~ locationId ~ startDate ~ endDate ~ availableRooms ~ price ~ currency
   override def * = id ~: baseProjection <> (ExtHotel, ExtHotel.unapply _)
@@ -37,6 +38,6 @@ case class ExtHotel(
   endDate: DateMidnight,
   availableRooms: Int,
   price: Int,
-  currency: String)
+  currency: Currency)
 
   

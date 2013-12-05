@@ -25,13 +25,27 @@ import models.ext.TExtHotel
 import models.ext.TExtHotelBooking
 import models.ext.TExtHotelLastModified
 
+sealed trait Currency
+case object Euro extends Currency
+case object RenminbiYuan extends Currency
+case object Dollar extends Currency
+
 object QueryBasics {
+  val Currencies = Seq(Euro, RenminbiYuan, Dollar)
+
   val sexesStringType = Map[String, Sex]("m" -> Male, "f" -> Female)
   val sexesTypeString = sexesStringType map (_.swap)
 
   implicit val sexTypeMapper = MappedTypeMapper.base[Sex, String](
     { sexesTypeString(_) },
     { sexesStringType(_) })
+
+  val currenciesStringType = Map[String, Currency]("EUR" -> Euro, "CNY" -> RenminbiYuan, "USD" -> Dollar)
+  val currenciesTypeString = currenciesStringType map (_.swap)
+
+  implicit val currenciesTypeMapper = MappedTypeMapper.base[Currency, String](
+    { currenciesTypeString(_) },
+    { currenciesStringType(_) })
 
   implicit val dateTimeMapper = MappedTypeMapper.base[DateTime, Timestamp](
     dt => new Timestamp(dt.getMillis),

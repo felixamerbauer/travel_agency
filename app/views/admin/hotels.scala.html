@@ -5,6 +5,8 @@
   
 @import helper.form 
 @import bootstrap3._
+@import views.formdata.Commons._
+@import db.Euro
 
 @main(title = "Admin-Hotels", authenticated, loginForm) { 
 <div class="container">
@@ -16,7 +18,8 @@
   				<th>Von</th>
   				<th>Bis</th>
   				<th>Zimmer</th>
-  				<th>Preis</th>
+  				<th>Preis Hotelbetreiber</th>
+  				<th>Preis Euro</th>
   			</tr>
   		</thead>
   		<tbody>
@@ -24,10 +27,11 @@
 			<tr>
 				<td>@hotel._1.hotelName</td>
 				<td>@(hotel._2.fullName) (@hotel._2.iataCode)</td>
-				<td>@hotel._1.startDate</td>
-				<td>@hotel._1.endDate</td>
+				<td>@uiDateFormat.print(hotel._1.startDate)</td>
+				<td>@uiDateFormat.print(hotel._1.endDate)</td>
 				<td>@hotel._1.availableRooms</td>
 				<td>@hotel._1.price @hotel._1.currency</td>
+				<td>@convert(hotel._1.price, hotel._1.currency, Euro) Euro</td>
 			</tr>
 		}
   		</tbody>

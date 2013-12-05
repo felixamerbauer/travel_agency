@@ -1,4 +1,5 @@
 @(loginForm: Form[views.formdata.LoginFormData], journeys:Seq[controllers.Client.Journey], authenticated:Option[String])
+@import views.formdata.Commons._
 @main(title = "List", authenticated, loginForm) {
 <div class="container">
 @if(journeys.isEmpty) {
@@ -8,11 +9,12 @@
 	@for(journey <- journeys) {
        <div class="row hotelentry">
         <div class="col-md-4">
-          <img src="img/hotel1.jpg">
+          <img src="/assets/images/hotel1.jpg">
         </div>
         <div class="col-md-8 hoteldesc">
-          <h2>@journey</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+          <h2>@journey.hotel.name (@journey.hotel.location)</h2>
+          <p>@journey.price Euro</p>
+          <p>@uiDateTimeFormat.print(journey.outward.dateTime) (@journey.outward.airline) - @uiDateTimeFormat.print(journey.inward.dateTime)  (@journey.inward.airline)</p>
           <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
           <p><a class="btn btn-default" href="#" role="button">Buchen &raquo;</a></p>
         </div>

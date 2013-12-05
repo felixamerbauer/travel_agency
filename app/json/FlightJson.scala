@@ -1,20 +1,21 @@
 package json
 
 import org.joda.time.DateTime
-
 import controllers.JsonHelper.isoDtf
 import models.Location
 import models.ext.ExtFlight
 import controllers.Client.baseUrl
+import db.Currency
 
 case class FlightJson(
   links: Seq[Link],
+  airline: String,
   from: String,
   to: String,
   dateTime: DateTime,
   availableSeats: Int,
   price: Int,
-  currency: String) {
+  currency: Currency) {
   def this(flight: ExtFlight, from: Location, to: Location) = {
     this(
       links = Seq(
@@ -24,6 +25,7 @@ case class FlightJson(
         Link(
           rel = "book",
           href = s"$baseUrl/airline/${flight.apiUrl}/flights/book/${flight.id}")),
+      airline = flight.airlineName,
       from = from.iataCode,
       to = to.iataCode,
       dateTime = flight.dateTime,

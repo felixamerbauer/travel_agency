@@ -3,6 +3,7 @@ import org.scalatest.BeforeAndAfter
 import org.scalatest.Finders
 import org.scalatest.FunSuite
 import db.QueryBasics._
+import db.Currency
 import Misc.db
 import models.TUser
 import models._
@@ -136,7 +137,7 @@ class DBTests extends FunSuite with BeforeAndAfter {
           ExtHotel(apiUrl = hotelGroupsDb(hotelGroupsIdx).apiUrl, hotelName = s"hotelName${nextInt(100)}", locationId = endLocationsDb(locationIdx).id,
             startDate = new DateMidnight(2014, 2, 3).plusDays(startDay),
             endDate = new DateMidnight(2014, 2, 3).plusDays(endDay),
-            availableRooms = 10, price = (nextInt(91) + 10) * (endDay - startDay), currency = "EUR")
+            availableRooms = 10, price = (nextInt(91) + 10) * (endDay - startDay), currency = Currencies(nextInt(Currencies.size)))
         }
         println("Inserting\n\t" + extHotel.mkString("\n\t"))
         extHotel foreach TExtHotel.autoInc.insert
@@ -152,8 +153,8 @@ class DBTests extends FunSuite with BeforeAndAfter {
           ExtFlight(apiUrl = airlinesDb(airlineIdx).apiUrl, airlineName = airlinesDb(airlineIdx).name,
             fromLocationId = startLocationsDb(startLocationIdx).id,
             toLocationId = endLocationsDb(endLocationIdx).id,
-            dateTime = new DateTime(2014, 2, 3, 20, 15).plusDays(day % 14),
-            availableSeats = 10, price = nextInt(991) + 10, currency = "EUR")
+            dateTime = new DateTime(2014, 2, 3, nextInt(18) + 6, nextInt(12) * 5).plusDays(day % 14),
+            availableSeats = 10, price = nextInt(991) + 10, currency = Currencies(nextInt(Currencies.size)))
         }
         val extFlightsInward = for {
           day <- 0 to 7
@@ -164,8 +165,8 @@ class DBTests extends FunSuite with BeforeAndAfter {
           ExtFlight(apiUrl = airlinesDb(airlineIdx).apiUrl, airlineName = airlinesDb(airlineIdx).name,
             fromLocationId = endLocationsDb(endLocationIdx).id,
             toLocationId = startLocationsDb(startLocationIdx).id,
-            dateTime = new DateTime(2014, 2, 3, 20, 15).plusDays(day),
-            availableSeats = 10, price = nextInt(991) + 10, currency = "EUR")
+            dateTime = new DateTime(2014, 2, 3, nextInt(18) + 6, nextInt(12) * 5).plusDays(day),
+            availableSeats = 10, price = nextInt(991) + 10, currency = Currencies(nextInt(Currencies.size)))
         }
         println("Inserting outward\n\t" + extFlightsOutward.mkString("\n\t"))
         extFlightsOutward foreach TExtFlight.autoInc.insert

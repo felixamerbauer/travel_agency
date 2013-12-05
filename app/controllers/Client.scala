@@ -17,13 +17,17 @@ import org.joda.time.DateMidnight
 import json._
 import org.joda.time.Duration
 import play.api.libs.json.JsValue
+import views.formdata.Commons.convert
+import db.Euro
 
 object Client {
   val baseUrl = "http://127.0.0.1:9000"
 
-  case class Journey(hotel: HotelJson, outward: FlightJson, inward: FlightJson, persons: Int, rooms: Int) {
-    val price = (hotel.price + outward.price + inward.price) * 2
-    lazy val pretty = s"${hotel.pretty} - ${outward.pretty} - ${inward.pretty} - persons=$persons rooms=$rooms"
+  case class Journey(hotel: HotelJson, outward: FlightJson, inward: FlightJson, adults: Int, children: Int, rooms: Int) {
+    // calculate price for currency
+    val price = (convert(hotel.price, hotel.currency, Euro) + convert(outward.price, outward.currency, Euro) + convert(inward.price, inward.currency, Euro)) * 2
+    lazy val pretty = s"${hotel.pretty} - ${outward.pretty} - ${inward.pretty} - adults=$adults children=$children rooms=$rooms"
+    val persons = adults + children
   }
 
   private def fetchApiUrls(implicit session: Session): Tuple2[Seq[String], Seq[String]] = {
@@ -150,7 +154,7 @@ object Client {
       for {
         out <- outwardMatches
         in <- inwardMatches
-      } yield Journey(h, out, in, persons, rooms)
+      } yield Journey(h, out, in, adults, children, rooms)
     })
     info(s"packages ${packages.size}")
     debug(packages.map(_.pretty).mkString("\n\t", "\n\t", ""))

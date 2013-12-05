@@ -2,9 +2,10 @@ package models.ext
 
 import play.api.db.slick.Config.driver.simple._
 import org.joda.time.LocalDate
-import db.QueryBasics.dateTimeMapper
+import db.QueryBasics._
 import org.joda.time.DateTime
 import models.TLocation
+import db.Currency
 
 object TExtFlight extends Table[ExtFlight]("extflights") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
@@ -15,7 +16,7 @@ object TExtFlight extends Table[ExtFlight]("extflights") {
   def dateTime = column[DateTime]("datetime")
   def availableSeats = column[Int]("availableseats")
   def price = column[Int]("price")
-  def currency = column[String]("currency")
+  def currency = column[Currency]("currency")
   def baseProjection = apiUrl ~ airlineName ~ fromLocationId ~ toLocationId ~ dateTime ~ availableSeats ~ price ~ currency
   override def * = id ~: baseProjection <> (ExtFlight, ExtFlight.unapply _)
   def forInsert = baseProjection <> (
@@ -36,6 +37,6 @@ case class ExtFlight(
   dateTime: DateTime,
   availableSeats: Int,
   price: Int,
-  currency: String)
+  currency: Currency)
 
   

@@ -11,10 +11,25 @@ import play.api.libs.json.JsValue
 import play.api.libs.json.Reads
 import play.api.libs.json.Writes
 import org.joda.time.DateMidnight
-
+import db.QueryBasics.currenciesStringType
+import db.QueryBasics.currenciesTypeString
+import db.Currency
 object JsonHelper {
   val isoDtf = ISODateTimeFormat.dateTimeNoMillis()
 
+  // datetime
+  implicit object currencyReads extends Reads[Currency] {
+    override def reads(json: JsValue) = json match {
+      case JsString(s) => JsSuccess(currenciesStringType(s))
+      case _ => JsError(Seq(JsPath() -> Seq(ValidationError("error parsing ISO 8601 datetime"))))
+    }
+  }
+
+  implicit object currencyWrites extends Writes[Currency] {
+    override def writes(currency: Currency) = JsString(currenciesTypeString(currency))
+  }
+  
+  
   // datetime
   implicit object dateTimeReads extends Reads[DateTime] {
     override def reads(json: JsValue) = json match {
@@ -39,15 +54,5 @@ object JsonHelper {
     override def writes(dt: DateMidnight) = JsString(isoDtf.print(dt))
   }
 
-//  implicit object localDateReads extends Reads[LocalDate] {
-//    override def reads(json: JsValue) = json match {
-//      case JsNumber(s) => JsSuccess(new LocalDate(s.toLong))
-//      case _ => JsError(Seq(JsPath() -> Seq(ValidationError("validate.error.expected.jsstring"))))
-//    }
-//  }
-//
-//  implicit object localDateWrites extends Writes[LocalDate] {
-//    override def writes(dt: LocalDate) = JsNumber(dt.toDateTimeAtStartOfDay().getMillis())
-//  }
 
 }
