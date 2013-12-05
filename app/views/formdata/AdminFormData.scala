@@ -8,7 +8,7 @@ import models.Product
 import models.Location
 import models.Customer
 import models.User
-import views.formdata.Commons.dateFormat
+import views.formdata.Commons._
 import play.api.data.validation.Constraint
 
 case class AdminAirlineFormData(id: String = "-1", name: String = "", apiURL: String = "") {
@@ -78,7 +78,7 @@ case class AdminCustomerFormData(
     email = user.email,
     password = "",
     birthDate = dateFormat.print(customer.birthDate),
-    sex = customer.sex,
+    sex = sexesFormTypeString(customer.sex),
     street = customer.street,
     zipCode = customer.zipCode,
     city = customer.city,
@@ -88,10 +88,5 @@ case class AdminCustomerFormData(
     creditCardNumber = customer.creditCardNumber,
     creditCardExpireDate = dateFormat.print(customer.creditCardExpireDate),
     creditCardVerificationCode = customer.creditCardVerificationCode)
-
-  def validate(): Seq[ValidationError] = {
-    val errors = Buffer[ValidationError]()
-    null
-  }
 }
 

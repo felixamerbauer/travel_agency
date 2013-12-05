@@ -28,14 +28,14 @@ class WorkflowTests extends FunSuite with BeforeAndAfter {
         val chosenDirection = directions.head
         println(s"chosen direction $chosenDirection")
 
-        val journeys = Client.checkAvailability(chosenDirection.from, chosenDirection.to, (2013, 12, 24), (2013, 12, 26), rooms = 1, persons = 2)
+        val journeys = Client.checkAvailability(chosenDirection.from, chosenDirection.to, (2014, 2, 3), (2014, 2, 5), adults = 2, children = 2)
         println(s"packages\n\t${journeys.map(_.pretty).mkString("\n\t")}")
         // choose cheapest
         val chosenJourney = journeys.minBy(_.price)
         println(s"chosen journey ${chosenJourney.pretty}")
 
-        val (bookingInward,bookingOutward,bookingHotel) = Client.book(chosenJourney)
-        val bookings:Seq[Option[BookingResponse]]=Seq(bookingInward,bookingOutward,bookingHotel)
+        val (bookingInward, bookingOutward, bookingHotel) = Client.book(chosenJourney)
+        val bookings: Seq[Option[BookingResponse]] = Seq(bookingInward, bookingOutward, bookingHotel)
         println(s"bookingOutward=$bookingOutward, bookingInward=$bookingInward, bookinHotel=$bookingHotel")
 
         val cancellingOk = Client.cancel(bookings.flatten)

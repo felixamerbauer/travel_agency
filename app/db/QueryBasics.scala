@@ -1,10 +1,16 @@
 package db
 
 import java.sql.Timestamp
+
 import scala.slick.lifted.MappedTypeMapper
 import scala.slick.lifted.Query
+
+import org.joda.time.DateMidnight
 import org.joda.time.DateTime
-import org.joda.time.LocalDate
+
+import models.Female
+import models.Male
+import models.Sex
 import models.TAirline
 import models.TCustomer
 import models.THotelgroup
@@ -13,11 +19,19 @@ import models.TOrder
 import models.TProduct
 import models.TUser
 import models.ext.TExtFlight
+import models.ext.TExtFlightBooking
 import models.ext.TExtFlightLastModified
-import models.ext._
-import org.joda.time.DateMidnight
+import models.ext.TExtHotel
+import models.ext.TExtHotelBooking
+import models.ext.TExtHotelLastModified
 
 object QueryBasics {
+  val sexesStringType = Map[String, Sex]("m" -> Male, "f" -> Female)
+  val sexesTypeString = sexesStringType map (_.swap)
+
+  implicit val sexTypeMapper = MappedTypeMapper.base[Sex, String](
+    { sexesTypeString(_) },
+    { sexesStringType(_) })
 
   implicit val dateTimeMapper = MappedTypeMapper.base[DateTime, Timestamp](
     dt => new Timestamp(dt.getMillis),

@@ -62,7 +62,7 @@
 	              <input id="@loginForm("password").id" name="@loginForm("password").name" type="password" placeholder="Passwort" class="form-control input-sm">
 	            </div>
 	            <button type="submit" class="btn btn-success btn-sm">Anmelden</button>
-	            <a class="btn btn-warning btn-sm" role="button">Registrieren</a>
+	            <a class="btn btn-warning btn-sm" role="button" href="@routes.Application.registration" >Registrieren</a>
 	        }
         } else {
         	@form(routes.Security.logout(), 'class -> "navbar-form navbar-right") {

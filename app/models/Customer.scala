@@ -9,13 +9,18 @@ import db.QueryBasics._
 import org.joda.time.DateTime
 import org.joda.time.DateMidnight
 
+sealed trait Sex
+case object Male extends Sex
+case object Female extends Sex
+
+  
 object TCustomer extends Table[Customer]("customers") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def userId = column[Int]("userid")
   def firstName = column[String]("firstname")
   def lastName = column[String]("lastname")
   def birthDate = column[DateMidnight]("birthdate")
-  def sex = column[String]("sex")
+  def sex = column[Sex]("sex")
   def street = column[String]("street")
   def zipCode = column[String]("zipcode")
   def city = column[String]("city")
@@ -41,7 +46,7 @@ case class Customer(
   firstName: String,
   lastName: String,
   birthDate: DateMidnight,
-  sex: String,
+  sex: Sex,
   street: String,
   zipCode: String,
   city: String,

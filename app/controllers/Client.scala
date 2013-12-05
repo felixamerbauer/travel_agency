@@ -19,8 +19,8 @@ import org.joda.time.Duration
 import play.api.libs.json.JsValue
 
 object Client {
-  val baseUrl="http://127.0.0.1:9000"
-  
+  val baseUrl = "http://127.0.0.1:9000"
+
   case class Journey(hotel: HotelJson, outward: FlightJson, inward: FlightJson, persons: Int, rooms: Int) {
     val price = (hotel.price + outward.price + inward.price) * 2
     lazy val pretty = s"${hotel.pretty} - ${outward.pretty} - ${inward.pretty} - persons=$persons rooms=$rooms"
@@ -85,8 +85,8 @@ object Client {
   }
 
   // TODO duration min/max would be nice
-  def checkAvailability(from: String, location: String, start: DateMidnight, end: DateMidnight, persons: Int, rooms: Int)(implicit session: Session): Seq[Journey] = {
-    info(s"checkAvailability from=$from location=$location start=$start end=$end persons=$persons rooms=$rooms")
+  def checkAvailability(from: String, location: String, start: DateMidnight, end: DateMidnight, adults: Int, children: Int)(implicit session: Session): Seq[Journey] = {
+    info(s"checkAvailability from=$from location=$location start=$start end=$end adults=$adults children=$children")
     val (airlineApiUrls, hotelgroupApiUrls) = fetchApiUrls
     // Outward Flight
     val outwardFlights = (for (airlineApiUrl <- airlineApiUrls) yield {
@@ -127,6 +127,7 @@ object Client {
     info(s"hotels ${hotels.size}")
     debug(hotels.map(_.pretty).mkString("\n\t", "\n\t", ""))
     // start with filtering hotels, that's easier
+    val rooms = Math.ceil((adults + children) / 2.0).toInt
     val hotelsFiltered = hotels.filterNot { e =>
       e.availableRooms < rooms ||
         e.duration != new Duration(start, end)
@@ -134,6 +135,7 @@ object Client {
     info(s"hotelsFiltered ${hotelsFiltered.size}")
     debug(hotelsFiltered.map(_.pretty).mkString("\n\t", "\n\t", ""))
     // find matching flights for the hotels
+    val persons = adults + children
     val packages = (hotelsFiltered.flatMap { h =>
       val outwardMatches = outwardFlights.filter { f =>
         f.to == h.location &&

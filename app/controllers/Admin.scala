@@ -174,7 +174,7 @@ object Admin extends Controller {
           firstName = formData.firstName,
           lastName = formData.lastName,
           birthDate = dateFormat.parseDateTime(formData.birthDate).toDateMidnight(),
-          sex = formData.sex,
+          sex = sexesFormStringType(formData.sex),
           street = formData.street,
           zipCode = formData.zipCode,
           city = formData.city,

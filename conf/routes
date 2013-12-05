@@ -44,7 +44,11 @@ GET      /travel/search                                 controllers.Application.
 
 POST     /travel/search                                 controllers.Application.travelSearchPost
 
-GET      /travel/list                                   controllers.Application.travelList
+GET      /travel/registration                           controllers.Application.registration
+
+POST     /travel/registration                           controllers.Application.registrationPost
+
+GET      /travel/list                                   controllers.Application.travelList(from:String, location:String, start:String, end:String, adults:Int,children:Int)
 
 GET      /travel/booking                                controllers.Application.travelBooking
 

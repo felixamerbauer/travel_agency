@@ -57,7 +57,7 @@ class DBTests extends FunSuite with BeforeAndAfter {
         // customer
         val customers = usersDb map { userDb =>
           Customer(userId = userDb.id, firstName = s"firstName${userDb.id}", lastName = s"lastName${userDb.id}",
-            birthDate = new DateMidnight(2013, 12, 24), sex = Seq("m", "f")(nextInt(2)), street = "street",
+            birthDate = new DateMidnight(2013, 12, 24), sex = Seq(Male, Female)(nextInt(2)), street = "street",
             zipCode = "1234", city = "city", country = "country",
             phoneNumber = "+43 1234567", creditCardCompany = Seq("MasterCard", "Visa")(nextInt(2)), creditCardNumber = "1234432112344321",
             creditCardExpireDate = new DateMidnight(2016, 1, 1), creditCardVerificationCode = "123")
@@ -106,8 +106,8 @@ class DBTests extends FunSuite with BeforeAndAfter {
         } yield {
           Order(customerId = customer.id, productId = product.id, hotelName = "hotelName",
             hotelAddress = "hotelAddress", personCount = 10, roomOrderId = "1",
-            toFlight = "OS 123", fromFlight = "OS 321", startDate = new DateMidnight(2013, 12, 24),
-            endDate = new DateMidnight(2014, 1, 1), price = 149999, currency = "EUR")
+            toFlight = "OS 123", fromFlight = "OS 321", startDate = new DateMidnight(2014, 2, 3),
+            endDate = new DateMidnight(2014, 2, 16), price = 149999, currency = "EUR")
 
         }
         println("Inserting\n\t" + orders.mkString("\n\t"))
@@ -128,14 +128,14 @@ class DBTests extends FunSuite with BeforeAndAfter {
         assert(hotelGroups === hotelGroupsDb.map(_.copy(id = -1)))
         // extHotel
         val extHotel = for {
-          startDay <- 0 until 7
-          endDay <- (startDay + 1) to 7
+          startDay <- 0 until 14
+          endDay <- (startDay + 1) to 14
           locationIdx <- 0 until endLocationsDb.size
           hotelGroupsIdx <- 0 until hotelGroupsDb.size
         } yield {
           ExtHotel(apiUrl = hotelGroupsDb(hotelGroupsIdx).apiUrl, hotelName = s"hotelName${nextInt(100)}", locationId = endLocationsDb(locationIdx).id,
-            startDate = new DateMidnight(2013, 12, 24).plusDays(startDay),
-            endDate = new DateMidnight(2013, 12, 24).plusDays(endDay),
+            startDate = new DateMidnight(2014, 2, 3).plusDays(startDay),
+            endDate = new DateMidnight(2014, 2, 3).plusDays(endDay),
             availableRooms = 10, price = (nextInt(91) + 10) * (endDay - startDay), currency = "EUR")
         }
         println("Inserting\n\t" + extHotel.mkString("\n\t"))
@@ -152,7 +152,7 @@ class DBTests extends FunSuite with BeforeAndAfter {
           ExtFlight(apiUrl = airlinesDb(airlineIdx).apiUrl, airlineName = airlinesDb(airlineIdx).name,
             fromLocationId = startLocationsDb(startLocationIdx).id,
             toLocationId = endLocationsDb(endLocationIdx).id,
-            dateTime = new DateTime(2013, 12, 24, 20, 15).plusDays(day % 14),
+            dateTime = new DateTime(2014, 2, 3, 20, 15).plusDays(day % 14),
             availableSeats = 10, price = nextInt(991) + 10, currency = "EUR")
         }
         val extFlightsInward = for {
@@ -164,7 +164,7 @@ class DBTests extends FunSuite with BeforeAndAfter {
           ExtFlight(apiUrl = airlinesDb(airlineIdx).apiUrl, airlineName = airlinesDb(airlineIdx).name,
             fromLocationId = endLocationsDb(endLocationIdx).id,
             toLocationId = startLocationsDb(startLocationIdx).id,
-            dateTime = new DateTime(2013, 12, 24, 20, 15).plusDays(day),
+            dateTime = new DateTime(2014, 2, 3, 20, 15).plusDays(day),
             availableSeats = 10, price = nextInt(991) + 10, currency = "EUR")
         }
         println("Inserting outward\n\t" + extFlightsOutward.mkString("\n\t"))

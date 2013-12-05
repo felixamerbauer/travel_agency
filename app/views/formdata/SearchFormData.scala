@@ -10,8 +10,8 @@ import play.api.Logger._
 case class SearchFormData(
   from: String = "",
   to: String = "",
-  start: String = dateFormat.print(LocalDate.now.plusDays(7)),
-  end: String = dateFormat.print(LocalDate.now.plusDays(14)),
+  start: String = dateFormat.print(new LocalDate(2014, 2, 3)),
+  end: String = dateFormat.print(new LocalDate(2014, 2, 10)),
   adults: String = "",
   children: String = "",
   category: String = "") {
