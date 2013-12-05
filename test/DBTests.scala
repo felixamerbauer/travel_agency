@@ -24,6 +24,7 @@ import scala.util.Random._
 import org.joda.time.DateMidnight
 
 class DBTests extends FunSuite with BeforeAndAfter {
+  def randomDescription = (1 to 100).map(_ => alphanumeric.take(nextInt(10) + 2).mkString).mkString(" ")
 
   test("read write to all tables") {
     running(FakeApplication()) {
@@ -74,14 +75,14 @@ class DBTests extends FunSuite with BeforeAndAfter {
             //            ("BER", "Berlin"),
             ("CDG", "Paris"),
             ("LHR", "Heathrow"))
-        } yield { Location(iataCode = iata, fullName = fullName) }
+        } yield { Location(iataCode = iata, fullName = fullName, start = true) }
         val endLocations = for {
           (iata, fullName) <- Seq(
             //            ("JNB", "Johannesburg"),
             ("JFK", "New York"),
             ("PEK", "Peking"),
             ("SYD", "Sydney"))
-        } yield { Location(iataCode = iata, fullName = fullName) }
+        } yield { Location(iataCode = iata, fullName = fullName, start = false) }
         println("Inserting start locations\n\t" + startLocations.mkString("\n\t"))
         startLocations foreach TLocation.autoInc.insert
         println("Inserting end locations\n\t" + endLocations.mkString("\n\t"))
@@ -134,7 +135,7 @@ class DBTests extends FunSuite with BeforeAndAfter {
           locationIdx <- 0 until endLocationsDb.size
           hotelGroupsIdx <- 0 until hotelGroupsDb.size
         } yield {
-          ExtHotel(apiUrl = hotelGroupsDb(hotelGroupsIdx).apiUrl, hotelName = s"hotelName${nextInt(100)}", locationId = endLocationsDb(locationIdx).id,
+          ExtHotel(apiUrl = hotelGroupsDb(hotelGroupsIdx).apiUrl, hotelName = s"hotelName${nextInt(100)}", description = randomDescription, category = nextInt(5) + 1, locationId = endLocationsDb(locationIdx).id,
             startDate = new DateMidnight(2014, 2, 3).plusDays(startDay),
             endDate = new DateMidnight(2014, 2, 3).plusDays(endDay),
             availableRooms = 10, price = (nextInt(91) + 10) * (endDay - startDay), currency = Currencies(nextInt(Currencies.size)))

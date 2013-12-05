@@ -13,9 +13,10 @@
         </div>
         <div class="col-md-8 hoteldesc">
           <h2>@journey.hotel.name (@journey.hotel.location)</h2>
+          <p>@for(i <- 1 to journey.hotel.category) { <span class="glyphicon glyphicon-star"></span>}</p>
           <p>@journey.price Euro</p>
           <p>@uiDateTimeFormat.print(journey.outward.dateTime) (@journey.outward.airline) - @uiDateTimeFormat.print(journey.inward.dateTime)  (@journey.inward.airline)</p>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+          <p>@journey.hotel.description</p>
           <p><a class="btn btn-default" href="#" role="button">Buchen &raquo;</a></p>
         </div>
        </div>

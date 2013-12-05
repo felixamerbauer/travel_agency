@@ -41,7 +41,10 @@ CREATE TABLE customers (
 CREATE TABLE locations (
   id       SERIAL PRIMARY KEY,
   iataCode CHAR(3) NOT NULL,
-  fullName TEXT NOT NULL
+  fullName TEXT NOT NULL,
+  start    BOOLEAN NOT NULL,
+  UNIQUE(iataCode),
+  UNIQUE(fullName)
 );
 
 
@@ -87,12 +90,14 @@ CREATE TABLE extHotels (
   id             SERIAL PRIMARY KEY,
   apiUrl         TEXT NOT NULL, -- for differentiation of REST services
   hotelName      TEXT NOT NULL,
+  description    TEXT NOT NULL,
+  category		 INTEGER NOT NULL CHECK (category >= 1 AND category <= 5),
   locationId     INTEGER NOT NULL REFERENCES locations,
   startDate      DATE NOT NULL,
   endDate        DATE NOT NULL,
   availableRooms INTEGER NOT NULL,  -- how many rooms of this type are available at the moment
   price          INTEGER NOT NULL CHECK (price >= 0),
-  currency       CHAR(3) NOT NULL,
+  currency       CHAR(3) NOT NULL
 );
 
 CREATE TABLE extHotelBookings (
