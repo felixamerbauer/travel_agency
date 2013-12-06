@@ -102,20 +102,20 @@ class DBTests extends FunSuite with BeforeAndAfter {
         val productsDb = qProduct.to[Seq]
         assert(products === productsDb.map(_.copy(id = -1)))
         // order
-        val orders = for {
-          customer <- customersDb.take(3)
-          product <- productsDb
-        } yield {
-          Order(customerId = customer.id, productId = product.id, hotelName = "hotelName",
-            hotelAddress = "hotelAddress", personCount = 10, roomOrderId = "1",
-            toFlight = "OS 123", fromFlight = "OS 321", startDate = new DateMidnight(2014, 2, 3),
-            endDate = new DateMidnight(2014, 2, 16), price = 149999, currency = "EUR")
-
-        }
-        println("Inserting\n\t" + orders.mkString("\n\t"))
-        orders foreach TOrder.autoInc.insert
-        val ordersDb = qOrder.to[Seq]
-        assert(orders === ordersDb.map(_.copy(id = -1)))
+//        val orders = for {
+//          customer <- customersDb.take(3)
+//          product <- productsDb
+//        } yield {
+//          Order(customerId = customer.id, productId = product.id, hotelName = "hotelName",
+//            hotelAddress = "hotelAddress", personCount = 10, roomOrderId = "1",
+//            toFlight = "OS 123", fromFlight = "OS 321", startDate = new DateMidnight(2014, 2, 3),
+//            endDate = new DateMidnight(2014, 2, 16), price = 149999, currency = "EUR")
+//
+//        }
+//        println("Inserting\n\t" + orders.mkString("\n\t"))
+//        orders foreach TOrder.autoInc.insert
+//        val ordersDb = qOrder.to[Seq]
+//        assert(orders === ordersDb.map(_.copy(id = -1)))
         // airline
         val airlines = Seq("A", "B", "C").map(e => Airline(name = s"Airline$e", apiUrl = s"$e"))
         println("Inserting\n\t" + airlines.mkString("\n\t"))

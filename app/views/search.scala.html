@@ -35,7 +35,7 @@
         </div>
         <div class="col-md-4">
 			<h2>Traumreise finden</h2>
-			@form(routes.Application.travelSearchPost(), 'class -> "form-horizontal") {
+			@form(routes.Application.searchPost(), 'class -> "form-horizontal") {
 				@select(searchForm("from"), label = "Abflughafen", optionMap = from, isMultiple = false)
 				@select(searchForm("to"), label = "Reiseziel", optionMap = to, isMultiple = false)
           		@date(searchForm("start"), label="Hinreise")

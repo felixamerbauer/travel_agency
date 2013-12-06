@@ -21,6 +21,7 @@ import models.User
 import models.TUser
 import play.api.db.slick.Config.driver.simple._
 import models.TCustomer
+import play.api.mvc.SimpleResult
 
 object Application extends Controller {
 
@@ -63,7 +64,7 @@ object Application extends Controller {
   private var from: Map[String, Boolean] = _
   private var to: Map[String, Boolean] = _
 
-  def travelSearch = DBAction { implicit rs =>
+  def search = DBAction { implicit rs =>
     implicit val dbSession = rs.dbSession
     val directions = Client.fetchDirections
     from = TreeMap(directions.map(_.from -> false).toSeq: _*)
@@ -73,7 +74,7 @@ object Application extends Controller {
     Ok(views.html.search(loginForm, defaultSearchForm, from, to, persons, category, authenticated))
   }
 
-  def travelSearchPost = DBAction { implicit rs =>
+  def searchPost = DBAction { implicit rs =>
     val filledForm: Form[SearchFormData] = searchForm.bindFromRequest
     filledForm.fold(
       formWithErrors => {
@@ -82,7 +83,7 @@ object Application extends Controller {
       },
       formData => {
         info(s"form is ok $formData")
-        Redirect(routes.Application.travelList(formData.from, formData.to, formData.start, formData.end, formData.adults.toInt, formData.children.toInt))
+        Redirect(routes.Application.list(formData.from, formData.to, formData.start, formData.end, formData.adults.toInt, formData.children.toInt))
       })
   }
 
@@ -128,19 +129,24 @@ object Application extends Controller {
     Redirect(routes.Application.index)
   }
 
-  def travelList(from: String, location: String, start: String, end: String, adults: Int, children: Int) = DBAction { implicit rs =>
+  def list(from: String, location: String, start: String, end: String, adults: Int, children: Int) = DBAction { implicit rs =>
     implicit val dbSession = rs.dbSession
     val startDate = dateFormat.parseDateTime(start).toDateMidnight()
     val endDate = dateFormat.parseDateTime(end).toDateMidnight()
     val journeys = Client.checkAvailability(from, location, startDate, endDate, adults, children)
-    Ok(views.html.list(loginForm, journeys, authenticated))
+    Ok(views.html.list(loginForm, journeys, authenticated)).withSession()
   }
 
-  def travelBooking = Action { implicit request =>
+  def booking(from: String, to: String, startDate: String, endDate: String, flightOutwardUrl: String, flightOutwardAirline: String, flightOutwardId: Int, flightInwardUrl: String, flightInwardAirline: String, flightInwardId: Int, hotelUrl: String, hotelName: String, hotelId: Int, adults: Int, children: Int, price: Int) = DBAction { implicit rs =>
+    info(s"booking $flightOutwardUrl / $flightOutwardAirline / $flightOutwardId / $flightInwardUrl / $flightInwardAirline / $flightInwardId / $hotelUrl / $hotelName / $hotelId / $adults / $children / $price")
+    implicit val dbSession = rs.dbSession
+    val startDateDM = dateFormat.parseDateTime(startDate).toDateMidnight()
+    val endDateDM = dateFormat.parseDateTime(endDate).toDateMidnight()
+    Client.book(from, to, startDateDM, endDateDM, flightOutwardUrl, flightOutwardAirline, flightOutwardId, flightInwardUrl, flightInwardAirline, flightInwardId, hotelUrl, hotelName, hotelId, adults, children, price)
     Ok(views.html.booking(loginForm, authenticated))
   }
 
-  def travelBookingConfirmation = Action { implicit request =>
+  def bookingConfirmation = Action { implicit request =>
     Ok(views.html.bookingconfirmation(loginForm, authenticated))
   }
 

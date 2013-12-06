@@ -10,6 +10,7 @@ import db.Currency
 case class FlightJson(
   links: Seq[Link],
   airline: String,
+  id: Int,
   from: String,
   to: String,
   dateTime: DateTime,
@@ -26,6 +27,7 @@ case class FlightJson(
           rel = "book",
           href = s"$baseUrl/airline/${flight.apiUrl}/flights/book/${flight.id}")),
       airline = flight.airlineName,
+      id = flight.id,
       from = from.iataCode,
       to = to.iataCode,
       dateTime = flight.dateTime,

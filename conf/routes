@@ -40,19 +40,19 @@ POST     /hotelgroup/*any                               controllers.Application.
 
 # Travel Booking Workflow
 
-GET      /travel/search                                 controllers.Application.travelSearch
+GET      /travel/search                                 controllers.Application.search
 
-POST     /travel/search                                 controllers.Application.travelSearchPost
+POST     /travel/search                                 controllers.Application.searchPost
 
 GET      /travel/registration                           controllers.Application.registration
 
 POST     /travel/registration                           controllers.Application.registrationPost
 
-GET      /travel/list                                   controllers.Application.travelList(from:String, location:String, start:String, end:String, adults:Int,children:Int)
+GET      /travel/list                                   controllers.Application.list(from:String, location:String, start:String, end:String, adults:Int,children:Int)
 
-GET      /travel/booking                                controllers.Application.travelBooking
+POST     /travel/booking                                controllers.Application.booking(from:String, to:String, startDate:String, endDate:String, flightOutwardUrl: String, flightOutwardAirline: String, flightOutwardId: Int, flightInwardUrl: String, flightInwardAirline: String, flightInwardId: Int, hotelUrl: String, hotelName: String, hotelId: Int, adults: Int, children: Int, price: Int)
 
-GET      /travel/bookingconfirmation                    controllers.Application.travelBookingConfirmation
+GET      /travel/bookingconfirmation                    controllers.Application.bookingConfirmation
 
 # Admin
 GET      /admin/airlines                                controllers.Admin.airlines

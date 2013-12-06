@@ -12,6 +12,7 @@ import db.Currency
 case class HotelJson(
   links: Seq[Link],
   name: String,
+  id: Int,
   description: String,
   category: Int,
   startDate: DateMidnight,
@@ -29,6 +30,7 @@ case class HotelJson(
         rel = "book",
         href = s"$baseUrl/hotelgroup/${hotel.apiUrl}/hotels/book/${hotel.id}")),
     name = hotel.hotelName,
+    id = hotel.id,
     description = hotel.description,
     category = hotel.category,
     startDate = hotel.startDate,
