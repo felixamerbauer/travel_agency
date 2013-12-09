@@ -1,20 +1,21 @@
 package controllers
 
-import play.api.Play.current
-import play.api.cache.Cached
-import play.api.mvc.Action
-import play.api.mvc.Controller
-import views.formdata.SearchFormData
-import play.api.data.Form
+import scala.slick.session.Session
+
+import db.QueryMethods.checkLogin
+import db.QueryMethods.userCustomer
+import models.Customer
 import play.api.Logger.info
-import play.api.data._
-import play.api.data.Forms._
+import play.api.Play.current
+import play.api.data.Form
+import play.api.data.Forms.mapping
+import play.api.data.Forms.text
+import play.api.db.slick.DBAction
 import play.api.mvc.Action
-import play.api.mvc.Controller
-import views.formdata.LoginFormData
-import views.html._
-import play.api.mvc.Request
 import play.api.mvc.AnyContent
+import play.api.mvc.Controller
+import play.api.mvc.Request
+import views.formdata.LoginFormData
 
 object Security extends Controller {
 
@@ -23,9 +24,23 @@ object Security extends Controller {
       "email" -> text,
       "password" -> text)(LoginFormData.apply)(LoginFormData.unapply))
 
-  def authenticated(implicit request: Request[AnyContent]) = request.session.get("user")
+  def authenticated(implicit request: Request[AnyContent]) = {
+    val x = request.session.get("user")
+    info(s"session.user $x")
+    x
+  }
 
-  def login = Action { implicit request =>
+  def curCustomer(implicit request: Request[AnyContent], session: Session): Customer = {
+    info(s"curCustomer $authenticated")
+    for ((k, v) <- request.session.data) {
+      info(s"k $k v $v")
+    }
+    val (_, customer) = userCustomer(authenticated.get)
+    customer
+  }
+
+  def login = DBAction { implicit rs =>
+    implicit val dbSession = rs.dbSession
     val filledForm: Form[LoginFormData] = loginForm.bindFromRequest
     filledForm.fold(
       formWithErrors => {
@@ -40,8 +55,15 @@ object Security extends Controller {
           Redirect(routes.Application.index).withSession(
             "user" -> "admin")
         } else {
-          info("wrong password")
-          Redirect(routes.Application.index)
+          checkLogin(loginData.email, loginData.password) match {
+            case Some(user) =>
+              info(s"user ${user.email} authenticated")
+              Redirect(routes.Application.index).withSession(
+                "user" -> user.email)
+            case None =>
+              info("wrong password")
+              Redirect(routes.Application.index)
+          }
         }
       })
   }

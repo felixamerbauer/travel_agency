@@ -1,28 +1,36 @@
 package controllers.ext
 
-import scala.collection.mutable.MutableList
+import scala.Option.option2Iterable
+
 import controllers.CtrlHelper
-import controllers.JsonDeSerialization._
+import controllers.JsonDeSerialization.directionWrites
+import controllers.JsonDeSerialization.flightBookingRequestReads
+import controllers.JsonDeSerialization.flightBookingResponseWrites
 import controllers.JsonDeSerialization.flightWrites
-import controllers.JsonHelper.isoDtf
 import db.QueryBasics.dateTimeMapper
-import db.QueryLibrary._
+import db.QueryLibrary.qFlight
+import db.QueryLibrary.qFlightBookingWithFlight
 import db.QueryLibrary.qFlightsWithLocation
 import db.QueryMethods.bookFlightSeats
 import db.QueryMethods.cancelFlightSeats
+import json.Direction
+import json.FlightBookingRequest
+import json.FlightBookingResponse
+import json.FlightJson
 import models.TLocation
 import models.ext.TExtFlight
-import json._
 import play.api.Logger.error
 import play.api.Logger.info
 import play.api.Logger.warn
 import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
+import play.api.db.slick.Config.driver.simple.columnExtensionMethods
+import play.api.db.slick.Config.driver.simple.queryToQueryInvoker
+import play.api.db.slick.Config.driver.simple.valueToConstColumn
 import play.api.db.slick.DBAction
+import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
 import play.api.mvc.Controller
-import scala.collection.SortedSet
-import play.api.libs.json.Json
 
 object FlightsCtrl extends Controller with CtrlHelper {
 

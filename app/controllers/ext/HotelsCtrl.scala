@@ -1,32 +1,36 @@
 package controllers.ext
 
+import scala.Option.option2Iterable
+
 import controllers.CtrlHelper
-import play.api.Logger.info
-import play.api.Play.current
-import play.api.db.slick.DBAction
-import play.api.mvc.Controller
-import controllers.CtrlHelper
-import controllers.JsonDeSerialization._
-import controllers.JsonDeSerialization.flightWrites
-import controllers.JsonHelper.isoDtf
-import db.QueryBasics._
-import db.QueryLibrary._
-import db.QueryLibrary.qFlightsWithLocation
-import db.QueryMethods._
-import db.QueryMethods.cancelFlightSeats
+import controllers.JsonDeSerialization.hotelBookingRequestReads
+import controllers.JsonDeSerialization.hotelBookingResponseWrites
+import controllers.JsonDeSerialization.hotelLocationWrites
+import controllers.JsonDeSerialization.hotelWrites
+import db.QueryBasics.localdateMapper
+import db.QueryLibrary.qHotel
+import db.QueryLibrary.qHotelBookingWithHotel
+import db.QueryLibrary.qHotelWithLocation
+import db.QueryMethods.bookHotelRooms
+import db.QueryMethods.cancelHotelRooms
+import json.HotelBookingRequest
+import json.HotelBookingResponse
+import json.HotelJson
+import json.HotelLocation
 import models.TLocation
-import models.ext.TExtFlight
-import json._
+import models.ext.TExtHotel
 import play.api.Logger.error
 import play.api.Logger.info
 import play.api.Logger.warn
 import play.api.Play.current
 import play.api.db.slick.Config.driver.simple._
+import play.api.db.slick.Config.driver.simple.columnExtensionMethods
+import play.api.db.slick.Config.driver.simple.queryToQueryInvoker
+import play.api.db.slick.Config.driver.simple.valueToConstColumn
 import play.api.db.slick.DBAction
+import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
 import play.api.mvc.Controller
-import models.ext._
-import play.api.libs.json.Json
 
 object HotelsCtrl extends Controller with CtrlHelper {
 

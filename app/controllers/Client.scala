@@ -21,6 +21,7 @@ import views.formdata.Commons.convert
 import db.Euro
 import models.Order
 import models.TOrder
+import models.Customer
 
 case class Journey(from: String, to: String, startDate: DateMidnight, endDate: DateMidnight, hotel: HotelJson, outward: FlightJson, inward: FlightJson, adults: Int, children: Int, rooms: Int) {
   // calculate price for currency
@@ -163,7 +164,7 @@ object Client {
     packages
   }
 
-  def book(from: String, to: String, startDate: DateMidnight, endDate: DateMidnight, flightOutwardUrl: String, flightOutwardAirline: String, flightOutwardId: Int, flightInwardUrl: String, flightInwardAirline: String, flightInwardId: Int, hotelUrl: String, hotelName: String, hotelId: Int, adults: Int, children: Int, price: Int)(implicit session: Session): Option[Order] = {
+  def book(from: String, to: String, startDate: DateMidnight, endDate: DateMidnight, flightOutwardUrl: String, flightOutwardAirline: String, flightOutwardId: Int, flightInwardUrl: String, flightInwardAirline: String, flightInwardId: Int, hotelUrl: String, hotelName: String, hotelId: Int, adults: Int, children: Int, price: Int, customer: Customer)(implicit session: Session): Option[Order] = {
     val persons = adults + children
     val rooms = (persons / 2.0).toInt
 
@@ -207,7 +208,7 @@ object Client {
       None
     } else {
       val order = Order(
-        customerId = -1,
+        customerId = customer.id,
         from = from,
         to = to,
         hotelName = hotelName,
@@ -228,7 +229,7 @@ object Client {
 
   }
 
-  def book(journey: Journey)(implicit session: Session): Option[Order] =
+  def book(journey: Journey, customer: Customer)(implicit session: Session): Option[Order] =
     book(from = journey.from,
       to = journey.to,
       startDate = journey.startDate,
@@ -244,7 +245,8 @@ object Client {
       hotelId = journey.hotel.id,
       adults = journey.adults,
       children = journey.children,
-      price = journey.price)
+      price = journey.price,
+      customer = customer)
 
   def cancel(bookings: Seq[BookingResponse]): Boolean = {
     info(s"cancel ${bookings.mkString(",")}")

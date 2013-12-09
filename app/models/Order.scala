@@ -9,8 +9,8 @@ import db.Currency
 object TOrder extends Table[Order]("orders") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def customerId = column[Int]("customerid")
-  def from = column[String]("from")
-  def to = column[String]("to")
+  def from = column[String]("fromlocation")
+  def to = column[String]("tolocation")
   def hotelName = column[String]("hotelname")
   def hotelId = column[Int]("hotelid")
   def outwardFlightAirline = column[String]("outwardflightairline")

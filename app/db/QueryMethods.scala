@@ -3,11 +3,14 @@ package db
 import com.github.t3hnar.bcrypt.BCrypt
 import com.github.t3hnar.bcrypt.Password
 import db.QueryBasics._
+import db.QueryLibrary._
 import play.api.Logger.info
 import play.api.Logger.warn
 import play.api.db.slick.Config.driver.simple._
 import models.ext._
-import java.sql._
+import java.sql.SQLException
+import models.Customer
+import models.User
 
 object QueryMethods {
   val defaultPassword = "password".bcrypt(BCrypt.gensalt())
@@ -98,6 +101,13 @@ object QueryMethods {
         warn(s"Error while cancelling flight $hotel and booking $booking")
         false
     }
+  }
+
+  def userCustomer(email: String)(implicit session: Session):Tuple2[User,Customer] = qUserWithCustomer.where(_._1.email === email).list.head
+  
+  def checkLogin(email:String,password:String)(implicit session: Session):Option[User] ={
+    // TODO hash
+    qUser.list.find(e => e.email == email && e.passwordHash == password)
   }
 
 }

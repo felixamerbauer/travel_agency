@@ -2,7 +2,7 @@ import play.api.db.slick.Config.driver.simple._
 import db.QueryLibrary._
 import play.api.test._
 import play.api.test.Helpers._
-import Misc.db
+import Misc.mydb
 import models.TUser
 import models.TCustomer
 import models.TProduct
@@ -19,7 +19,7 @@ object PrintDDL extends App {
 
   running(FakeApplication()) {
 
-    db.withSession {
+    mydb.withSession {
       def print(it: Iterator[String]) = println(it.mkString("", ";\n", ";"))
       print(TUser.ddl.createStatements)
       print(TCustomer.ddl.createStatements)

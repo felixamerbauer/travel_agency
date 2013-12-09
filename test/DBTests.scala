@@ -4,7 +4,7 @@ import org.scalatest.Finders
 import org.scalatest.FunSuite
 import db.QueryBasics._
 import db.Currency
-import Misc.db
+import Misc.mydb
 import models.TUser
 import models._
 import play.api.db.slick.Config.driver.simple.Database.threadLocalSession
@@ -24,14 +24,14 @@ import scala.util.Random._
 import org.joda.time.DateMidnight
 
 class DBTests extends FunSuite with BeforeAndAfter {
-  def randomDescription = (1 to 100).map(_ => alphanumeric.take(nextInt(10) + 2).mkString).mkString(" ")
+  def randomDescription = (1 to 10).map(_ => alphanumeric.take(nextInt(10) + 2).mkString).mkString(" ")
 
   test("read write to all tables") {
     running(FakeApplication()) {
       // initialize random seed so we get consitent results
       setSeed(1234)
 
-      db.withSession {
+      mydb.withSession {
         // TODO empty tables
         val tables = Seq(qOrder,
           qAirline,
@@ -51,7 +51,7 @@ class DBTests extends FunSuite with BeforeAndAfter {
           qExtHotelLastModified)
         tables foreach (_.delete)
         // user
-        val users = (1 to 5 map (e => User(email = s"user$e@example.org", passwordHash = "passwordhash"))).toSeq
+        val users = (1 to 5 map (e => User(email = s"user$e@example.org", passwordHash = "pwd"))).toSeq
         println("Inserting\n\t" + users.mkString("\n\t"))
         users foreach TUser.autoInc.insert
         val usersDb = qUser.to[Seq]
@@ -102,20 +102,20 @@ class DBTests extends FunSuite with BeforeAndAfter {
         val productsDb = qProduct.to[Seq]
         assert(products === productsDb.map(_.copy(id = -1)))
         // order
-//        val orders = for {
-//          customer <- customersDb.take(3)
-//          product <- productsDb
-//        } yield {
-//          Order(customerId = customer.id, productId = product.id, hotelName = "hotelName",
-//            hotelAddress = "hotelAddress", personCount = 10, roomOrderId = "1",
-//            toFlight = "OS 123", fromFlight = "OS 321", startDate = new DateMidnight(2014, 2, 3),
-//            endDate = new DateMidnight(2014, 2, 16), price = 149999, currency = "EUR")
-//
-//        }
-//        println("Inserting\n\t" + orders.mkString("\n\t"))
-//        orders foreach TOrder.autoInc.insert
-//        val ordersDb = qOrder.to[Seq]
-//        assert(orders === ordersDb.map(_.copy(id = -1)))
+        //        val orders = for {
+        //          customer <- customersDb.take(3)
+        //          product <- productsDb
+        //        } yield {
+        //          Order(customerId = customer.id, productId = product.id, hotelName = "hotelName",
+        //            hotelAddress = "hotelAddress", personCount = 10, roomOrderId = "1",
+        //            toFlight = "OS 123", fromFlight = "OS 321", startDate = new DateMidnight(2014, 2, 3),
+        //            endDate = new DateMidnight(2014, 2, 16), price = 149999, currency = "EUR")
+        //
+        //        }
+        //        println("Inserting\n\t" + orders.mkString("\n\t"))
+        //        orders foreach TOrder.autoInc.insert
+        //        val ordersDb = qOrder.to[Seq]
+        //        assert(orders === ordersDb.map(_.copy(id = -1)))
         // airline
         val airlines = Seq("A", "B", "C").map(e => Airline(name = s"Airline$e", apiUrl = s"$e"))
         println("Inserting\n\t" + airlines.mkString("\n\t"))
@@ -143,6 +143,8 @@ class DBTests extends FunSuite with BeforeAndAfter {
         println("Inserting\n\t" + extHotel.mkString("\n\t"))
         extHotel foreach TExtHotel.autoInc.insert
         val extHotelDb = qExtHotel.to[Seq]
+        println("Read\n\t" + extHotelDb.map(_.copy(id = -1)).mkString("\n\t"))
+        println("result: " + (extHotel === extHotelDb.map(_.copy(id = -1))))
         assert(extHotel === extHotelDb.map(_.copy(id = -1)))
         // extFlight - outward
         val extFlightsOutward = for {

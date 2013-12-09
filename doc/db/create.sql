@@ -57,19 +57,22 @@ CREATE TABLE products (
 );
 
 CREATE TABLE orders (
-  id           SERIAL PRIMARY KEY,
-  customerId   INTEGER REFERENCES customers NOT NULL,
-  productId    INTEGER REFERENCES products NOT NULL,
-  hotelName    TEXT NOT NULL,
-  hotelAddress TEXT NOT NULL,
-  personCount  INTEGER NOT NULL CHECK (personCount >= 0),
-  roomOrderId  TEXT NOT NULL,
-  toFlight     TEXT NOT NULL,
-  fromFlight   TEXT NOT NULL,
-  startDate    TIMESTAMP NOT NULL,
-  endDate      TIMESTAMP NOT NULL,
-  price        INTEGER NOT NULL CHECK (price >= 0),
-  currency     CHAR(3) NOT NULL
+  id                   SERIAL PRIMARY KEY,
+  customerId           INTEGER REFERENCES customers NOT NULL,
+  fromLocation         TEXT NOT NULL,
+  toLocation           TEXT NOT NULL,
+  hotelName	           TEXT NOT NULL,
+  hotelId	           INTEGER NOT NULL,
+  outwardFlightAirline TEXT NOT NULL,
+  outwardFlightId      INTEGER NOT NULL,
+  inwardFlightAirline  TEXT NOT NULL,
+  inwardFlightId       INTEGER NOT NULL,
+  adults               INTEGER NOT NULL CHECK (adults >= 0),
+  children             INTEGER NOT NULL CHECK (children >= 0),
+  startDate            TIMESTAMP NOT NULL,
+  endDate              TIMESTAMP NOT NULL,
+  price                INTEGER NOT NULL CHECK (price >= 0),
+  currency             CHAR(3) NOT NULL
 );
 
 CREATE TABLE airlines (

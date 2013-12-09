@@ -2,12 +2,13 @@ import scala.concurrent.ExecutionContext
 
 import org.joda.time.DateMidnight
 import org.scalatest.BeforeAndAfter
-import org.scalatest.Finders
 import org.scalatest.FunSuite
 
-import Misc.db
+import Misc.mydb
 import controllers.Client
+import db.QueryBasics.qCustomer
 import play.api.db.slick.Config.driver.simple.Database.threadLocalSession
+import play.api.db.slick.Config.driver.simple.queryToQueryInvoker
 import play.api.test.FakeApplication
 import play.api.test.Helpers.running
 
@@ -22,7 +23,7 @@ class WorkflowTests extends FunSuite with BeforeAndAfter {
   test("complete workflow") {
     running(FakeApplication()) {
 
-      db.withSession {
+      mydb.withSession {
         val directions = Client.fetchDirections
         println(s"directions\n\t${directions.mkString("\n\t")}")
         // choose first
@@ -34,8 +35,8 @@ class WorkflowTests extends FunSuite with BeforeAndAfter {
         // choose cheapest
         val chosenJourney = journeys.minBy(_.price)
         println(s"chosen journey ${chosenJourney.pretty}")
-
-        Client.book(chosenJourney)
+        val customer = qCustomer.list.head
+        Client.book(chosenJourney, customer)
       }
     }
   }

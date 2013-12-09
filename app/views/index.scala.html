@@ -1,11 +1,12 @@
 @(loginForm: Form[views.formdata.LoginFormData], 
-  authenticated:Option[String])
+  authenticated:Option[String])(implicit lang: Lang)
+
 @main(title = "Search",authenticated, loginForm) { 
 
 <!-- Main jumbotron for a primary marketing message or call to action -->
 <div class="jumbotron">
 	<div class="container">
-		<h1>Weihnachtsaktion!</h1>
+		<h1>@Messages("index.header")</h1>
 		<p>Wollen Sie Weihnachten lieber bei Sonne, Strand und Meer feiern? Mit unseren Weihnachtsangeboten fliegen Sie besonders günstig nach Gran Canaria, Lanzarote oder Teneriffa.</p>
 		<p><a class="btn btn-primary btn-lg" role="button" href="@routes.Application.search">Angebote entdecken! &raquo;</a></p>
   	</div>

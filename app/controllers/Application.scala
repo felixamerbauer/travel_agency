@@ -1,31 +1,37 @@
 package controllers
 
-import play.api.Play.current
-import play.api.cache.Cached
-import play.api.mvc.Action
-import play.api.mvc.Controller
-import views.formdata.SearchFormData
-import play.api.data.Form
-import play.api.Logger.info
-import play.api.data._
-import play.api.data.Forms._
-import play.api.mvc.Action
-import play.api.mvc.Controller
-import controllers.Security._
-import play.api.db.slick.DBAction
 import scala.collection.immutable.TreeMap
-import views.formdata.Commons._
-import views.formdata.RegistrationFormData
+import controllers.Security.authenticated
+import controllers.Security.loginForm
 import models.Customer
-import models.User
-import models.TUser
-import play.api.db.slick.Config.driver.simple._
 import models.TCustomer
-import play.api.mvc.SimpleResult
+import models.TUser
+import models.User
+import play.api.Logger.info
+import play.api.Play.current
+import play.api.data.Form
+import play.api.data.Forms.mapping
+import play.api.data.Forms.nonEmptyText
+import play.api.db.slick.Config.driver.simple.columnBaseToInsertInvoker
+import play.api.db.slick.DBAction
+import play.api.i18n.Lang
+import play.api.i18n.Messages
+import play.api.mvc.Action
+import play.api.mvc.Controller
+import views.formdata.Commons.creditCardCompaniesFirstSelected
+import views.formdata.Commons.dateFormat
+import views.formdata.Commons.sexesFirstSelected
+import views.formdata.Commons.sexesFormStringType
+import views.formdata.RegistrationFormData
+import views.formdata.SearchFormData
+import sun.org.mozilla.javascript.internal.SecurityController
 
 object Application extends Controller {
 
   def index = Action { implicit request =>
+    request.acceptLanguages
+    println("Locale " + request.acceptLanguages)
+    println("msg " + Messages("index.header"))
     Ok(views.html.index(loginForm, authenticated))
   }
 
@@ -131,10 +137,12 @@ object Application extends Controller {
 
   def list(from: String, location: String, start: String, end: String, adults: Int, children: Int) = DBAction { implicit rs =>
     implicit val dbSession = rs.dbSession
+    val customer = Security.curCustomer
+    info(s"list $customer")
     val startDate = dateFormat.parseDateTime(start).toDateMidnight()
     val endDate = dateFormat.parseDateTime(end).toDateMidnight()
     val journeys = Client.checkAvailability(from, location, startDate, endDate, adults, children)
-    Ok(views.html.list(loginForm, journeys, authenticated)).withSession()
+    Ok(views.html.list(loginForm, journeys, authenticated))
   }
 
   def booking(from: String, to: String, startDate: String, endDate: String, flightOutwardUrl: String, flightOutwardAirline: String, flightOutwardId: Int, flightInwardUrl: String, flightInwardAirline: String, flightInwardId: Int, hotelUrl: String, hotelName: String, hotelId: Int, adults: Int, children: Int, price: Int) = DBAction { implicit rs =>
@@ -142,7 +150,8 @@ object Application extends Controller {
     implicit val dbSession = rs.dbSession
     val startDateDM = dateFormat.parseDateTime(startDate).toDateMidnight()
     val endDateDM = dateFormat.parseDateTime(endDate).toDateMidnight()
-    Client.book(from, to, startDateDM, endDateDM, flightOutwardUrl, flightOutwardAirline, flightOutwardId, flightInwardUrl, flightInwardAirline, flightInwardId, hotelUrl, hotelName, hotelId, adults, children, price)
+    val customer = Security.curCustomer
+    Client.book(from, to, startDateDM, endDateDM, flightOutwardUrl, flightOutwardAirline, flightOutwardId, flightInwardUrl, flightInwardAirline, flightInwardId, hotelUrl, hotelName, hotelId, adults, children, price, customer)
     Ok(views.html.booking(loginForm, authenticated))
   }
 
@@ -151,5 +160,23 @@ object Application extends Controller {
   }
 
   def http404(any: String) = Action { NotFound }
+
+  case class MyLocale(locale: String)
+  val localeForm = Form(
+    mapping("locale" -> nonEmptyText)(MyLocale.apply)(MyLocale.unapply))
+
+  val changeLocale = Action { implicit request =>
+    val referrer = request.headers.get(REFERER).getOrElse("/")
+    val filledForm = localeForm.bindFromRequest
+    filledForm.fold(
+      errors => {
+        info("The locale can not be change to : " + errors.get)
+        BadRequest(referrer)
+      },
+      locale => {
+        info("Change user lang to : " + locale)
+        Redirect(referrer).withLang(Lang(locale.locale)) // TODO Check if the lang is handled by the application
+      })
+  }
 
 }
