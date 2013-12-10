@@ -45,7 +45,7 @@ object HotelsCtrl extends Controller with CtrlHelper {
     Ok(toJson(data))
   }
 
-  def list(apiUrl: String, location: Option[String], start: Option[String], end: Option[String]) = DBAction { implicit rs =>
+  def list(apiUrl: String, location: Option[String], start: Option[String], end: Option[String], category:Option[Int]) = DBAction { implicit rs =>
     info(s"list apiUrl=$apiUrl, location=$location start=$start end=$end")
     implicit val dbSession = rs.dbSession
     // check if start and end are valid dates
@@ -58,7 +58,8 @@ object HotelsCtrl extends Controller with CtrlHelper {
         Some(room.apiUrl === apiUrl),
         startDate map (room.startDate >= _),
         endDate map (room.endDate <= _),
-        location map (locationDb.iataCode === _)).flatten
+        location map (locationDb.iataCode === _),
+        category map (room.category >= _)).flatten
       conditions.reduce(_ && _)
     }
 

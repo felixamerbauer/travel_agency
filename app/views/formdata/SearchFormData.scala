@@ -12,8 +12,8 @@ case class SearchFormData(
   to: String = "",
   start: String = dateFormat.print(new LocalDate(2014, 2, 3)),
   end: String = dateFormat.print(new LocalDate(2014, 2, 10)),
-  adults: String = "",
-  children: String = "",
+  adults: Int = 2,
+  children: Int = 0,
   category: String = "") {
 }
 

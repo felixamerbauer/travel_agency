@@ -92,8 +92,8 @@ object Client {
   }
 
   // TODO duration min/max would be nice
-  def checkAvailability(from: String, location: String, start: DateMidnight, end: DateMidnight, adults: Int, children: Int)(implicit session: Session): Seq[Journey] = {
-    info(s"checkAvailability from=$from location=$location start=$start end=$end adults=$adults children=$children")
+  def checkAvailability(from: String, location: String, start: DateMidnight, end: DateMidnight, adults: Int, children: Int,category:Int)(implicit session: Session): Seq[Journey] = {
+    info(s"checkAvailability from=$from location=$location start=$start end=$end adults=$adults children=$children category=$category")
     val (airlineApiUrls, hotelgroupApiUrls) = fetchApiUrls
     // Outward Flight
     val outwardFlights = (for (airlineApiUrl <- airlineApiUrls) yield {
@@ -127,7 +127,8 @@ object Client {
       val queryParams = Seq(
         ("location", location),
         ("start", JsonHelper.isoDtf.print(start)),
-        ("end", JsonHelper.isoDtf.print(end)))
+        ("end", JsonHelper.isoDtf.print(end)),
+        ("category",category.toString))
       val result = get(url, queryParams)
       Json.fromJson[Seq[HotelJson]](result.json).get
     }).flatten

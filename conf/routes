@@ -21,7 +21,7 @@ DELETE   /airline/:apiUrl/flights/cancel/:bookingId     controllers.ext.FlightsC
 
 GET      /hotelgroup/:apiUrl/locations                  controllers.ext.HotelsCtrl.locations(apiUrl:String)
 
-GET      /hotelgroup/:apiUrl/hotels                     controllers.ext.HotelsCtrl.list(apiUrl:String, location:Option[String] ?= None, start:Option[String] ?= None, end:Option[String] ?= None)
+GET      /hotelgroup/:apiUrl/hotels                     controllers.ext.HotelsCtrl.list(apiUrl:String, location:Option[String] ?= None, start:Option[String] ?= None, end:Option[String] ?= None, category:Option[Int] ?= None)
 
 GET      /hotelgroup/:apiUrl/hotels/:id                 controllers.ext.HotelsCtrl.find(apiUrl:String, id: Int)
 
@@ -48,11 +48,11 @@ GET      /travel/registration                           controllers.Application.
 
 POST     /travel/registration                           controllers.Application.registrationPost
 
-GET      /travel/list                                   controllers.Application.list(from:String, location:String, start:String, end:String, adults:Int,children:Int)
+GET      /travel/list                                   controllers.Application.list(from:String, location:String, start:String, end:String, adults:Int,children:Int,category:Int)
 
-POST     /travel/booking                                controllers.Application.booking(from:String, to:String, startDate:String, endDate:String, flightOutwardUrl: String, flightOutwardAirline: String, flightOutwardId: Int, flightInwardUrl: String, flightInwardAirline: String, flightInwardId: Int, hotelUrl: String, hotelName: String, hotelId: Int, adults: Int, children: Int, price: Int)
+POST     /travel/booking                                controllers.Application.booking(journeyHash:Int)
 
-GET      /travel/bookingconfirmation                    controllers.Application.bookingConfirmation
+#GET      /travel/bookingconfirmation                    controllers.Application.bookingConfirmation
 
 # Admin
 GET      /admin/airlines                                controllers.Admin.airlines

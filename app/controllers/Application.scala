@@ -1,6 +1,7 @@
 package controllers
 
 import scala.collection.immutable.TreeMap
+import scala.collection.mutable.{ LinkedHashMap, SynchronizedMap }
 import controllers.Security.authenticated
 import controllers.Security.loginForm
 import models.Customer
@@ -10,7 +11,7 @@ import models.User
 import play.api.Logger.info
 import play.api.Play.current
 import play.api.data.Form
-import play.api.data.Forms.mapping
+import play.api.data.Forms._
 import play.api.data.Forms.nonEmptyText
 import play.api.db.slick.Config.driver.simple.columnBaseToInsertInvoker
 import play.api.db.slick.DBAction
@@ -25,8 +26,27 @@ import views.formdata.Commons.sexesFormStringType
 import views.formdata.RegistrationFormData
 import views.formdata.SearchFormData
 import sun.org.mozilla.javascript.internal.SecurityController
+import scala.collection.mutable.SynchronizedMap
+import scala.collection.mutable.LinkedHashMap
 
 object Application extends Controller {
+
+  private object BookingCache {
+    private val cache = new LinkedHashMap[Int, Journey]() with SynchronizedMap[Int, Journey]
+    private val max = 100
+
+    def put(journeys: Seq[Journey]) {
+      info(s"putting ${journeys.size} in booking cache")
+      cache ++= journeys map (e => e.hashCode -> e)
+      val size = cache.size
+      if (size > max) {
+        val dropping = size - max
+        info(s"Dropping first $dropping of booking cache")
+        cache --= cache.keys.take(dropping)
+      }
+    }
+    def has(journeyHash: Int): Option[Journey] = cache.get(journeyHash)
+  }
 
   def index = Action { implicit request =>
     request.acceptLanguages
@@ -41,8 +61,8 @@ object Application extends Controller {
       "to" -> nonEmptyText,
       "start" -> nonEmptyText,
       "end" -> nonEmptyText,
-      "adults" -> nonEmptyText,
-      "children" -> nonEmptyText,
+      "adults" -> number(min = 1, max = 5),
+      "children" -> number(min = 0, max = 5),
       "category" -> nonEmptyText)(SearchFormData.apply)(SearchFormData.unapply).
       verifying(SearchFormData.constraints))
   val defaultSearchForm = searchForm.fill(SearchFormData())
@@ -89,7 +109,11 @@ object Application extends Controller {
       },
       formData => {
         info(s"form is ok $formData")
-        Redirect(routes.Application.list(formData.from, formData.to, formData.start, formData.end, formData.adults.toInt, formData.children.toInt))
+        // "3+" -> 3 
+        val category = formData.category.take(1).toInt
+        info("category " + formData.category + "/" + category)
+
+        Redirect(routes.Application.list(formData.from, formData.to, formData.start, formData.end, formData.adults, formData.children, category))
       })
   }
 
@@ -135,29 +159,31 @@ object Application extends Controller {
     Redirect(routes.Application.index)
   }
 
-  def list(from: String, location: String, start: String, end: String, adults: Int, children: Int) = DBAction { implicit rs =>
+  def list(from: String, location: String, start: String, end: String, adults: Int, children: Int, category: Int) = DBAction { implicit rs =>
     implicit val dbSession = rs.dbSession
     val customer = Security.curCustomer
     info(s"list $customer")
     val startDate = dateFormat.parseDateTime(start).toDateMidnight()
     val endDate = dateFormat.parseDateTime(end).toDateMidnight()
-    val journeys = Client.checkAvailability(from, location, startDate, endDate, adults, children)
-    Ok(views.html.list(loginForm, journeys, authenticated))
+    val journeys = Client.checkAvailability(from, location, startDate, endDate, adults, children, category)
+    BookingCache.put(journeys)
+    // group journey by hotel
+    Ok(views.html.list(loginForm, journeys.groupBy(_.hotel), authenticated))
   }
 
-  def booking(from: String, to: String, startDate: String, endDate: String, flightOutwardUrl: String, flightOutwardAirline: String, flightOutwardId: Int, flightInwardUrl: String, flightInwardAirline: String, flightInwardId: Int, hotelUrl: String, hotelName: String, hotelId: Int, adults: Int, children: Int, price: Int) = DBAction { implicit rs =>
-    info(s"booking $flightOutwardUrl / $flightOutwardAirline / $flightOutwardId / $flightInwardUrl / $flightInwardAirline / $flightInwardId / $hotelUrl / $hotelName / $hotelId / $adults / $children / $price")
+  def booking(journeyHash: Int) = DBAction { implicit rs =>
+    info(s"booking $journeyHash")
     implicit val dbSession = rs.dbSession
-    val startDateDM = dateFormat.parseDateTime(startDate).toDateMidnight()
-    val endDateDM = dateFormat.parseDateTime(endDate).toDateMidnight()
     val customer = Security.curCustomer
-    Client.book(from, to, startDateDM, endDateDM, flightOutwardUrl, flightOutwardAirline, flightOutwardId, flightInwardUrl, flightInwardAirline, flightInwardId, hotelUrl, hotelName, hotelId, adults, children, price, customer)
-    Ok(views.html.booking(loginForm, authenticated))
+    // TODO
+    val journey = BookingCache.has(journeyHash).get
+    Client.book(journey, customer)
+    Ok(views.html.booking(loginForm, authenticated, journey, customer))
   }
 
-  def bookingConfirmation = Action { implicit request =>
-    Ok(views.html.bookingconfirmation(loginForm, authenticated))
-  }
+  //  def bookingConfirmation = Action { implicit request =>
+  //    Ok(views.html.bookingconfirmation(loginForm, authenticated))
+  //  }
 
   def http404(any: String) = Action { NotFound }
 

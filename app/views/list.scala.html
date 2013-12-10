@@ -1,26 +1,44 @@
-@(loginForm: Form[views.formdata.LoginFormData], journeys:Seq[controllers.Journey], authenticated:Option[String])
+@(loginForm: Form[views.formdata.LoginFormData], hotelJourneys:Map[json.HotelJson,Seq[controllers.Journey]], authenticated:Option[String])
 @import views.formdata.Commons._
 @main(title = "List", authenticated, loginForm) {
 <div class="container">
-@if(journeys.isEmpty) {
+@if(hotelJourneys.isEmpty) {
 	<div class="alert alert-warning">Leider konnten keine Angebote für ihre Suchkriterien gefunden werden.</div>
 	<a class="btn btn-primary btn-lg" role="button" href="javascript:history.back()">Suchkriterien überarbeiten &raquo;</a>	
 } else {	 
 	<form method="post">
-	@for(journey <- journeys) {
+	@for((hotel,journeys) <- hotelJourneys) {
+		
 		<div class="row hotelentry">
 			<div class="col-md-4">
 				<img src="/assets/images/hotel1.jpg">
         	</div>
         <div class="col-md-8 hoteldesc">
-          	<h2>@journey.hotel.name (@journey.hotel.location)</h2>
-          	<p>@for(i <- 1 to journey.hotel.category) { <span class="glyphicon glyphicon-star"></span>}</p>
-          	<p>@journey.price Euro</p>
-          	<p>@uiDateTimeFormat.print(journey.outward.dateTime) (@journey.outward.airline) - @uiDateTimeFormat.print(journey.inward.dateTime)  (@journey.inward.airline)</p>
-          	<p>@journey.hotel.description</p>
-          	<p>
-				<button type="submit" formaction="@routes.Application.booking(journey.from, journey.to, dateFormat.print(journey.startDate), dateFormat.print(journey.endDate), journey.outward.links.head.href, journey.outward.airline, journey.outward.id, journey.inward.links.head.href, journey.inward.airline, journey.inward.id, journey.hotel.links.head.href, journey.hotel.name, journey.hotel.id, journey.adults, journey.children, journey.price)" class="btn btn-default">Buchen &raquo;</button>
-          	</p>
+          	<p>@for(i <- 1 to hotel.category) { <span class="glyphicon glyphicon-star"></span>}</p>
+          	<h3>@hotel.name (@hotel.location)</h3>
+          	<div class="well">@hotel.description</div>
+       		<table>
+       			<thead>
+        			<tr>
+	         			<th colspan="2">Hinflug</th>
+	         			<th colspan="2">Rückflug</th>
+	         			<th>Preis</th>
+	         			<th></th>
+        			</tr>
+       			</thead>
+       			<tbody>
+	          	@for(journey <- journeys.sortBy(_.price)) {
+	          		<tr>
+			          	<td>@uiDateTimeFormat.print(journey.outward.dateTime)</td>
+			          	<td>@journey.outward.airline</td>
+			          	<td>@uiDateTimeFormat.print(journey.inward.dateTime)</td>
+			          	<td>@journey.inward.airline</td>
+			          	<td>@journey.price €</td>
+						<td><button type="submit" formaction="@routes.Application.booking(journey.hashCode)" class="btn btn-default">Buchen &raquo;</button></td>
+		          	<tr>
+	          	}
+       			</tbody>
+       		</table>
         	</div>
        	</div>
 	}
