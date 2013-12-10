@@ -27,8 +27,8 @@
 			<tr>
 				<td>@hotel._1.hotelName</td>
 				<td>@(hotel._2.fullName) (@hotel._2.iataCode)</td>
-				<td>@uiDateFormat.print(hotel._1.startDate)</td>
-				<td>@uiDateFormat.print(hotel._1.endDate)</td>
+				<td>@uiDF.print(hotel._1.startDate)</td>
+				<td>@uiDF.print(hotel._1.endDate)</td>
 				<td>@hotel._1.availableRooms</td>
 				<td>@hotel._1.price @hotel._1.currency</td>
 				<td>@convert(hotel._1.price, hotel._1.currency, Euro) Euro</td>

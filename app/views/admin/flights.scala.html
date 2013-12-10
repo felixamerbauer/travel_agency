@@ -28,7 +28,7 @@
 				<td>@flight._1.airlineName</td>
 				<td>@(flight._2.fullName) (@flight._2.iataCode)</td>
 				<td>@(flight._3.fullName) (@flight._3.iataCode)</td>
-				<td>@uiDateTimeFormat.print(flight._1.dateTime)</td>
+				<td>@uiDTF.print(flight._1.dateTime)</td>
 				<td>@flight._1.availableSeats</td>
 				<td>@flight._1.price @flight._1.currency</td>
 				<td>@convert(flight._1.price, flight._1.currency, Euro) Euro</td>

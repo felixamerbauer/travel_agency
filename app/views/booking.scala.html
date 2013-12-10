@@ -1,4 +1,5 @@
 @(loginForm: Form[views.formdata.LoginFormData], authenticated:Option[String], journey:controllers.Journey, customer:Customer)
+@import views.formdata.Commons._
 @main(title = "Booking", authenticated, loginForm) {
 <div class="row">
 	<div class="col-md-4">
@@ -6,8 +7,42 @@
       	</div>
     <div class="col-md-8 hoteldesc">
 	<h2>Wir gratulieren zum baldigen Urlaub!</h2>
-	<p>@journey</p>
-	<p>@customer</p>
+	<div class="well">
+		<h3>Ihre Reise</h3>
+		<h4>Hinflug</h4>
+		Von @journey.outward.from nach @journey.outward.to am @uiDTF.print(journey.outward.dateTime)
+		<h4>Hotel</h4>
+		Hotel @journey.hotel.name in @journey.hotel.location vom @uiDF.print(journey.hotel.startDate) bis zum @uiDF.print(journey.hotel.endDate) 
+		<h4>Rückflug</h4>
+		Von @journey.inward.from nach @journey.outward.to am @uiDTF.print(journey.outward.dateTime)
+	</div>
+	<div class="well">
+		<h3>Buchungsdetails</h3>
+		<table>
+			<tbody>
+				<tr>
+					<td>Person</td>
+					<td>@customer.firstName @customer.lastName</td>
+				</tr>
+				<tr>
+					<td>Erwachsene</td>
+					<td>@journey.adults</td>
+				</tr>
+				<tr>
+					<td>Kinder</td>
+					<td>@journey.children</td>
+				</tr>
+				<tr>
+					<td>Preis</td>
+					<td>@journey.price €</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>	
+	<div class="well">
+		<h3>Wichtige Informations</h3>
+		<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+	</div>
 	<p><a class="btn btn-primary btn-lg" role="button" href="@routes.Application.search">Weitere Angebote entdecken! &raquo;</a></p>
 	</div>
 </div>

@@ -29,9 +29,9 @@
        			<tbody>
 	          	@for(journey <- journeys.sortBy(_.price)) {
 	          		<tr>
-			          	<td>@uiDateTimeFormat.print(journey.outward.dateTime)</td>
+			          	<td>@uiDTF.print(journey.outward.dateTime)</td>
 			          	<td>@journey.outward.airline</td>
-			          	<td>@uiDateTimeFormat.print(journey.inward.dateTime)</td>
+			          	<td>@uiDTF.print(journey.inward.dateTime)</td>
 			          	<td>@journey.inward.airline</td>
 			          	<td>@journey.price €</td>
 						<td><button type="submit" formaction="@routes.Application.booking(journey.hashCode)" class="btn btn-default">Buchen &raquo;</button></td>
