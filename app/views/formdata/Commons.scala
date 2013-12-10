@@ -25,4 +25,15 @@ object Commons {
 
   val locations = Map(Seq("Paris", "New York", "Wien", "Peking", "Sydney", "London").map(_ -> false): _*)
   val locationsFirstSelected = locations + (locations.head._1 -> true)
+
+  val iataFullname = Map(
+    "VIE" -> "Wien",
+    "BER" -> "Berlin",
+    "CDG" -> "Paris",
+    "LHR" -> "Heathrow",
+    "JFK" -> "New York",
+    "PEK" -> "Peking",
+    "SYD" -> "Sydney")
+  val fullNameIata = iataFullname map (_.swap)
+
 }

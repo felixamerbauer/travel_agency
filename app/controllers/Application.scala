@@ -175,10 +175,21 @@ object Application extends Controller {
     info(s"booking $journeyHash")
     implicit val dbSession = rs.dbSession
     val customer = Security.curCustomer
-    // TODO
-    val journey = BookingCache.has(journeyHash).get
-    Client.book(journey, customer)
-    Ok(views.html.booking(loginForm, authenticated, journey, customer))
+    BookingCache.has(journeyHash) match {
+      // journey in cache let's try to book
+      case Some(journey) => Client.book(journey, customer) match {
+        // booking successful
+        case Some(order) =>
+          Ok(views.html.booking(loginForm, authenticated, Some(order), Some(journey), customer))
+        // booking failed
+        case None =>
+          Ok(views.html.booking(loginForm, authenticated, None, Some(journey), customer))
+      }
+      // no journey in cache
+      case None =>
+          Ok(views.html.booking(loginForm, authenticated, None, None, customer))
+
+    }
   }
 
   //  def bookingConfirmation = Action { implicit request =>

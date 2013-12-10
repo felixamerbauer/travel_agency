@@ -15,7 +15,7 @@
         	</div>
         <div class="col-md-8 hoteldesc">
           	<p>@for(i <- 1 to hotel.category) { <span class="glyphicon glyphicon-star"></span>}</p>
-          	<h3>@hotel.name (@hotel.location)</h3>
+          	<h3>@hotel.name (@iataFullname(hotel.location))</h3>
           	<div class="well">@hotel.description</div>
        		<table>
        			<thead>

@@ -106,7 +106,7 @@ object HotelsCtrl extends Controller with CtrlHelper {
     qHotel(apiUrl, id).to[Vector] match {
       // good case: single result
       case Vector(hotel) =>
-        info(s"Flight for apiUrl $apiUrl and id $id found $hotel")
+        info(s"Hotel for apiUrl $apiUrl and id $id found $hotel")
         if (hotel.availableRooms >= bookingDetails.rooms) {
           bookHotelRooms(hotel.id, bookingDetails.rooms) match {
             case Some(bookingId) =>

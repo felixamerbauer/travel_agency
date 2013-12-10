@@ -64,7 +64,7 @@ object FlightsCtrl extends Controller with CtrlHelper {
     }
 
     // build the complete query including dynamic parts
-    val query = for { (flight, from, to) <- qFlightsWithLocation if (flightConditions(flight, to, from)) } yield (flight, from, to)
+    val query = for { (flight, to, from) <- qFlightsWithLocation if (flightConditions(flight, to, from)) } yield (flight, from, to)
     //    info("query\n" + query.selectStatement)
 
     // perform the query

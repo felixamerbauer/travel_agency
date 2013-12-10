@@ -76,7 +76,7 @@ object QueryMethods {
           // 2) store booking
           val hotelBooking = ExtHotelBooking(extHotelId = id, rooms = requiredRooms)
           val hotelBookingId = TExtHotelBooking.autoInc.insert(hotelBooking)
-          info("Inserted flight booking " + hotelBooking.copy(id = hotelBookingId))
+          info("Inserted hotel booking " + hotelBooking.copy(id = hotelBookingId))
           Some(hotelBookingId)
         } else {
           warn(s"Sorry not enough rooms ${hotel.availableRooms} < requiredRooms for hotel $hotel")
