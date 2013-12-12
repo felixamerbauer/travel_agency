@@ -1,0 +1,8 @@
+Start with http disabled, https enabled
+run -Dhttp.port=disabled -Dhttps.port=443 -Dhttps.keyStore=keystore.jks -Dhttps.keyStorePassword=password
+
+
+keytool -genkey -alias MyKey -keyalg RSA -keysize 2048 -keystore keystore.jks
+run -Dhttp.port=disabled -Dhttps.port=443 -Dhttps.keyStore=keystore.jks -Dhttps.keyStorePassword=password
+
+CN=travel_agency, OU=Workflow Systems and Technology, O=University of Vienna, L=Vienna, ST=Austria, C=AT

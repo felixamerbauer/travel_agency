@@ -19,6 +19,62 @@ body {
   text-shadow: 3px 3px 20px #000;
 }
 
+.jumbotron_original {
+  padding: 40px;
+  margin-bottom: 30px;
+  font-size: 21px;
+  font-weight: 200;
+  line-height: 2.1428571435;
+  color: inherit;
+  background-color: #eeeeee;
+  
+-webkit-box-shadow: 0 5px 5px rgba(0,0,0, 0.7);
+  -moz-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.7);
+}
+
+.jumbotron_original_rotate_left {
+  padding: 40px;
+  margin-bottom: 30px;
+  font-size: 21px;
+  font-weight: 200;
+  line-height: 2.1428571435;
+  color: inherit;
+  background-color: #eeeeee;
+  
+-webkit-box-shadow: 0 5px 5px rgba(0,0,0, 0.7);
+  -moz-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.7);
+  -webkit-transform: rotate(-3deg);
+  -moz-transform: rotate(-3deg);
+  -o-transform: rotate(-3deg);
+}
+
+.jumbotron_original_rotate_right {
+  padding: 40px;
+  margin-bottom: 30px;
+  font-size: 21px;
+  font-weight: 200;
+  line-height: 2.1428571435;
+  color: inherit;
+  background-color: #eeeeee;
+  
+-webkit-box-shadow: 0 5px 5px rgba(0,0,0, 0.7);
+  -moz-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.7);
+  -webkit-transform: rotate(3deg);
+  -moz-transform: rotate(3deg);
+  -o-transform: rotate(3deg);
+}
+
+
+.textShadowSingle {
+  font-size: 3.2em;
+  color: #F5F5F5;
+  text-shadow: 1px 1px 3px #111;
+  text-align: left;
+}
+
 .jumbotron .btn {
   text-shadow: none;
 }

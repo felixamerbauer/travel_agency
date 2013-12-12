@@ -8,30 +8,37 @@
 @import helper.form 
 @import bootstrap3._
 
-@main(title = "Registration", authenticated, loginForm) { 
+@main(title = "Registration", authenticated, loginForm) {
 <div class="container">
-	<div class="col-md-4">
-		@form(routes.Application.registrationPost, 'class -> "form-horizontal") {
-			@text(customerForm("firstName"), label = "Vorname")
-			@text(customerForm("lastName"), label = "Nachname")
-			@text(customerForm("email"), label = "E-Mail")
-			@password(customerForm("password"), label = "Passwort")
-			@date(customerForm("birthDate"), label = "Geburtsdatum")
-			@select(customerForm("sex"), label = "Geschlecht", sexes, false)
-			@text(customerForm("street"), label = "Straße")
-			@text(customerForm("zipCode"),	label = "Postleitzahl")
-			@text(customerForm("city"),	label = "Stadt")
-			@text(customerForm("country"), label = "Land")
-			@text(customerForm("phoneNumber"), label = "Telefonnummer")
-			@select(customerForm("creditCardCompany"), label = "Kreditkartenanbieter", creditCardCompanies, false)
-			@text(customerForm("creditCardNumber"),	label = "Kreditkartennummer")
-			@date(customerForm("creditCardExpireDate"),	label = "Kreditkartenablaufdatum")
-			@text(customerForm("creditCardVerificationCode"),	label = "Kreditkartensicherheitscode")
-			<div class="form-group">
-		    	<button type="submit" class="btn btn-success">Registrieren</button>
-		    	<a class="btn btn-info" href="@routes.Application.index()">Abbrechen</a>
-		  	</div>
-		}
+	<div class="textShadowSingle">
+				<h2><font color="green">Registrieren</font></h2>
+	</div>
+</div>
+<div class="container">
+	<div class="jumbotron_original_rotate_left">
+		<div class="jumbotron_original_rotate_right">
+			@form(routes.Application.registrationPost, 'class -> "form-horizontal") {
+				@text(customerForm("firstName"), label = "Vorname*")
+				@text(customerForm("lastName"), label = "Nachname*")
+				@text(customerForm("email"), label = "E-Mail*")
+				@password(customerForm("password"), label = "Passwort*")
+				@date(customerForm("birthDate"), label = "Geburtsdatum*")
+				@select(customerForm("sex"), label = "Geschlecht*", sexes, false)
+				@text(customerForm("street"), label = "Straße*")
+				@text(customerForm("zipCode"),	label = "Postleitzahl*")
+				@text(customerForm("city"),	label = "Stadt*")
+				@text(customerForm("country"), label = "Land*")
+				@text(customerForm("phoneNumber"), label = "Telefonnummer*")
+				@select(customerForm("creditCardCompany"), label = "Kreditkartenanbieter*", creditCardCompanies, false)
+				@text(customerForm("creditCardNumber"),	label = "Kreditkartennummer*")
+				@date(customerForm("creditCardExpireDate"),	label = "Kreditkartenablaufdatum*")
+				@text(customerForm("creditCardVerificationCode"),	label = "Kreditkartensicherheitscode*")
+				<div class="form-group">
+		    		<button type="submit" class="btn btn-success">Registrieren</button>
+		    		<a class="btn btn-info" href="@routes.Application.index()">Abbrechen</a>
+		  		</div>
+			}
+		</div>
 	</div>
 </div>
 }
