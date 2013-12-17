@@ -9,7 +9,7 @@
 @import helper.form 
 @import bootstrap3._
 
-@main(title = "Admin-Product", authenticated, loginForm) { 
+@main(title = "Admin-Product", authenticated, Some(loginForm)) { 
 <div class="container">
 	<div class="col-md-4">
 		@for(arg <- productForm.errors.flatMap(_.args)) { <div class="alert alert-danger">@arg</div> }

@@ -1,4 +1,4 @@
-@(title: String, authenticated:Option[String], loginForm: Form[views.formdata.LoginFormData])(content: Html)(implicit lang: Lang)
+@(title: String, authenticated:Option[String], loginForm: Option[Form[views.formdata.LoginFormData]])(content: Html)(implicit lang: Lang)
 @import helper.form
 <!DOCTYPE html>
 <html lang="en">
@@ -33,7 +33,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="@routes.Application.index">&mdash; RV Reisen &mdash;</a>
+          <a class="navbar-brand" href="@routes.Application.index()">&mdash; RV Reisen &mdash;</a>
         </div>
         @if(authenticated.exists(_ == "admin")) {
 		<ul class="nav navbar-nav">
@@ -54,15 +54,17 @@
 	    </ul>
 	    }        
         @if(authenticated.isEmpty) {
-			@form(routes.Security.login(), 'class -> "navbar-form navbar-right") {
-	            <div class="form-group">
-	              <input id="@loginForm("email").id" name="@loginForm("email").name" type="text" placeholder="E-Mail" class="form-control input-sm">
-	            </div>
-	            <div class="form-group">
-	              <input id="@loginForm("password").id" name="@loginForm("password").name" type="password" placeholder="Passwort" class="form-control input-sm">
-	            </div>
-	            <button type="submit" class="btn btn-success btn-sm">Anmelden</button>
-	            <a class="btn btn-warning btn-sm" role="button" href="@routes.Application.registration" >Registrieren</a>
+        	@loginForm.map { loginForm => 
+				@form(routes.Security.login(), 'class -> "navbar-form navbar-right") {
+		            <div class="form-group">
+		              <input id="@loginForm("email").id" name="@loginForm("email").name" type="text" placeholder="E-Mail" class="form-control input-sm">
+		            </div>
+		            <div class="form-group">
+		              <input id="@loginForm("password").id" name="@loginForm("password").name" type="password" placeholder="Passwort" class="form-control input-sm">
+		            </div>
+		            <button type="submit" class="btn btn-success btn-sm">Anmelden</button>
+		            <a class="btn btn-warning btn-sm" role="button" href="@routes.Application.registration" >Registrieren</a>
+		        }
 	        }
         } else {
         	@form(routes.Security.logout(), 'class -> "navbar-form navbar-right") {

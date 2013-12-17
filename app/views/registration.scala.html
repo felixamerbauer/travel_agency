@@ -1,5 +1,4 @@
-@(loginForm: Form[views.formdata.LoginFormData],	
-  authenticated:Option[String],
+@(authenticated:Option[String],
   customerForm:Form[views.formdata.RegistrationFormData],
   sexes:Map[String,Boolean],
   creditCardCompanies:Map[String,Boolean]
@@ -8,7 +7,7 @@
 @import helper.form 
 @import bootstrap3._
 
-@main(title = "Registration", authenticated, loginForm) {
+@main(title = "Registration", authenticated, None) {
 <div class="container">
 	<div class="textShadowSingle">
 				<h2><font color="green">Registrieren</font></h2>

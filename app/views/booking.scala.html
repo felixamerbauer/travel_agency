@@ -1,6 +1,6 @@
 @(loginForm: Form[views.formdata.LoginFormData], authenticated:Option[String], order:Option[models.Order], journey:Option[controllers.Journey], customer:Customer)
 @import views.formdata.Commons._
-@main(title = "Booking", authenticated, loginForm) {
+@main(title = "Booking", authenticated, Some(loginForm)) {
 <div class="container">
 	@if(journey.isEmpty || order.isEmpty) {
 		<div class="alert alert-warning">Leider steht das Angebot nicht mehr zur Verfügung.</div>
@@ -55,7 +55,7 @@
 			<h3>Wichtige Informationen</h3>
 			<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
 		</div>
-		<p><a class="btn btn-primary btn-lg" role="button" href="@routes.Application.search">Weitere Angebote entdecken! &raquo;</a></p>
+		<p><a class="btn btn-primary btn-lg" role="button" href="@routes.Application.search()">Weitere Angebote entdecken! &raquo;</a></p>
 		</div>
 	</div>
 	}

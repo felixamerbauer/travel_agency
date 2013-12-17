@@ -4,7 +4,7 @@
 
 # Two ways to define routes
 #controllers.Assets.at(path="/public", file="index.html")
-GET      /                                              controllers.Application.index
+GET      /                                              controllers.Application.index(loginFailed:Boolean ?= false)
 
 
 # Admin-SignIns
@@ -40,15 +40,17 @@ POST     /hotelgroup/*any                               controllers.Application.
 
 # Travel Booking Workflow
 
-GET      /travel/search                                 controllers.Application.search
+GET      /travel/search                                 controllers.Application.search(loginFailed:Boolean ?= false)
 
 POST     /travel/search                                 controllers.Application.searchPost
+
+GET      /travel/loginRegistration                      controllers.Application.loginRegistration
 
 GET      /travel/registration                           controllers.Application.registration
 
 POST     /travel/registration                           controllers.Application.registrationPost
 
-GET      /travel/list                                   controllers.Application.list(from:String, location:String, start:String, end:String, adults:Int,children:Int,category:Int)
+GET      /travel/list                                   controllers.Application.list(from:String, location:String, start:String, end:String, adults:Int,children:Int,category:Int, loginFailed:Boolean ?= false)
 
 POST     /travel/booking                                controllers.Application.booking(journeyHash:Int)
 
@@ -96,12 +98,6 @@ GET      /admin/hotels                                  controllers.Admin.hotels
 POST     /login                                         controllers.Security.login
 
 POST     /logout                                        controllers.Security.logout
-
-# GET      /isAdmin                                controllers.SecurityController.isAdmin
-
-# POST     /login                                  controllers.SecurityController.login
-
-# POST     /logout                                 controllers.SecurityController.logout
 
 # Map static resources from the /public folder to the /assets URL path
 GET      /assets/*file                                  controllers.Assets.at(path="/public", file)

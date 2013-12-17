@@ -6,7 +6,7 @@
 @import helper.form 
 @import bootstrap3._
 
-@main(title = "Admin-Kunden", authenticated, loginForm) { 
+@main(title = "Admin-Kunden", authenticated, Some(loginForm)) { 
 <div class="container">
 	<form method="post">
 	<table class="table table-striped">

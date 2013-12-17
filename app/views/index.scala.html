@@ -1,14 +1,22 @@
-@(loginForm: Form[views.formdata.LoginFormData], 
-  authenticated:Option[String])(implicit lang: Lang)
+@(loginForm: Form[views.formdata.LoginFormData],
+  authenticated:Option[String],
+  loginFailed:Boolean = false
+  )(implicit lang: Lang)
 
-@main(title = "Search",authenticated, loginForm) { 
+@main(title = "Search",authenticated, Some(loginForm)) { 
+
+@if(loginFailed) {
+<div class="container">
+	<div class="alert alert-warning">Leider konnte ich sie nicht einloggen</div>
+</div>
+}
 
 <!-- Main jumbotron for a primary marketing message or call to action -->
 <div class="jumbotron">
 	<div class="container">
 		<h1>@Messages("index.header")</h1>
 		<p>Wollen Sie Weihnachten lieber bei Sonne, Strand und Meer feiern? Mit unseren Weihnachtsangeboten fliegen Sie besonders günstig nach Gran Canaria, Lanzarote oder Teneriffa.</p>
-		<p><a class="btn btn-primary btn-lg" role="button" href="@routes.Application.search">Angebote entdecken! &raquo;</a></p>
+		<p><a class="btn btn-primary btn-lg" role="button" href="@routes.Application.search()">Angebote entdecken! &raquo;</a></p>
   	</div>
 </div>
 

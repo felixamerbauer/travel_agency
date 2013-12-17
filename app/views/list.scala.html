@@ -1,7 +1,13 @@
-@(loginForm: Form[views.formdata.LoginFormData], hotelJourneys:Map[json.HotelJson,Seq[controllers.Journey]], authenticated:Option[String])
+@(loginForm: Form[views.formdata.LoginFormData], 
+	hotelJourneys:Map[json.HotelJson,Seq[controllers.Journey]], 
+	authenticated:Option[String],
+    loginFailed:Boolean = false)
 @import views.formdata.Commons._
-@main(title = "List", authenticated, loginForm) {
+@main(title = "List", authenticated, Some(loginForm)) {
 <div class="container">
+@if(loginFailed) {
+	<div class="alert alert-warning">Leider konnte ich sie nicht einloggen</div>
+}
 @if(hotelJourneys.isEmpty) {
 	<div class="alert alert-warning">Leider konnten keine Angebote für ihre Suchkriterien gefunden werden.</div>
 	<a class="btn btn-primary btn-lg" role="button" href="javascript:history.back()">Suchkriterien überarbeiten &raquo;</a>	

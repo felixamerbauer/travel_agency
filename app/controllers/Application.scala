@@ -28,6 +28,7 @@ import views.formdata.SearchFormData
 import sun.org.mozilla.javascript.internal.SecurityController
 import scala.collection.mutable.SynchronizedMap
 import scala.collection.mutable.LinkedHashMap
+import views.html.loginRegistration
 
 object Application extends Controller {
 
@@ -48,11 +49,11 @@ object Application extends Controller {
     def has(journeyHash: Int): Option[Journey] = cache.get(journeyHash)
   }
 
-  def index = Action { implicit request =>
+  def index(loginFailed: Boolean = false) = Action { implicit request =>
     request.acceptLanguages
     println("Locale " + request.acceptLanguages)
     println("msg " + Messages("index.header"))
-    Ok(views.html.index(loginForm, authenticated))
+    Ok(views.html.index(loginForm, authenticated, loginFailed))
   }
 
   private val searchForm = Form(
@@ -90,7 +91,7 @@ object Application extends Controller {
   private var from: Map[String, Boolean] = _
   private var to: Map[String, Boolean] = _
 
-  def search = DBAction { implicit rs =>
+  def search(loginFailed: Boolean) = DBAction { implicit rs =>
     implicit val dbSession = rs.dbSession
     val directions = Client.fetchDirections
     from = TreeMap(directions.map(_.from -> false).toSeq: _*)
@@ -118,7 +119,11 @@ object Application extends Controller {
   }
 
   def registration = DBAction { implicit rs =>
-    Ok(views.html.registration(loginForm, authenticated, registrationForm, sexesFirstSelected, creditCardCompaniesFirstSelected))
+    Ok(views.html.registration(authenticated, registrationForm, sexesFirstSelected, creditCardCompaniesFirstSelected))
+  }
+
+  def loginRegistration = DBAction { implicit rs =>
+    Ok(views.html.loginRegistration(authenticated, loginForm, registrationForm, sexesFirstSelected, creditCardCompaniesFirstSelected))
   }
 
   def registrationPost = DBAction { implicit rs =>
@@ -156,13 +161,11 @@ object Application extends Controller {
           TCustomer.forInsert.insert(customer.copy(userId = userId))
         }
       })
-    Redirect(routes.Application.index)
+    Redirect(routes.Application.index())
   }
 
-  def list(from: String, location: String, start: String, end: String, adults: Int, children: Int, category: Int) = DBAction { implicit rs =>
+  def list(from: String, location: String, start: String, end: String, adults: Int, children: Int, category: Int, loginFailed: Boolean) = DBAction { implicit rs =>
     implicit val dbSession = rs.dbSession
-    val customer = Security.curCustomer
-    info(s"list $customer")
     val startDate = dateFormat.parseDateTime(start).toDateMidnight()
     val endDate = dateFormat.parseDateTime(end).toDateMidnight()
     val journeys = Client.checkAvailability(from, location, startDate, endDate, adults, children, category)
@@ -174,21 +177,29 @@ object Application extends Controller {
   def booking(journeyHash: Int) = DBAction { implicit rs =>
     info(s"booking $journeyHash")
     implicit val dbSession = rs.dbSession
-    val customer = Security.curCustomer
-    BookingCache.has(journeyHash) match {
-      // journey in cache let's try to book
-      case Some(journey) => Client.book(journey, customer) match {
-        // booking successful
-        case Some(order) =>
-          Ok(views.html.booking(loginForm, authenticated, Some(order), Some(journey), customer))
-        // booking failed
-        case None =>
-          Ok(views.html.booking(loginForm, authenticated, None, Some(journey), customer))
-      }
-      // no journey in cache
-      case None =>
-          Ok(views.html.booking(loginForm, authenticated, None, None, customer))
+    Security.userCustomer match {
+      case Some(userCustomer) =>
+        val (user, customer) = userCustomer
+        BookingCache.has(journeyHash) match {
+          // journey in cache let's try to book
+          case Some(journey) => Client.book(journey, customer) match {
+            // booking successful
+            case Some(order) =>
+              Ok(views.html.booking(loginForm, authenticated, Some(order), Some(journey), customer))
+            // booking failed
+            case None =>
+              Ok(views.html.booking(loginForm, authenticated, None, Some(journey), customer))
+          }
+          // no journey in cache
+          case None =>
+            Ok(views.html.booking(loginForm, authenticated, None, None, customer))
 
+        }
+      // not logged in
+      case None => {
+        val referer = rs.request.headers("Referer")
+        Redirect(routes.Application.loginRegistration)
+      }
     }
   }
 

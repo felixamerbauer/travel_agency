@@ -8,7 +8,7 @@
 @import views.formdata.Commons._
 @import db.Euro
 
-@main(title = "Admin-Hotels", authenticated, loginForm) { 
+@main(title = "Admin-Hotels", authenticated, Some(loginForm)) { 
 <div class="container">
 	<table class="table table-striped">
   		<thead>
