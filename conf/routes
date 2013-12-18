@@ -4,7 +4,7 @@
 
 # Two ways to define routes
 #controllers.Assets.at(path="/public", file="index.html")
-GET      /                                              controllers.Application.index(loginFailed:Boolean ?= false)
+GET      /                                              controllers.Application.index
 
 
 # Admin-SignIns
@@ -40,17 +40,21 @@ POST     /hotelgroup/*any                               controllers.Application.
 
 # Travel Booking Workflow
 
-GET      /travel/search                                 controllers.Application.search(loginFailed:Boolean ?= false)
+GET      /travel/search                                 controllers.Application.search
 
 POST     /travel/search                                 controllers.Application.searchPost
 
-GET      /travel/loginRegistration                      controllers.Application.loginRegistration
+GET      /travel/loginRegistration                      controllers.Application.loginRegistration(journeyHash:Int)
+
+POST	/travel/loginBooking							controllers.Application.loginBooking(journeyHash:Int)
+
+POST    /travel/registrationBooking						controllers.Application.registrationBooking(journeyHash:Int)
 
 GET      /travel/registration                           controllers.Application.registration
 
 POST     /travel/registration                           controllers.Application.registrationPost
 
-GET      /travel/list                                   controllers.Application.list(from:String, location:String, start:String, end:String, adults:Int,children:Int,category:Int, loginFailed:Boolean ?= false)
+GET      /travel/list                                   controllers.Application.list(from:String, location:String, start:String, end:String, adults:Int,children:Int,category:Int)
 
 POST     /travel/booking                                controllers.Application.booking(journeyHash:Int)
 

@@ -1,0 +1,22 @@
+@(customerForm:Form[views.formdata.RegistrationFormData],
+  sexes:Map[String,Boolean],
+  creditCardCompanies:Map[String,Boolean])
+
+@import bootstrap3._
+
+@text(customerForm("firstName"), label = "Vorname")
+@text(customerForm("lastName"), label = "Nachname")
+@text(customerForm("email"), label = "E-Mail")
+@password(customerForm("password"), label = "Passwort")
+@date(customerForm("birthDate"), label = "Geburtsdatum")
+@select(customerForm("sex"), label = "Geschlecht", sexes, false)
+@text(customerForm("street"), label = "Straße")
+@text(customerForm("zipCode"),	label = "Postleitzahl")
+@text(customerForm("city"),	label = "Stadt")
+@text(customerForm("country"), label = "Land")
+@text(customerForm("phoneNumber"), label = "Telefonnummer")
+@select(customerForm("creditCardCompany"), label = "Kreditkartenanbieter", creditCardCompanies, false)
+@text(customerForm("creditCardNumber"),	label = "Kreditkartennummer")
+@date(customerForm("creditCardExpireDate"),	label = "Kreditkartenablaufdatum")
+@text(customerForm("creditCardVerificationCode"),	label = "Kreditkartensicherheitscode")
+

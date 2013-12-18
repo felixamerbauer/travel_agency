@@ -1,8 +1,12 @@
 import play.api.Application
 import play.api.GlobalSettings
 import play.api.Logger
-import play.api.mvc.WithFilters
+import play.api.mvc._
 import play.filters.gzip.GzipFilter
+import play.api.mvc.RequestHeader
+import play.api.mvc.Result
+import play.api.mvc.Results._
+import scala.concurrent.Future
 
 object Util {
   val contentTypes = Set("text/html", "application/json", "application/javascript", "text/css")
@@ -19,4 +23,8 @@ object Global extends WithFilters(Util.filter) with GlobalSettings {
   override def onStop(application: Application) {
     Logger.info("Global onStop")
   }
+  override def onHandlerNotFound(request: RequestHeader) = {
+    Future.successful(NotFound(views.html.notFound(request.path)))
+  }
+
 }

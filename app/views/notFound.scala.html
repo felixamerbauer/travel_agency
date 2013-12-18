@@ -1,0 +1,11 @@
+@(path:String)(implicit lang: Lang)
+
+@main(title = "404",None, None) { 
+<div class="jumbotron">
+	<div class="container">
+		<h1>Return to sender</h1>
+		<p>Sorry, diese Seite existiert nicht.</p>
+		<p><a class="btn btn-primary btn-lg" role="button" href="@routes.Application.index()">Zurück zur Startseite! &raquo;</a></p>
+  	</div>
+</div>
+}

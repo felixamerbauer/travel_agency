@@ -1,5 +1,8 @@
 @(loginForm: Form[views.formdata.LoginFormData], authenticated:Option[String], order:Option[models.Order], journey:Option[controllers.Journey], customer:Customer)
+
 @import views.formdata.Commons._
+@import subtemplates._
+
 @main(title = "Booking", authenticated, Some(loginForm)) {
 <div class="container">
 	@if(journey.isEmpty || order.isEmpty) {
@@ -12,15 +15,7 @@
 	      	</div>
 	    <div class="col-md-8 hoteldesc">
 		<h2>Wir gratulieren zum baldigen Urlaub!</h2>
-		<div class="well">
-			<h3>Ihre Reise</h3>
-			<h4>Hinflug</h4>
-			Von @iataFullname(journey.get.outward.from) nach @iataFullname(journey.get.outward.to) am @uiDTF.print(journey.get.outward.dateTime)
-			<h4>Hotel</h4>
-			Hotel @iataFullname(journey.get.hotel.name) in @iataFullname(journey.get.hotel.location) vom @uiDF.print(journey.get.hotel.startDate) bis zum @uiDF.print(journey.get.hotel.endDate) 
-			<h4>Rückflug</h4>
-			Von @iataFullname(journey.get.inward.from) nach @iataFullname(journey.get.outward.to) am @uiDTF.print(journey.get.outward.dateTime)
-		</div>
+		@bookingsummary(journey.get)
 		<div class="well">
 			<h3>Buchungsdetails</h3>
 			<table>

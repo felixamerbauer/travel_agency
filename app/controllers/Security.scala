@@ -46,9 +46,8 @@ object Security extends Controller {
             // todo set login failed
             case Some(user) => Redirect(referer).withSession("user" -> user.email)
             case None =>
-              val loginFailedReferer = referer + (if (referer.endsWith("/")) "?" else "&") + "loginFailed=true"
-              info("Redirecting login failed " + loginFailedReferer)
-              Redirect(loginFailedReferer)
+              info("Redirecting login failed")
+              Redirect(referer).flashing("loginFailed" -> "true")
           }
         case None =>
           warn("No referer found -> redirect to start page")
