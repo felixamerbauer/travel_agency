@@ -236,13 +236,18 @@ object Application extends Controller {
 
   private def doBooking(journey: Journey, customer: Customer, newlyLoggedInUser: Option[User] = None)(implicit session: DBSessionRequest[AnyContent]) = {
     implicit val dbSession = session.dbSession
+    val specialAuthenticated = if (newlyLoggedInUser.isDefined) {
+      Some(newlyLoggedInUser.get.email)
+    } else {
+      authenticated
+    }
     val result = Client.book(journey, customer) match {
       // booking successful
       case Some(order) =>
-        Ok(views.html.booking(loginForm, authenticated, Some(order), Some(journey), customer))
+        Ok(views.html.booking(loginForm, specialAuthenticated, Some(order), Some(journey), customer))
       // booking failed
       case None =>
-        Ok(views.html.booking(loginForm, authenticated, None, Some(journey), customer))
+        Ok(views.html.booking(loginForm, specialAuthenticated, None, Some(journey), customer))
     }
     if (newlyLoggedInUser.isDefined) { result.withSession("user" -> newlyLoggedInUser.get.email) }
     else result

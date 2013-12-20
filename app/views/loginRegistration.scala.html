@@ -12,6 +12,12 @@
 @import subtemplates._
 
 @main(title = "Login/Registration", authenticated, None) { 
+
+@if(loginFailed) {
+<div class="container">
+	<div class="alert alert-warning">Leider konnte ich sie nicht einloggen</div>
+</div>
+}
 <div class="container">
 	<div class="row">
 		@bookingsummary(journey)	

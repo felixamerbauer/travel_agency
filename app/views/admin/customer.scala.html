@@ -11,30 +11,32 @@
 
 @main(title = "Admin-Airlines", authenticated, Some(loginForm)) { 
 <div class="container">
-	<div class="col-md-4">
-		@form(routes.Admin.customerPost, 'class -> "form-horizontal") {
-			@hidden(customerForm("id")),
-			@hidden(customerForm("userId")),
-			@text(customerForm("firstName"), label = "Vorname")
-			@text(customerForm("lastName"), label = "Nachname")
-			@text(customerForm("email"), label = "E-Mail")
-			@text(customerForm("password"), label = "Passwort")
-			@date(customerForm("birthDate"), label = "Geburtsdatum")
-			@select(customerForm("sex"), label = "Geschlecht", sexes, false)
-			@text(customerForm("street"), label = "Straße")
-			@text(customerForm("zipCode"),	label = "Postleitzahl")
-			@text(customerForm("city"),	label = "Stadt")
-			@text(customerForm("country"), label = "Land")
-			@text(customerForm("phoneNumber"), label = "Telefonnummer")
-			@select(customerForm("creditCardCompany"), label = "Kreditkartenanbieter", creditCardCompanies, false)
-			@text(customerForm("creditCardNumber"),	label = "Kreditkartennummer")
-			@date(customerForm("creditCardExpireDate"),	label = "Kreditkartenablaufdatum")
-			@text(customerForm("creditCardVerificationCode"),	label = "Kreditkartensicherheitscode")
-			<div class="form-group">
-		    	<button type="submit" class="btn btn-success">@if(customerForm("id").value.isEmpty) { Anlegen } else { Übernehmen}</button>
-		    	<a class="btn btn-info" href="@routes.Admin.customers">Abbrechen</a>
-		  	</div>
-		}
+	<div class="row">
+		<div class="col-md-4">
+			@form(routes.Admin.customerPost, 'class -> "form-horizontal") {
+				@hidden(customerForm("id")),
+				@hidden(customerForm("userId")),
+				@text(customerForm("firstName"), label = "Vorname")
+				@text(customerForm("lastName"), label = "Nachname")
+				@text(customerForm("email"), label = "E-Mail")
+				@text(customerForm("password"), label = "Passwort")
+				@date(customerForm("birthDate"), label = "Geburtsdatum")
+				@select(customerForm("sex"), label = "Geschlecht", sexes, false)
+				@text(customerForm("street"), label = "Straße")
+				@text(customerForm("zipCode"),	label = "Postleitzahl")
+				@text(customerForm("city"),	label = "Stadt")
+				@text(customerForm("country"), label = "Land")
+				@text(customerForm("phoneNumber"), label = "Telefonnummer")
+				@select(customerForm("creditCardCompany"), label = "Kreditkartenanbieter", creditCardCompanies, false)
+				@text(customerForm("creditCardNumber"),	label = "Kreditkartennummer")
+				@date(customerForm("creditCardExpireDate"),	label = "Kreditkartenablaufdatum")
+				@text(customerForm("creditCardVerificationCode"),	label = "Kreditkartensicherheitscode")
+				<div class="form-group">
+			    	<button type="submit" class="btn btn-success">@if(customerForm("id").value.isEmpty) { Anlegen } else { Übernehmen}</button>
+			    	<a class="btn btn-info" href="@routes.Admin.customers">Abbrechen</a>
+			  	</div>
+			}
+		</div>
 	</div>
 </div>
 }

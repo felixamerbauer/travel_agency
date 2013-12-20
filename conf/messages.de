@@ -1,1 +1,3 @@
 index.header=Weihnachtsaktion!
+error.number=Wählen sie eine gültige Zahl.
+validation.error.required=Dieses Feld muss ausgefüllt werden.

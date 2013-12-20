@@ -21,8 +21,8 @@ case class AdminAirlineFormData(id: String = "-1", name: String = "", apiURL: St
 object AdminAirlineFormData {
   val constraints: Constraint[AdminAirlineFormData] = Constraint("constraints")({ data =>
     val errors = Buffer[ValidationError]()
-    if (data.name.length() < 3) errors += ValidationError("name", "Name too short")
-    if (data.name.length() > 20) errors += ValidationError("name", "Name too long")
+    if (data.name.length() < 3) errors += ValidationError("name", "Name ist zu kurz")
+    if (data.name.length() > 20) errors += ValidationError("name", "Name ist zu lang")
     if (errors.isEmpty) Valid else Invalid(errors.toSeq)
   })
 }
@@ -43,11 +43,12 @@ case class AdminProductFormData(id: String = "-1", from: String = "", to: String
     to = to.fullName,
     archived = product.archived)
 }
+
 object AdminProductFormData {
   def constraints: Constraint[AdminProductFormData] = Constraint("constraints")({ data =>
     val errors = Buffer[ValidationError]()
     if (data.from == data.to)
-      errors += ValidationError("from", "From and to must be different")
+      errors += ValidationError("from", "Von und nach müssen sich unterscheiden")
     if (errors.isEmpty) Valid else Invalid(errors.toSeq)
   })
 }

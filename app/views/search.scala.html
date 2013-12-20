@@ -21,39 +21,40 @@
 <!-- Main jumbotron for a primary marketing message or call to action -->
 <div class="jumbotron">
 	<div class="container">
-		<h1>Weihnachtsaktion!</h1>
-		<p>Wollen Sie Weihnachten lieber bei Sonne, Strand und Meer feiern? Mit unseren Weihnachtsangeboten fliegen Sie besonders günstig nach Gran Canaria, Lanzarote oder Teneriffa.</p>
+		<h1>Traumreise finden</h1>
+		<p>Nur noch ein paar Klicks...</p>
 	</div>
 </div>
 
 <div class="container">
-	<div class="row">
-		@searchForm.globalError.map { error => <div class="alert alert-danger">@error.message</div> }
-		<div class="col-md-4">
-			<h2>Newsletter</h2>
-			<p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-			<p><a class="btn btn-default" href="#" role="button">Jetzt Newsletter abonnieren &raquo;</a></p>
-        </div>
+	@searchForm.globalError.map { error =>
+	<div class="row"> 
+		<div class="alert alert-danger">@error.message</div>
+	</div> 
+	}
+	@form(routes.Application.searchPost(), 'class -> "form-vertical") {
+	<hr/>
+    <div class="row">
         <div class="col-md-4">
-			<h2>Treuebonus</h2>
-			<p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-			<p><a class="btn btn-default" href="#" role="button">Stammkunde werden &raquo;</a></p>
-        </div>
+		@select(searchForm("from"), label = "Abflughafen", optionMap = from, isMultiple = false)
+		@select(searchForm("to"), label = "Reiseziel", optionMap = to, isMultiple = false)
+    	</div>
         <div class="col-md-4">
-			<h2>Traumreise finden</h2>
-			@form(routes.Application.searchPost(), 'class -> "form-horizontal") {
-				@select(searchForm("from"), label = "Abflughafen", optionMap = from, isMultiple = false)
-				@select(searchForm("to"), label = "Reiseziel", optionMap = to, isMultiple = false)
-          		@date(searchForm("start"), label="Hinreise")
-    	      	@date(searchForm("end"), label="Rückreise")
-				@select(searchForm("adults"), label = "Erwachsene", optionMap = persons, isMultiple = false)
-				@select(searchForm("children"), label = "Kinder", optionMap = persons, isMultiple = false)
-				@select(searchForm("category"), label = "Kategorie", optionMap = category, isMultiple = false)
-     		<div class="form-group">
-		    	<button type="submit" class="btn btn-success">Suchen</button>
-		  	</div>
-          }
+        		@date(searchForm("start"), label="Hinreise")
+  	      	@date(searchForm("end"), label="Rückreise")
+    	</div>
+        <div class="col-md-4">
+		@select(searchForm("adults"), label = "Erwachsene", optionMap = persons, isMultiple = false)
+		@select(searchForm("children"), label = "Kinder", optionMap = persons, isMultiple = false)
+		@select(searchForm("category"), label = "Kategorie", optionMap = category, isMultiple = false)
     	</div>
 	</div>
+	<hr/>
+    <div class="row">
+    	<div class="centered">
+   			<button type="submit" class="btn btn-success btn-lg">Suchen &raquo;</button>
+   		</div>
+  	</div>
+    }
 </div>
 }

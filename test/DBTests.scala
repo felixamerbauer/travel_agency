@@ -117,13 +117,13 @@ class DBTests extends FunSuite with BeforeAndAfter {
         //        val ordersDb = qOrder.to[Seq]
         //        assert(orders === ordersDb.map(_.copy(id = -1)))
         // airline
-        val airlines = Seq("A", "B", "C").map(e => Airline(name = s"Airline$e", apiUrl = s"$e"))
+        val airlines = Seq(("Austrian", "OS"), ("Lufthansa", "LH"), ("Swiss", "LX")).map(e => Airline(name = e._1, apiUrl = e._2))
         println("Inserting\n\t" + airlines.mkString("\n\t"))
         airlines foreach TAirline.autoInc.insert
         val airlinesDb = qAirline.to[Seq]
         assert(airlines === airlinesDb.map(_.copy(id = -1)))
         // hotelgroup
-        val hotelGroups = Seq("X", "Y", "Z").map(e => Hotelgroup(name = s"Hotelgroup$e", apiUrl = s"$e"))
+        val hotelGroups = Seq(("InterContintental","ic"), ("Marriot","ma"), ("Hilton","hi")).map(e => Hotelgroup(name = e._1, apiUrl = e._2))
         println("Inserting\n\t" + hotelGroups.mkString("\n\t"))
         hotelGroups foreach THotelgroup.autoInc.insert
         val hotelGroupsDb = qHotelgroup.to[Seq]
@@ -138,7 +138,7 @@ class DBTests extends FunSuite with BeforeAndAfter {
           ExtHotel(apiUrl = hotelGroupsDb(hotelGroupsIdx).apiUrl, hotelName = s"hotelName${nextInt(100)}", description = randomDescription, category = nextInt(5) + 1, locationId = endLocationsDb(locationIdx).id,
             startDate = new DateMidnight(2014, 2, 3).plusDays(startDay),
             endDate = new DateMidnight(2014, 2, 3).plusDays(endDay),
-            availableRooms = 10, price = (nextInt(91) + 10) * (endDay - startDay), currency = Currencies(nextInt(Currencies.size)))
+            availableRooms = 100, price = (nextInt(91) + 10) * (endDay - startDay), currency = Currencies(nextInt(Currencies.size)))
         }
         println("Inserting\n\t" + extHotel.mkString("\n\t"))
         extHotel foreach TExtHotel.autoInc.insert
@@ -157,7 +157,7 @@ class DBTests extends FunSuite with BeforeAndAfter {
             fromLocationId = startLocationsDb(startLocationIdx).id,
             toLocationId = endLocationsDb(endLocationIdx).id,
             dateTime = new DateTime(2014, 2, 3, nextInt(18) + 6, nextInt(12) * 5).plusDays(day % 14),
-            availableSeats = 10, price = nextInt(991) + 10, currency = Currencies(nextInt(Currencies.size)))
+            availableSeats = 100, price = nextInt(991) + 10, currency = Currencies(nextInt(Currencies.size)))
         }
         val extFlightsInward = for {
           day <- 0 to 7

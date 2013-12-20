@@ -8,6 +8,6 @@
 		name="@field.name" 
 		value="@field.value.getOrElse("tt.mm.jjjj")"
 		placeholder="@placeholder" />
-	<span class="help-block">@{field.error.map { error => error.message }}</span>
+	<span class="help-block">@{field.error.map { error => Messages(error.message) }}</span>
 </div>
 

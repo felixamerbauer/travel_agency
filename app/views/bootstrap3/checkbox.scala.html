@@ -10,5 +10,5 @@
 			value="@field.value"
 			@if(field.value) {checked}>
 	</label>
-	<span class="help-block">@{field.error.map { error => error.message }}</span>
+	<span class="help-block">@{field.error.map { error => Messages(error.message) }}</span>
 </div>
