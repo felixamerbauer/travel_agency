@@ -1,0 +1,44 @@
+@(loginForm: Form[views.formdata.LoginFormData],	
+  authenticated:Option[String],
+  orders:Seq[Tuple2[Order,Customer]])
+  
+@import helper.form 
+@import bootstrap3._
+@import views.formdata.Commons._
+
+@main(title = "Admin-Orders", authenticated, Some(loginForm)) { 
+<div class="container">
+	<form method="post">
+	<table class="table table-striped">
+  		<thead>
+  			<tr>
+  				<th>Kunde</th>
+  				<th>Von</th>
+  				<th>Nach</th>
+  				<th>Hotel</th>
+  				<th>Hinflug</th>
+  				<th>Rückflug</th>
+  				<th>Erwachsene</th>
+  				<th>Kinder</th>
+  				<th>Preis</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+		@for(order <- orders) {
+			<tr>
+				<td>@order._2.firstName @order._2.lastName</td>
+				<td>@uiDF.print(order._1.startDate)<br/> @iataFullname(order._1.from)</td>
+				<td>@uiDF.print(order._1.endDate)<br/>@iataFullname(order._1.to)</td>
+				<td>@order._1.hotelName</td>
+				<td>@order._1.outwardFlightId - @order._1.outwardFlightAirline </td>
+				<td>@order._1.inwardFlightId - @order._1.inwardFlightAirline </td>
+				<td>@{order._1.adults}</td>
+				<td>@{order._1.children}</td>
+				<td>@{order._1.price} @{order._1.currency}</td>
+			</tr>
+		}
+  		</tbody>
+	</table>
+	</form>
+</div>
+}

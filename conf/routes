@@ -46,9 +46,9 @@ POST     /travel/search                                 controllers.Application.
 
 GET      /travel/loginRegistration                      controllers.Application.loginRegistration(journeyHash:Int)
 
-POST	/travel/loginBooking							controllers.Application.loginBooking(journeyHash:Int)
+POST     /travel/loginBooking                           controllers.Application.loginBooking(journeyHash:Int)
 
-POST    /travel/registrationBooking						controllers.Application.registrationBooking(journeyHash:Int)
+POST     /travel/registrationBooking                    controllers.Application.registrationBooking(journeyHash:Int)
 
 GET      /travel/registration                           controllers.Application.registration
 
@@ -76,6 +76,8 @@ GET      /admin/hotelgroup                              controllers.Admin.hotelg
 POST     /admin/hotelgroup                              controllers.Admin.hotelgroupPost
 
 POST     /admin/hotelgroup/delete/:id                   controllers.Admin.hotelgroupDelete(id:Int)
+
+GET      /admin/orders                                  controllers.Admin.orders
 
 GET      /admin/products                                controllers.Admin.products
 

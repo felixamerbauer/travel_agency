@@ -73,6 +73,11 @@ object QueryLibrary {
     to <- qLocation if (to.id === product.toLocationId)
   } yield (product, from, to)
 
+  val qOrderWithCustomer = for {
+    order <- qOrder
+    customer <- qCustomer if (customer.id === order.customerId)
+  } yield (order, customer)
+
   val qActiveProductsOnlyLocationsIata = for {
     product <- qProduct if (product.archived === false)
     from <- qLocation if (from.id === product.fromLocationId)

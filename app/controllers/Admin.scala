@@ -328,4 +328,10 @@ object Admin extends Controller {
     Ok(admin.hotels(loginForm, authenticated, data))
   }
 
+  def orders = DBAction { implicit rs =>
+    implicit val dbSession = rs.dbSession
+    val data = qOrderWithCustomer.to[Vector]
+    Ok(admin.orders(loginForm, authenticated, data))
+  }
+
 }
