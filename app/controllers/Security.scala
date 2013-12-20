@@ -17,6 +17,8 @@ import play.api.mvc.Request
 import views.formdata.LoginFormData
 import db.QueryMethods
 import models.User
+import play.api.db.slick.DBSessionRequest
+import play.api.mvc.SimpleResult
 
 object Security extends Controller {
 
@@ -25,10 +27,12 @@ object Security extends Controller {
       "email" -> text,
       "password" -> text)(LoginFormData.apply)(LoginFormData.unapply))
 
-  def authenticated(implicit request: Request[AnyContent]) = {
-    val x = request.session.get("user")
-    info(s"session.user $x")
-    x
+  def authenticated(implicit request: Request[AnyContent]) = request.session.get("user")
+
+  def checkAuthenticated(code: => SimpleResult)(implicit request: DBSessionRequest[AnyContent]): SimpleResult = {
+    if (authenticated.isDefined) code
+    else
+      Redirect(routes.Application.index())
   }
 
   def userCustomer(implicit request: Request[AnyContent], session: Session): Option[Tuple2[User, Customer]] = {
