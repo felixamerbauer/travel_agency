@@ -13,7 +13,6 @@ sealed trait Sex
 case object Male extends Sex
 case object Female extends Sex
 
-  
 object TCustomer extends Table[Customer]("customers") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def userId = column[Int]("userid")
@@ -55,6 +54,8 @@ case class Customer(
   creditCardCompany: String,
   creditCardNumber: String,
   creditCardExpireDate: DateMidnight,
-  creditCardVerificationCode: String)
+  creditCardVerificationCode: String) {
+  def fullName = firstName + " " + lastName
+}
 
   

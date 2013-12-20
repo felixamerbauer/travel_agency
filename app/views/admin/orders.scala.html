@@ -1,5 +1,5 @@
 @(loginForm: Form[views.formdata.LoginFormData],	
-  authenticated:Option[String],
+  authenticated:Option[Tuple2[String,String]],
   orders:Seq[Tuple2[Order,Customer]])
   
 @import helper.form 

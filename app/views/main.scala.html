@@ -1,4 +1,4 @@
-@(title: String, authenticated:Option[String], loginForm: Option[Form[views.formdata.LoginFormData]])(content: Html)(implicit lang: Lang)
+@(title: String, authenticated:Option[Tuple2[String,String]], loginForm: Option[Form[views.formdata.LoginFormData]])(content: Html)(implicit lang: Lang)
 @import helper.form
 <!DOCTYPE html>
 <html lang="en">
@@ -33,9 +33,11 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="@routes.Application.index()">&mdash; RV Reisen &mdash;</a>
+          <a class="navbar-brand" href="@routes.Application.index()">
+          	&mdash; RV Reisen &mdash;
+          </a>
         </div>
-        @if(authenticated.exists(_ == "admin")) {
+        @if(authenticated.exists(_._1 == "admin")) {
 		<ul class="nav navbar-nav">
 	      	<li class="dropdown">
 	        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin <b class="caret"></b></a>
@@ -67,17 +69,24 @@
 		        }
 	        }
         } else {
-        	@form(routes.Security.logout(), 'class -> "navbar-form navbar-right") {
+           	@form(routes.Security.logout(), 'class -> "navbar-form navbar-right") {
             	<button type="submit" class="btn btn-danger">Abmelden</button>
             }
+	        @if(authenticated.isDefined) {
+	          <a class="navbar-brand navbar-right" href="">
+	          	<span class="glyphicon glyphicon-user"></span> @authenticated.get._2
+	          </a>
+	        }
         }
         </div><!--/.navbar-collapse -->
       </div>
 		@content
-    	 <hr>
 
-	<footer>
-		<p>&copy; Travel Agency 2013</p>
+	<footer class="container">
+    	<hr/>
+		<div class="centered">
+			<p>&copy; Travel Agency 2013</p>
+		</div>
 	</footer>
 
 

@@ -150,10 +150,10 @@ object Application extends Controller {
         info(s"form is ok $formData")
         implicit val dbSession = rs.dbSession
         checkLogin(formData.email, formData.password) match {
-          case Some(user) =>
+          case Some(userCustomer) =>
+            val (user, customer) = userCustomer
             info(s"user ${user.email} authenticated")
             info("Redirecting to booking with just logged in user")
-            val (_, customer) = QueryMethods.userCustomer(user.email)
             doBooking(journey, customer, Some(user))
           case None =>
             info("wrong password")
@@ -237,7 +237,7 @@ object Application extends Controller {
   private def doBooking(journey: Journey, customer: Customer, newlyLoggedInUser: Option[User] = None)(implicit session: DBSessionRequest[AnyContent]) = {
     implicit val dbSession = session.dbSession
     val specialAuthenticated = if (newlyLoggedInUser.isDefined) {
-      Some(newlyLoggedInUser.get.email)
+      Some(newlyLoggedInUser.get.email, customer.fullName)
     } else {
       authenticated
     }
@@ -249,7 +249,7 @@ object Application extends Controller {
       case None =>
         Ok(views.html.booking(loginForm, specialAuthenticated, None, Some(journey), customer))
     }
-    if (newlyLoggedInUser.isDefined) { result.withSession("user" -> newlyLoggedInUser.get.email) }
+    if (newlyLoggedInUser.isDefined) { result.withSession("user" -> newlyLoggedInUser.get.email, "name" -> customer.fullName) }
     else result
   }
 

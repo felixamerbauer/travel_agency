@@ -1,6 +1,6 @@
 @(loginForm: Form[views.formdata.LoginFormData], 
 	hotelJourneys:Map[json.HotelJson,Seq[controllers.Journey]], 
-	authenticated:Option[String],
+	authenticated:Option[Tuple2[String,String]],
     loginFailed:Boolean)
 @import views.formdata.Commons._
 @main(title = "List", authenticated, Some(loginForm)) {

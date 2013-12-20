@@ -1,4 +1,4 @@
-@(loginForm: Form[views.formdata.LoginFormData], authenticated:Option[String], order:Option[models.Order], journey:Option[controllers.Journey], customer:Customer)
+@(loginForm: Form[views.formdata.LoginFormData], authenticated:Option[Tuple2[String,String]], order:Option[models.Order], journey:Option[controllers.Journey], customer:Customer)
 
 @import views.formdata.Commons._
 @import subtemplates._

@@ -1,6 +1,6 @@
 @* search Template File *@
 @(loginForm: Form[views.formdata.LoginFormData],	
-  authenticated:Option[String],
+  authenticated:Option[Tuple2[String,String]],
   productForm:Form[views.formdata.AdminProductFormData],
   froms:Map[String,Boolean],
   tos:Map[String,Boolean]

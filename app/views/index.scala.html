@@ -1,5 +1,5 @@
 @(loginForm: Form[views.formdata.LoginFormData],
-  authenticated:Option[String],
+  authenticated:Option[Tuple2[String,String]],
   loginFailed:Boolean = false
   )(implicit lang: Lang)
 

@@ -27,7 +27,10 @@ object Security extends Controller {
       "email" -> text,
       "password" -> text)(LoginFormData.apply)(LoginFormData.unapply))
 
-  def authenticated(implicit request: Request[AnyContent]) = request.session.get("user")
+  def authenticated(implicit request: Request[AnyContent]) = (request.session.get("user"), request.session.get("name")) match {
+    case (Some(user), Some(name)) => Some(user, name)
+    case _ => None
+  }
 
   def checkAuthenticated(code: => SimpleResult)(implicit request: DBSessionRequest[AnyContent]): SimpleResult = {
     if (authenticated.isDefined) code
@@ -37,18 +40,20 @@ object Security extends Controller {
 
   def userCustomer(implicit request: Request[AnyContent], session: Session): Option[Tuple2[User, Customer]] = {
     info(s"userCustomer $authenticated")
-    authenticated map QueryMethods.userCustomer
+    authenticated map (e => QueryMethods.userCustomer(e._1))
   }
 
   def login = DBAction { implicit rs =>
     implicit val dbSession = rs.dbSession
-    def refer(user: Option[User]) = {
+    def refer(user: Option[Tuple2[User, Customer]]) = {
       rs.request.headers.get("Referer") match {
         case Some(referer) =>
           info("Redirect to referer " + referer)
           user match {
             // todo set login failed
-            case Some(user) => Redirect(referer).withSession("user" -> user.email)
+            case Some(userCustomer) =>
+              val (user, customer) = userCustomer
+              Redirect(referer).withSession("user" -> user.email, "name" -> customer.fullName)
             case None =>
               info("Redirecting login failed")
               Redirect(referer).flashing("loginFailed" -> "true")
@@ -71,12 +76,14 @@ object Security extends Controller {
         if (loginData.email == "top" && loginData.password == "secret") {
           info("Storing user login in session")
           Redirect(routes.Application.index()).withSession(
-            "user" -> "admin")
+            "user" -> "admin",
+            "name" -> "Admin")
         } else {
           checkLogin(loginData.email, loginData.password) match {
-            case Some(user) =>
+            case Some(userCustomer) =>
+              val (user, _) = userCustomer
               info(s"user ${user.email} authenticated")
-              refer(Some(user))
+              refer(Some(userCustomer))
             case None =>
               info("wrong password")
               refer(None)

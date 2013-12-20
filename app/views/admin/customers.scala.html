@@ -1,6 +1,6 @@
 @* search Template File *@
 @(loginForm: Form[views.formdata.LoginFormData],	
-  authenticated:Option[String],
+  authenticated:Option[Tuple2[String,String]],
   customers:Seq[Tuple2[User,Customer]])
   
 @import helper.form 
