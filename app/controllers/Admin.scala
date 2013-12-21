@@ -38,25 +38,28 @@ import models.TCustomer
 import play.api.data.validation._
 import scala.collection.mutable.Buffer
 import play.api.data.FormError
+import com.github.t3hnar.bcrypt._
+import models.Sex
+import models.Male
 
 object Admin extends Controller {
 
   private val airlineForm = Form(
     mapping(
-      "id" -> text,
+      "id" -> number,
       "name" -> nonEmptyText,
       "apiURL" -> nonEmptyText)(AdminAirlineFormData.apply)(AdminAirlineFormData.unapply).
       verifying(AdminAirlineFormData.constraints))
 
   private val hotelgroupForm = Form(
     mapping(
-      "id" -> text,
+      "id" -> number,
       "name" -> nonEmptyText,
       "apiURL" -> nonEmptyText)(AdminHotelgroupFormData.apply)(AdminHotelgroupFormData.unapply))
 
   private val productForm = Form(
     mapping(
-      "id" -> text,
+      "id" -> number,
       "from" -> nonEmptyText,
       "to" -> nonEmptyText,
       "archived" -> boolean)(AdminProductFormData.apply)(AdminProductFormData.unapply).
@@ -64,23 +67,23 @@ object Admin extends Controller {
 
   private val customerForm = Form(
     mapping(
-      "id" -> text,
-      "userId" -> text,
+      "id" -> number(min = 0),
+      "userId" -> number(min = 0),
       "firstName" -> nonEmptyText,
       "lastName" -> nonEmptyText,
-      "email" -> text,
-      "password" -> text,
-      "birthDate" -> text,
-      "sex" -> text,
-      "street" -> text,
-      "zipCode" -> text,
-      "city" -> text,
-      "country" -> text,
-      "phoneNumber" -> text,
-      "creditCardCompany" -> text,
-      "creditCardNumber" -> text,
-      "creditCardExpireDate" -> text,
-      "creditCardVerificationCode" -> text)(AdminCustomerFormData.apply)(AdminCustomerFormData.unapply))
+      "email" -> nonEmptyText,
+      "password" -> nonEmptyText,
+      "birthDate" -> nonEmptyText,
+      "sex" -> nonEmptyText,
+      "street" -> nonEmptyText,
+      "zipCode" -> nonEmptyText,
+      "city" -> nonEmptyText,
+      "country" -> nonEmptyText,
+      "phoneNumber" -> nonEmptyText,
+      "creditCardCompany" -> nonEmptyText,
+      "creditCardNumber" -> nonEmptyText,
+      "creditCardExpireDate" -> nonEmptyText,
+      "creditCardVerificationCode" -> nonEmptyText)(AdminCustomerFormData.apply)(AdminCustomerFormData.unapply))
 
   def airlines = DBAction { implicit rs =>
     checkAuthenticated {
@@ -131,11 +134,11 @@ object Admin extends Controller {
         formData => {
           info(s"form is ok $formData")
           implicit val dbSession = rs.dbSession
-          val airline = Airline(id = formData.id.toInt, name = formData.name, apiUrl = formData.apiURL)
+          val airline = Airline(id = formData.id, name = formData.name, apiUrl = formData.apiURL)
           if (airline.id == -1)
             TAirline.forInsert.insert(airline)
           else
-            qAirline.where(_.id === formData.id.toInt).update(airline)
+            qAirline.where(_.id === formData.id).update(airline)
           Redirect(routes.Admin.airlines)
         })
     }
@@ -161,7 +164,7 @@ object Admin extends Controller {
               val (user, customer) = item
               val filled = customerForm.fill(new AdminCustomerFormData(user, customer))
 
-              val sexesSelect = sexes + (if ("m" == customer.sex) ("Männlich" -> true) else ("Weiblich" -> true))
+              val sexesSelect = sexes + (if (Male == customer.sex) ("Männlich" -> true) else ("Weiblich" -> true))
               Ok(admin.customer(loginForm, authenticated, filled, sexesSelect, creditCardCompanies + (customer.creditCardCompany -> true)))
             case _ =>
               warn(s"Couldn't find customer for id $id")
@@ -183,9 +186,11 @@ object Admin extends Controller {
         formData => {
           info(s"form is ok $formData")
           implicit val dbSession = rs.dbSession
+          //          TODO
+          //          userCustomerByCustomerId()
           val customer = Customer(
-            id = formData.id.toInt,
-            userId = -1,
+            id = formData.id,
+            userId = formData.userId,
             firstName = formData.firstName,
             lastName = formData.lastName,
             birthDate = dateFormat.parseDateTime(formData.birthDate).toDateMidnight(),
@@ -200,15 +205,15 @@ object Admin extends Controller {
             creditCardExpireDate = dateFormat.parseDateTime(formData.creditCardExpireDate).toDateMidnight(),
             creditCardVerificationCode = formData.creditCardVerificationCode)
           val user = User(
-            id = formData.userId.toInt,
+            id = formData.userId,
             email = formData.email,
-            passwordHash = formData.password)
+            passwordHash = formData.password.bcrypt(BCrypt.gensalt()))
           if (customer.id == -1) {
             val userId = TUser.forInsert.insert(user)
             TCustomer.forInsert.insert(customer.copy(userId = userId))
           } else {
-            qUser.where(_.id === formData.userId.toInt).update(user)
-            qCustomer.where(_.id === formData.id.toInt).update(customer)
+            qUser.where(_.id === formData.userId).update(user)
+            qCustomer.where(_.id === formData.id).update(customer)
           }
         })
       Redirect(routes.Admin.customers)
@@ -220,6 +225,7 @@ object Admin extends Controller {
       info(s"customerDelete $id")
       implicit val dbSession = rs.dbSession
       val userId = qCustomer.where(_.id === id).map(_.userId).to[Seq].head
+      qOrder.where(_.customerId === id).delete
       qCustomer.where(_.id === id).delete
       qUser.where(_.id === userId).delete
       Redirect(routes.Admin.customers)
@@ -264,11 +270,11 @@ object Admin extends Controller {
         formData => {
           info(s"form is ok $formData")
           implicit val dbSession = rs.dbSession
-          val hotelgroup = Hotelgroup(id = formData.id.toInt, name = formData.name, apiUrl = formData.apiURL)
+          val hotelgroup = Hotelgroup(id = formData.id, name = formData.name, apiUrl = formData.apiURL)
           if (hotelgroup.id == -1)
             THotelgroup.forInsert.insert(hotelgroup)
           else
-            qHotelgroup.where(_.id === formData.id.toInt).update(hotelgroup)
+            qHotelgroup.where(_.id === formData.id).update(hotelgroup)
         })
       Redirect(routes.Admin.hotelgroups)
     }
@@ -328,11 +334,13 @@ object Admin extends Controller {
           implicit val dbSession = rs.dbSession
           val fromId = qLocation.where(_.fullName === formData.from).map(_.id).to[Seq].head
           val toId = qLocation.where(_.fullName === formData.to).map(_.id).to[Seq].head
-          val product = Product(id = formData.id.toInt, fromLocationId = fromId, toLocationId = toId, archived = formData.archived)
-          if (product.id == -1)
+          val product = Product(id = formData.id, fromLocationId = fromId, toLocationId = toId, archived = formData.archived)
+          if (product.id == -1) {
             TProduct.forInsert.insert(product)
-          else
-            qProduct.where(_.id === formData.id.toInt).update(product)
+          } else {
+            info("Updating " + product)
+            qProduct.where(_.id === product.id).update(product)
+          }
           Redirect(routes.Admin.products)
         })
     }

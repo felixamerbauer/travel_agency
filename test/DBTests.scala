@@ -22,11 +22,17 @@ import models.ext.TExtFlightLastModified
 import models.ext._
 import scala.util.Random._
 import org.joda.time.DateMidnight
+import com.github.t3hnar.bcrypt.BCrypt
+import com.github.t3hnar.bcrypt.Password
 
 class DBTests extends FunSuite with BeforeAndAfter {
   val loremIpsum = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.".split("""\.""").map(_.trim).map(_ + ".")
   def randomDescription = loremIpsum.take(nextInt(loremIpsum.length + 1)).mkString(" ")
   val persons = Seq(("Max", "Mustermann", Male), ("Erika", "Mustermann", Female), ("John", "Doe", Male), ("Jane", "Doe", Female))
+  val hotelnames = (for {
+    first <- Seq("Red", "Blue", "Yellow", "Orange", "Black", "White", "Green")
+    last <- Seq("Dream", "Paradise", "Innfinity", "Oasis")
+  } yield (first + " " + last)).toArray
 
   test("read write to all tables") {
     running(FakeApplication()) {
@@ -55,8 +61,7 @@ class DBTests extends FunSuite with BeforeAndAfter {
         // user
         val users = for (person <- persons) yield {
           val (firstname, lastname, _) = person
-          // TODO hash
-          User(email = s"${firstname.toLowerCase}.${lastname.toLowerCase}@example.org", passwordHash = "pwd")
+          User(email = s"${firstname.toLowerCase}.${lastname.toLowerCase}@example.org", passwordHash = "pwd".bcrypt(BCrypt.gensalt()))
         }
         println("Inserting\n\t" + users.mkString("\n\t"))
         users foreach TUser.autoInc.insert
@@ -82,7 +87,7 @@ class DBTests extends FunSuite with BeforeAndAfter {
             ("VIE", "Wien"),
             //            ("BER", "Berlin"),
             ("CDG", "Paris"),
-            ("LHR", "Heathrow"))
+            ("LHR", "London"))
         } yield { Location(iataCode = iata, fullName = fullName, start = true) }
         val endLocations = for {
           (iata, fullName) <- Seq(
@@ -131,7 +136,7 @@ class DBTests extends FunSuite with BeforeAndAfter {
         val airlinesDb = qAirline.to[Seq]
         //        assert(airlines === airlinesDb.map(_.copy(id = -1)))
         // hotelgroup
-        val hotelGroups = Seq(("InterContintental", "ic"), ("Marriot", "ma"), ("Hilton", "hi")).map(e => Hotelgroup(name = e._1, apiUrl = e._2))
+        val hotelGroups = Seq(("InterContintental", "interconti"), ("Marriot", "marriot"), ("Hilton", "hilton")).map(e => Hotelgroup(name = e._1, apiUrl = e._2))
         println("Inserting\n\t" + hotelGroups.mkString("\n\t"))
         hotelGroups foreach THotelgroup.autoInc.insert
         val hotelGroupsDb = qHotelgroup.to[Seq]
@@ -143,7 +148,7 @@ class DBTests extends FunSuite with BeforeAndAfter {
           locationIdx <- 0 until endLocationsDb.size
           hotelGroupsIdx <- 0 until hotelGroupsDb.size
         } yield {
-          ExtHotel(apiUrl = hotelGroupsDb(hotelGroupsIdx).apiUrl, hotelName = s"hotelName${nextInt(100)}", description = randomDescription, category = nextInt(5) + 1, locationId = endLocationsDb(locationIdx).id,
+          ExtHotel(apiUrl = hotelGroupsDb(hotelGroupsIdx).apiUrl, hotelName = hotelnames(nextInt(hotelnames.length)), description = randomDescription, category = nextInt(5) + 1, locationId = endLocationsDb(locationIdx).id,
             startDate = new DateMidnight(2014, 2, 3).plusDays(startDay),
             endDate = new DateMidnight(2014, 2, 3).plusDays(endDay),
             availableRooms = 100, price = (nextInt(91) + 10) * (endDay - startDay), currency = Currencies(nextInt(Currencies.size)))
@@ -177,7 +182,7 @@ class DBTests extends FunSuite with BeforeAndAfter {
             fromLocationId = endLocationsDb(endLocationIdx).id,
             toLocationId = startLocationsDb(startLocationIdx).id,
             dateTime = new DateTime(2014, 2, 3, nextInt(18) + 6, nextInt(12) * 5).plusDays(day),
-            availableSeats = 10, price = nextInt(991) + 10, currency = Currencies(nextInt(Currencies.size)))
+            availableSeats = 100, price = nextInt(991) + 10, currency = Currencies(nextInt(Currencies.size)))
         }
         println("Inserting outward\n\t" + extFlightsOutward.mkString("\n\t"))
         extFlightsOutward foreach TExtFlight.autoInc.insert

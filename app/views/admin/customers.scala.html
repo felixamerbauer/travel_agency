@@ -8,40 +8,44 @@
 
 @main(title = "Admin-Kunden", authenticated, Some(loginForm)) { 
 <div class="container">
-	<form method="post">
-	<table class="table table-striped">
-  		<thead>
-  			<tr>
-  				<th>Vorname</th>
-  				<th>Nachname</th>
-  				<th>E-Mail</th>
-  				<th></th>
-  				<th></th>
-  			</tr>
-  		</thead>
-  		<tbody>
-		@for(customer <- customers) {
-			<tr>
-				<td>@customer._2.firstName</td>
-				<td>@customer._2.lastName</td>
-				<td>@customer._1.email</td>
-				<td>
-					<a class="glyphicon glyphicon-edit" href="/admin/customer?id=@customer._2.id"></a>
-				</td>
-				<td>
-					<button type="submit" formaction="@routes.Admin.customerDelete(customer._2.id)" class="btn btn-default"> <i class="glyphicon glyphicon-remove"></i></button>
-				</td>
-			</tr>
-		}
-			<tr>
-				<td><a class="glyphicon glyphicon-plus" href="/admin/customer"></a></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-  		</tbody>
-	</table>
-	</form>
+	<div class="row">
+		<div class="col-md-6">
+			<form method="post">
+				<table class="table table-striped">
+			  		<thead>
+			  			<tr>
+			  				<th>Vorname</th>
+			  				<th>Nachname</th>
+			  				<th>E-Mail</th>
+			  				<th></th>
+			  				<th></th>
+			  			</tr>
+			  		</thead>
+			  		<tbody>
+						@for(customer <- customers) {
+						<tr>
+							<td>@customer._2.firstName</td>
+							<td>@customer._2.lastName</td>
+							<td>@customer._1.email</td>
+							<td>
+								<a class="glyphicon glyphicon-edit" href="/admin/customer?id=@customer._2.id"></a>
+							</td>
+							<td>
+								<button type="submit" formaction="@routes.Admin.customerDelete(customer._2.id)" class="btn btn-default"> <i class="glyphicon glyphicon-remove"></i></button>
+							</td>
+						</tr>
+						}
+						<tr>
+							<td><a class="glyphicon glyphicon-plus" href="/admin/customer"></a></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+			  		</tbody>
+				</table>
+			</form>
+		</div>
+	</div>
 </div>
 }

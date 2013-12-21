@@ -3,10 +3,23 @@
 @import views.formdata.Commons._
 <div class="well">
 	<h3>Ihre Reise</h3>
-	<h4>Hinflug</h4>
-	Von @iataFullname(journey.outward.from) nach @iataFullname(journey.outward.to) am @uiDTF.print(journey.outward.dateTime)
-	<h4>Hotel</h4>
-	Hotel @journey.hotel.name in @iataFullname(journey.hotel.location) vom @uiDF.print(journey.hotel.startDate) bis zum @uiDF.print(journey.hotel.endDate) 
-	<h4>Rückflug</h4>
-	Von @iataFullname(journey.inward.from) nach @iataFullname(journey.outward.to) am @uiDTF.print(journey.outward.dateTime)
+	<table class="table">
+		<tbody>
+			<tr>
+				<th>Hinflug</th>
+				<td>@iataFullname(journey.outward.from) - @iataFullname(journey.outward.to) am @uiDTF.print(journey.outward.dateTime)</td>
+			</tr>
+			<tr>
+				<th rowspan="2">Hotel</th>
+				<td>@journey.hotel.name in @iataFullname(journey.hotel.location)</td>
+			</tr>
+			<tr>
+				<td>Vom @uiDF.print(journey.hotel.startDate) bis zum @uiDF.print(journey.hotel.endDate)</td>
+			</tr>
+			<tr>
+				<th>Rückflug</th>
+				<td>@iataFullname(journey.inward.from) - @iataFullname(journey.inward.to) am @uiDTF.print(journey.inward.dateTime)</td>
+			</tr>
+		</tbody>
+	</table>
 </div>

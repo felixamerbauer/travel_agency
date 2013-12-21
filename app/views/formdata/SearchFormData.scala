@@ -23,7 +23,7 @@ object SearchFormData {
     val start = dateFormat.parseDateTime(data.start)
     val end = dateFormat.parseDateTime(data.end)
     debug(s"start $start end $end")
-    if (!end.isAfter(start)) errors += ValidationError("End before start")
+    if (!end.isAfter(start)) errors += ValidationError("Das Ende der Reise muss nach dem Anfang liegen.")
     if (errors.isEmpty) Valid else Invalid(errors.toSeq)
   })
 }

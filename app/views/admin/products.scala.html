@@ -8,40 +8,44 @@
 
 @main(title = "Admin-Airlines", authenticated, Some(loginForm)) { 
 <div class="container">
-	<form method="post">
-	<table class="table table-striped">
-  		<thead>
-  			<tr>
-  				<th>Von</th>
-  				<th>Nach</th>
-  				<th>Archiviert</th>
-  				<th></th>
-  				<th></th>
-  			</tr>
-  		</thead>
-  		<tbody>
-		@for(product <- products) {
-			<tr>
-				<td>@product._2.fullName</td>
-				<td>@product._3.fullName</td>
-				<td>@product._1.archived</td>
-				<td>
-					<a class="glyphicon glyphicon-edit" href="/admin/product?id=@product._1.id"></a>
-				</td>
-				<td>
-					<button type="submit" formaction="@routes.Admin.productDelete(product._1.id)" class="btn btn-default"> <i class="glyphicon glyphicon-remove"></i></button>
-				</td>
-			</tr>
-		}
-			<tr>
-				<td><a class="glyphicon glyphicon-plus" href="/admin/product"></a></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-  		</tbody>
-	</table>
-	</form>
+	<div class="row">
+		<div class="col-md-6">
+			<form method="post">
+			<table class="table table-striped">
+		  		<thead>
+		  			<tr>
+		  				<th>Von</th>
+		  				<th>Nach</th>
+		  				<th>Archiviert</th>
+		  				<th></th>
+		  				<th></th>
+		  			</tr>
+		  		</thead>
+		  		<tbody>
+				@for(product <- products) {
+					<tr>
+						<td>@product._2.fullName</td>
+						<td>@product._3.fullName</td>
+						<td>@if(product._1.archived) { <span class="glyphicon glyphicon-ok"> }</span></td>
+						<td>
+							<a class="glyphicon glyphicon-edit" href="/admin/product?id=@product._1.id"></a>
+						</td>
+						<td>
+							<button type="submit" formaction="@routes.Admin.productDelete(product._1.id)" class="btn btn-default"> <i class="glyphicon glyphicon-remove"></i></button>
+						</td>
+					</tr>
+				}
+					<tr>
+						<td><a class="glyphicon glyphicon-plus" href="/admin/product"></a></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+		  		</tbody>
+			</table>
+			</form>
+		</div>
+	</div>
 </div>
 }

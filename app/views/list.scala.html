@@ -12,39 +12,44 @@
 	<div class="alert alert-warning">Leider konnten keine Angebote für ihre Suchkriterien gefunden werden.</div>
 	<a class="btn btn-primary btn-lg" role="button" href="javascript:history.back()">Suchkriterien überarbeiten &raquo;</a>	
 } else {	 
+	<div class="row centered">
+		<hr/>
+		<h4>Angebote für @iataFullname(hotelJourneys.head._1.location) vom @uiDF.print(hotelJourneys.head._1.startDate) bis @uiDF.print(hotelJourneys.head._1.endDate) ab @iataFullname(hotelJourneys.head._2.head.from)<h4>
+		<hr/>
+	</div>
 	<form method="post">
+	
 	@for((hotel,journeys) <- hotelJourneys) {
-		
 		<div class="row hotelentry">
 			<div class="col-md-4">
 				<img src="/assets/images/hotel1.jpg">
         	</div>
-        <div class="col-md-8 hoteldesc">
-          	<p>@for(i <- 1 to hotel.category) { <span class="glyphicon glyphicon-star"></span>}</p>
-          	<h3>@hotel.name (@iataFullname(hotel.location))</h3>
-          	<div class="well">@hotel.description</div>
-       		<table>
-       			<thead>
-        			<tr>
-	         			<th colspan="2">Hinflug</th>
-	         			<th colspan="2">Rückflug</th>
-	         			<th>Preis</th>
-	         			<th></th>
-        			</tr>
-       			</thead>
-       			<tbody>
-	          	@for(journey <- journeys.sortBy(_.price)) {
-	          		<tr>
-			          	<td>@uiDTF.print(journey.outward.dateTime)</td>
-			          	<td>@journey.outward.airline</td>
-			          	<td>@uiDTF.print(journey.inward.dateTime)</td>
-			          	<td>@journey.inward.airline</td>
-			          	<td>@journey.price €</td>
-						<td><button type="submit" formaction="@routes.Application.booking(journey.hashCode)" class="btn btn-default">Buchen &raquo;</button></td>
-		          	<tr>
-	          	}
-       			</tbody>
-       		</table>
+        	<div class="col-md-8 hoteldesc">
+          		<p>@for(i <- 1 to hotel.category) { <span class="glyphicon glyphicon-star"></span>}</p>
+          		<h3>@hotel.name</h3>
+          		<div class="well">@hotel.description</div>
+       			<table class="table table-striped">
+	       			<thead>
+	        			<tr>
+		         			<th colspan="2">Hinflug (ab  @iataFullname(journeys.head.from))</th>
+		         			<th colspan="2">Rückflug (ab  @iataFullname(hotel.location))</th>
+		         			<th>Preis</th>
+		         			<th></th>
+	        			</tr>
+	       			</thead>
+	       			<tbody>
+		          	@for(journey <- journeys.sortBy(_.price)) {
+		          		<tr>
+				          	<td>@uiTF.print(journey.outward.dateTime)</td>
+				          	<td>@journey.outward.airline</td>
+				          	<td>@uiTF.print(journey.inward.dateTime)</td>
+				          	<td>@journey.inward.airline</td>
+				          	<td>@journey.price €</td>
+							<td><button type="submit" formaction="@routes.Application.booking(journey.hashCode)" class="btn btn-primary btn-sm">Buchen &raquo;</button></td>
+			          	<tr>
+		          	}
+	       			</tbody>
+	       		</table>
         	</div>
        	</div>
 	}

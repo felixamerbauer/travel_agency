@@ -8,7 +8,7 @@
 			name="@field.name"
 			id="@field.id"
 			value="@field.value"
-			@if(field.value) {checked}>
+			@if(field.value.exists(_ == "true")) { checked }>
 	</label>
 	<span class="help-block">@{field.error.map { error => Messages(error.message) }}</span>
 </div>

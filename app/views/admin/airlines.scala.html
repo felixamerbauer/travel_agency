@@ -8,37 +8,41 @@
 
 @main(title = "Admin-Airlines", authenticated, Some(loginForm)) { 
 <div class="container">
-	<form method="post">
-	<table class="table table-striped">
-  		<thead>
-  			<tr>
-  				<th>Name</th>
-  				<th>URL</th>
-  				<th></th>
-  				<th></th>
-  			</tr>
-  		</thead>
-  		<tbody>
-		@for(airline <- airlines) {
-			<tr>
-				<td>@airline.name</td>
-				<td>@airline.apiUrl</td>
-				<td>
-					<a class="glyphicon glyphicon-edit" href="/admin/airline?id=@airline.id"></a>
-				</td>
-				<td>
-					<button type="submit" formaction="@routes.Admin.airlineDelete(airline.id)" class="btn btn-default"> <i class="glyphicon glyphicon-remove"></i></button>
-				</td>
-			</tr>
-		}
-			<tr>
-				<td><a class="glyphicon glyphicon-plus" href="/admin/airline"></a></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-  		</tbody>
-	</table>
-	</form>
+	<div class="row">
+		<div class="col-md-6">
+			<form method="post">
+				<table class="table table-striped">
+			  		<thead>
+			  			<tr>
+			  				<th>Name</th>
+			  				<th>URL</th>
+			  				<th></th>
+			  				<th></th>
+			  			</tr>
+			  		</thead>
+			  		<tbody>
+						@for(airline <- airlines) {
+						<tr>
+							<td>@airline.name</td>
+							<td>@airline.apiUrl</td>
+							<td>
+								<a class="glyphicon glyphicon-edit" href="/admin/airline?id=@airline.id"></a>
+							</td>
+							<td>
+								<button type="submit" formaction="@routes.Admin.airlineDelete(airline.id)" class="btn btn-default"> <i class="glyphicon glyphicon-remove"></i></button>
+							</td>
+						</tr>
+						}
+						<tr>
+							<td><a class="glyphicon glyphicon-plus" href="/admin/airline"></a></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+			  		</tbody>
+				</table>
+			</form>
+		</div>
+	</div>
 </div>
 }

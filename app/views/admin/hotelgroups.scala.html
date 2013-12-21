@@ -8,37 +8,41 @@
 
 @main(title = "Admin-Hotelgroups", authenticated, Some(loginForm)) { 
 <div class="container">
-	<form method="post">
-	<table class="table table-striped">
-  		<thead>
-  			<tr>
-  				<th>Name</th>
-  				<th>URL</th>
-  				<th></th>
-  				<th></th>
-  			</tr>
-  		</thead>
-  		<tbody>
-		@for(hotelgroup <- hotelgroups) {
-			<tr>
-				<td>@hotelgroup.name</td>
-				<td>@hotelgroup.apiUrl</td>
-				<td>
-					<a class="glyphicon glyphicon-edit" href="/admin/hotelgroup?id=@hotelgroup.id"></a>
-				</td>
-				<td>
-					<button type="submit" formaction="@routes.Admin.hotelgroupDelete(hotelgroup.id)" class="btn btn-default"> <i class="glyphicon glyphicon-remove"></i></button>
-				</td>
-			</tr>
-		}
-			<tr>
-				<td><a class="glyphicon glyphicon-plus" href="/admin/hotelgroup"></a></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-  		</tbody>
-	</table>
-	</form>
+	<div class="row">
+		<div class="col-md-6">
+			<form method="post">
+				<table class="table table-striped">
+			  		<thead>
+			  			<tr>
+			  				<th>Name</th>
+			  				<th>URL</th>
+			  				<th></th>
+			  				<th></th>
+			  			</tr>
+			  		</thead>
+			  		<tbody>
+						@for(hotelgroup <- hotelgroups) {
+						<tr>
+							<td>@hotelgroup.name</td>
+							<td>@hotelgroup.apiUrl</td>
+							<td>
+								<a class="glyphicon glyphicon-edit" href="/admin/hotelgroup?id=@hotelgroup.id"></a>
+							</td>
+							<td>
+								<button type="submit" formaction="@routes.Admin.hotelgroupDelete(hotelgroup.id)" class="btn btn-default"> <i class="glyphicon glyphicon-remove"></i></button>
+							</td>
+						</tr>
+						}
+						<tr>
+							<td><a class="glyphicon glyphicon-plus" href="/admin/hotelgroup"></a></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+			  		</tbody>
+				</table>
+			</form>
+		</div>
+	</div>
 </div>
 }

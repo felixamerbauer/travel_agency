@@ -10,31 +10,35 @@
 
 @main(title = "Admin-Hotels", authenticated, Some(loginForm)) { 
 <div class="container">
-	<table class="table table-striped">
-  		<thead>
-  			<tr>
-  				<th>Name</th>
-  				<th>Ort</th>
-  				<th>Von</th>
-  				<th>Bis</th>
-  				<th>Zimmer</th>
-  				<th>Preis Hotelbetreiber</th>
-  				<th>Preis Euro</th>
-  			</tr>
-  		</thead>
-  		<tbody>
-		@for(hotel <- hotels) {
-			<tr>
-				<td>@hotel._1.hotelName</td>
-				<td>@(hotel._2.fullName) (@hotel._2.iataCode)</td>
-				<td>@uiDF.print(hotel._1.startDate)</td>
-				<td>@uiDF.print(hotel._1.endDate)</td>
-				<td>@hotel._1.availableRooms</td>
-				<td>@hotel._1.price @hotel._1.currency</td>
-				<td>@convert(hotel._1.price, hotel._1.currency, Euro) Euro</td>
-			</tr>
-		}
-  		</tbody>
-	</table>
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped">
+		  		<thead>
+		  			<tr>
+		  				<th>Name</th>
+		  				<th>Ort</th>
+		  				<th>Von</th>
+		  				<th>Bis</th>
+		  				<th>Zimmer</th>
+		  				<th>Preis Hotelbetreiber</th>
+		  				<th>Preis Euro</th>
+		  			</tr>
+		  		</thead>
+		  		<tbody>
+				@for(hotel <- hotels) {
+					<tr>
+						<td>@hotel._1.hotelName</td>
+						<td>@(hotel._2.fullName) (@hotel._2.iataCode)</td>
+						<td>@uiDF.print(hotel._1.startDate)</td>
+						<td>@uiDF.print(hotel._1.endDate)</td>
+						<td>@hotel._1.availableRooms</td>
+						<td>@hotel._1.price @hotel._1.currency</td>
+						<td>@convert(hotel._1.price, hotel._1.currency, Euro) Euro</td>
+					</tr>
+				}
+		  		</tbody>
+			</table>
+		</div>
+	</div>
 </div>
 }

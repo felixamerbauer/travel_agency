@@ -10,31 +10,35 @@
 
 @main(title = "Admin-Flüge", authenticated, Some(loginForm)) { 
 <div class="container">
-	<table class="table table-striped">
-  		<thead>
-  			<tr>
-  				<th>Airline</th>
-  				<th>Von</th>
-  				<th>Nach</th>
-  				<th>Zeitpunkt</th>
-  				<th>Sitze</th>
-  				<th>Preis Airline</th>
-  				<th>Preis Euro</th>
-  			</tr>
-  		</thead>
-  		<tbody>
-		@for(flight <- flights) {
-			<tr>
-				<td>@flight._1.airlineName</td>
-				<td>@(flight._2.fullName) (@flight._2.iataCode)</td>
-				<td>@(flight._3.fullName) (@flight._3.iataCode)</td>
-				<td>@uiDTF.print(flight._1.dateTime)</td>
-				<td>@flight._1.availableSeats</td>
-				<td>@flight._1.price @flight._1.currency</td>
-				<td>@convert(flight._1.price, flight._1.currency, Euro) Euro</td>
-			</tr>
-		}
-  		</tbody>
-	</table>
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped">
+		  		<thead>
+		  			<tr>
+		  				<th>Airline</th>
+		  				<th>Von</th>
+		  				<th>Nach</th>
+		  				<th>Zeitpunkt</th>
+		  				<th>Sitze</th>
+		  				<th>Preis Airline</th>
+		  				<th>Preis Euro</th>
+		  			</tr>
+		  		</thead>
+		  		<tbody>
+				@for(flight <- flights) {
+					<tr>
+						<td>@flight._1.airlineName</td>
+						<td>@(flight._2.fullName) (@flight._2.iataCode)</td>
+						<td>@(flight._3.fullName) (@flight._3.iataCode)</td>
+						<td>@uiDTF.print(flight._1.dateTime)</td>
+						<td>@flight._1.availableSeats</td>
+						<td>@flight._1.price @flight._1.currency</td>
+						<td>@convert(flight._1.price, flight._1.currency, Euro) Euro</td>
+					</tr>
+				}
+		  		</tbody>
+			</table>
+		</div>
+	</div>
 </div>
 }

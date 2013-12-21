@@ -36,6 +36,7 @@ import views.formdata.LoginFormData
 import db.QueryMethods.checkLogin
 import play.api.db.slick.DBSessionRequest
 import db.QueryMethods
+import views.formdata.Commons
 
 object Application extends Controller {
 
@@ -105,8 +106,8 @@ object Application extends Controller {
     val loginFailed = flash.get("loginFailed").isDefined
     println("Login failed = " + loginFailed)
     val directions = Client.fetchDirections
-    from = TreeMap(directions.map(_.from -> false).toSeq: _*)
-    to = TreeMap(directions.map(_.to -> false).toSeq: _*)
+    from = TreeMap(directions.map(e => Commons.iataFullname(e.from) -> false).toSeq: _*)
+    to = TreeMap(directions.map(e => Commons.iataFullname(e.to) -> false).toSeq: _*)
     from = from + (from.head._1 -> true)
     to = to + (to.head._1 -> true)
     Ok(views.html.search(loginForm, defaultSearchForm, from, to, persons, category, authenticated, loginFailed))
@@ -125,7 +126,7 @@ object Application extends Controller {
         val category = formData.category.take(1).toInt
         info("category " + formData.category + "/" + category)
 
-        Redirect(routes.Application.list(formData.from, formData.to, formData.start, formData.end, formData.adults, formData.children, category))
+        Redirect(routes.Application.list(Commons.fullNameIata(formData.from), Commons.fullNameIata(formData.to), formData.start, formData.end, formData.adults, formData.children, category))
       })
   }
 
@@ -256,21 +257,26 @@ object Application extends Controller {
   def booking(journeyHash: Int) = DBAction { implicit rs =>
     info(s"booking $journeyHash")
     implicit val dbSession = rs.dbSession
-    Security.userCustomer match {
-      case Some(userCustomer) =>
-        val (user, customer) = userCustomer
-        BookingCache.has(journeyHash) match {
-          // journey in cache let's try to book
-          case Some(journey) => doBooking(journey, customer)
-          // no journey in cache
-          case None =>
-            Ok(views.html.booking(loginForm, authenticated, None, None, customer))
+    // Admin isn't allowed to book
+    if (authenticated.exists(_._1 == "admin")) {
+      Redirect(routes.Application.index())
+    } else {
+      Security.userCustomer match {
+        case Some(userCustomer) =>
+          val (user, customer) = userCustomer
+          BookingCache.has(journeyHash) match {
+            // journey in cache let's try to book
+            case Some(journey) => doBooking(journey, customer)
+            // no journey in cache
+            case None =>
+              Ok(views.html.booking(loginForm, authenticated, None, None, customer))
 
+          }
+        // not logged in
+        case None => {
+          val referer = rs.request.headers("Referer")
+          Redirect(routes.Application.loginRegistration(journeyHash))
         }
-      // not logged in
-      case None => {
-        val referer = rs.request.headers("Referer")
-        Redirect(routes.Application.loginRegistration(journeyHash))
       }
     }
   }

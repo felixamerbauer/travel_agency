@@ -9,35 +9,39 @@
 		<div class="alert alert-warning">Leider steht das Angebot nicht mehr zur Verfügung.</div>
 		<a class="btn btn-primary btn-lg" role="button" href="javascript:history.back()">Verfügbare Reisen anzeigen &raquo;</a>	
 	} else {	
+	<div class="row centered">
+		<hr>
+		<h3>RV Reisen gratuliert zum baldigen Urlaub!</h3>
+		<hr>
+	</div>
 	<div class="row">
 		<div class="col-md-4">
 			<img src="/assets/images/12fly.jpg">
-	      	</div>
+	    </div>
 	    <div class="col-md-8 hoteldesc">
-		<h2>Wir gratulieren zum baldigen Urlaub!</h2>
 		@bookingsummary(journey.get)
 		<div class="well">
 			<h3>Buchungsdetails</h3>
-			<table>
+			<table class="table">
 				<tbody>
 					<tr>
-						<td>Person</td>
+						<th>Person</th>
 						<td>@customer.firstName @customer.lastName</td>
 					</tr>
 					<tr>
-						<td>Erwachsene</td>
+						<th>Erwachsene</th>
 						<td>@journey.get.adults</td>
 					</tr>
 					<tr>
-						<td>Kinder</td>
+						<th>Kinder</th>
 						<td>@journey.get.children</td>
 					</tr>
 					<tr>
-						<td>Preis</td>
+						<th>Preis</th>
 						<td>@journey.get.price €</td>
 					</tr>
 					<tr>
-						<td rowspan="2">Kreditkarte</td>
+						<th rowspan="2">Kreditkarte</th>
 						<td>@customer.creditCardCompany </td>
 					</tr>
 					<tr>
@@ -46,10 +50,6 @@
 				</tbody>
 			</table>
 		</div>	
-		<div class="well">
-			<h3>Wichtige Informationen</h3>
-			<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
-		</div>
 		<p><a class="btn btn-primary btn-lg" role="button" href="@routes.Application.search()">Weitere Angebote entdecken! &raquo;</a></p>
 		</div>
 	</div>

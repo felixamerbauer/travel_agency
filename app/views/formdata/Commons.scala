@@ -12,7 +12,9 @@ object Commons {
 
   val dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd")
   val uiDTF = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm")
+  val uiEDTF = DateTimeFormat.forPattern("EE dd.MM.yyyy HH:mm")
   val uiDF = DateTimeFormat.forPattern("dd.MM.yyyy")
+  val uiTF = DateTimeFormat.forPattern("HH:mm")
 
   val sexesFormStringType = Map[String, Sex]("Männlich" -> Male, "Weiblich" -> Female)
   val sexesFormTypeString = sexesFormStringType map (_.swap)
@@ -30,7 +32,7 @@ object Commons {
     "VIE" -> "Wien",
     "BER" -> "Berlin",
     "CDG" -> "Paris",
-    "LHR" -> "Heathrow",
+    "LHR" -> "London",
     "JFK" -> "New York",
     "PEK" -> "Peking",
     "SYD" -> "Sydney")

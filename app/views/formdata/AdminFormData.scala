@@ -11,9 +11,9 @@ import models.User
 import views.formdata.Commons._
 import play.api.data.validation.Constraint
 
-case class AdminAirlineFormData(id: String = "-1", name: String = "", apiURL: String = "") {
+case class AdminAirlineFormData(id: Int = -1, name: String = "", apiURL: String = "") {
   def this(airline: Airline) = this(
-    id = airline.id.toString,
+    id = airline.id,
     name = airline.name,
     apiURL = airline.apiUrl)
 }
@@ -27,18 +27,18 @@ object AdminAirlineFormData {
   })
 }
 
-case class AdminHotelgroupFormData(id: String = "-1", name: String = "", apiURL: String = "") {
+case class AdminHotelgroupFormData(id: Int = -1, name: String = "", apiURL: String = "") {
   def this(hotelgroup: Hotelgroup) = this(
-    id = hotelgroup.id.toString,
+    id = hotelgroup.id,
     name = hotelgroup.name,
     apiURL = hotelgroup.apiUrl)
 }
 
 object AdminHotelgroupFormData
 
-case class AdminProductFormData(id: String = "-1", from: String = "", to: String = "", archived: Boolean) {
+case class AdminProductFormData(id: Int = -1, from: String = "", to: String = "", archived: Boolean) {
   def this(product: Product, from: Location, to: Location) = this(
-    id = product.id.toString,
+    id = product.id,
     from = from.fullName,
     to = to.fullName,
     archived = product.archived)
@@ -54,8 +54,8 @@ object AdminProductFormData {
 }
 
 case class AdminCustomerFormData(
-  id: String = "-1",
-  userId: String = "-1",
+  id: Int = -1,
+  userId: Int = -1,
   firstName: String = "",
   lastName: String = "",
   email: String = "",
@@ -73,7 +73,8 @@ case class AdminCustomerFormData(
   creditCardVerificationCode: String = "") {
 
   def this(user: User, customer: Customer) = this(
-    id = user.id.toString,
+    id = customer.id,
+    userId = user.id,
     firstName = customer.firstName,
     lastName = customer.lastName,
     email = user.email,

@@ -103,11 +103,12 @@ object QueryMethods {
     }
   }
 
+  def userCustomerByCustomerId(id: Int)(implicit session: Session): Tuple2[User, Customer] = qUserWithCustomer.where(_._2.id === id).list.head
+
   def userCustomer(email: String)(implicit session: Session): Tuple2[User, Customer] = qUserWithCustomer.where(_._1.email === email).list.head
 
-  def checkLogin(email: String, password: String)(implicit session: Session): Option[Tuple2[User,Customer]] = {
-    // TODO hash
-    qUserWithCustomer.list.find(e => e._1.email == email && e._1.passwordHash == password)
-  }
+  def checkLogin(email: String, password: String)(implicit session: Session): Option[Tuple2[User,Customer]] = 
+    qUserWithCustomer.list.find(e => e._1.email == email && password.isBcrypted(e._1.passwordHash))
+  
 
 }

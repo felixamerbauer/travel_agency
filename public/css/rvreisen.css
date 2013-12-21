@@ -22,7 +22,11 @@ body {
 .jumbotron {
   color:#fff;
   background-image:url(../images/jumbotronbg.jpg);
+  background-repeat:no-repeat;
+  background-position:center;
   text-shadow: 3px 3px 20px #000;
+  height: 350px;
+  background-color: white;
 }
 
 .jumbotron_original {
