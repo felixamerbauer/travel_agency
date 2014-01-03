@@ -1,9 +1,12 @@
 package controllers
 
 import scala.collection.immutable.TreeMap
-import scala.collection.mutable.{ LinkedHashMap, SynchronizedMap }
+import scala.collection.mutable.LinkedHashMap
+import scala.collection.mutable.SynchronizedMap
+
 import controllers.Security.authenticated
 import controllers.Security.loginForm
+import db.QueryMethods.checkLogin
 import models.Customer
 import models.TCustomer
 import models.TUser
@@ -11,32 +14,26 @@ import models.User
 import play.api.Logger.info
 import play.api.Play.current
 import play.api.data.Form
-import play.api.data.Forms._
+import play.api.data.Forms.mapping
 import play.api.data.Forms.nonEmptyText
+import play.api.data.Forms.number
+import play.api.db.slick.Config.driver.simple.Session
 import play.api.db.slick.Config.driver.simple.columnBaseToInsertInvoker
 import play.api.db.slick.DBAction
+import play.api.db.slick.DBSessionRequest
 import play.api.i18n.Lang
 import play.api.i18n.Messages
 import play.api.mvc.Action
+import play.api.mvc.AnyContent
 import play.api.mvc.Controller
+import views.formdata.Commons
 import views.formdata.Commons.creditCardCompaniesFirstSelected
 import views.formdata.Commons.dateFormat
 import views.formdata.Commons.sexesFirstSelected
 import views.formdata.Commons.sexesFormStringType
+import views.formdata.LoginFormData
 import views.formdata.RegistrationFormData
 import views.formdata.SearchFormData
-import sun.org.mozilla.javascript.internal.SecurityController
-import scala.collection.mutable.SynchronizedMap
-import scala.collection.mutable.LinkedHashMap
-import views.html.loginRegistration
-import play.api.mvc.Request
-import play.api.mvc.AnyContent
-import play.api.db.slick.Config.driver.simple._
-import views.formdata.LoginFormData
-import db.QueryMethods.checkLogin
-import play.api.db.slick.DBSessionRequest
-import db.QueryMethods
-import views.formdata.Commons
 
 object Application extends Controller {
 
