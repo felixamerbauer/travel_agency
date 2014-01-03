@@ -13,7 +13,7 @@ object ApplicationBuild extends Build {
     jdbc,
     filters,
     "com.typesafe.slick" % "slick_2.10" % "1.0.1",
-    "org.postgresql" % "postgresql" % "9.3-1100-jdbc41",
+    "org.postgresql" % "postgresql" % "9.3-1100-jdbc4",
     "org.scalatest" % "scalatest_2.10" % "2.0",
     "com.typesafe.play" %% "play-slick" % "0.5.0.5",
     "com.github.t3hnar" % "scala-bcrypt_2.10" % "2.3")
