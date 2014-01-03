@@ -58,13 +58,6 @@ GET      /travel/list                                   controllers.Application.
 
 POST     /travel/booking                                controllers.Application.booking(journeyHash:Int)
 
-# Upload
-GET /travel/upload            controllers.Application.upload
-
-POST /travel/upload         controllers.Application.uploadPost
-
-GET   /travel/uploadSuccess       controllers.Application.uploadSuccess
-
 #GET      /travel/bookingconfirmation                    controllers.Application.bookingConfirmation
 
 # Admin
