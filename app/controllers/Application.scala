@@ -38,6 +38,8 @@ import play.api.db.slick.DBSessionRequest
 import db.QueryMethods
 import views.formdata.Commons
 
+import java.io.File
+
 object Application extends Controller {
 
   private object BookingCache {
@@ -132,6 +134,25 @@ object Application extends Controller {
 
   def registration = DBAction { implicit rs =>
     Ok(views.html.registration(authenticated, registrationForm, sexesFirstSelected, creditCardCompaniesFirstSelected))
+  }
+  
+  def upload = Action { implicit rs =>
+    Ok(views.html.upload(authenticated, registrationForm, sexesFirstSelected, creditCardCompaniesFirstSelected))
+  }
+  
+def uploadPost = Action(parse.multipartFormData) { request =>
+  request.body.file("picture").map { picture =>
+    val filename = picture.filename 
+    val contentType = picture.contentType
+    picture.ref.moveTo(new File("/TravelCloud/"+filename+".jpg")) // Speichern die Image in C:\TravelCloud
+    Redirect(routes.Application.uploadSuccess())
+  }.getOrElse {
+    Redirect(routes.Application.index())
+  }
+}
+
+def uploadSuccess = Action { implicit rs =>
+    Ok(views.html.uploadSuccess(authenticated, registrationForm, sexesFirstSelected, creditCardCompaniesFirstSelected))
   }
 
   def loginRegistration(journeyHash: Int) = DBAction { implicit rs =>
