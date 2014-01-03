@@ -4,7 +4,16 @@
     loginFailed:Boolean)
 @import views.formdata.Commons._
 @main(title = "List", authenticated, Some(loginForm)) {
+	<div class="container">
+	<div class="textShadowSingle">
+				<h2><font color="green">Ergebnisse</font></h2>
+	</div>
+</div>
+
 <div class="container">
+		<div class="jumbotron_original_new_rotate">
+		<div class="jumbotron_original_new">
+		<div class="jumbotron_original_new_">
 @if(loginFailed) {
 	<div class="alert alert-warning">Leider konnte ich sie nicht einloggen</div>
 }
@@ -55,6 +64,9 @@
 	}
 	</form>
 }
+</div>
+</div>
+</div>
 </div>
 }
 

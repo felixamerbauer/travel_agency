@@ -11,8 +11,9 @@
 
 @main(title = "Admin-Airlines", authenticated, Some(loginForm)) { 
 <div class="container">
+<div class="jumbotron_original">
 	<div class="row">
-		<div class="col-md-4">
+		@*<div class="col-md-4">*@
 			@form(routes.Admin.customerPost, 'class -> "form-horizontal") {
 				@hidden(customerForm("id")),
 				@hidden(customerForm("userId")),
@@ -37,6 +38,7 @@
 			  	</div>
 			}
 		</div>
-	</div>
+	@*</div>*@
+</div>
 </div>
 }

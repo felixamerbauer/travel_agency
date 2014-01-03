@@ -11,8 +11,8 @@
 
 @main(title = "Admin-Product", authenticated, Some(loginForm)) { 
 <div class="container">
+<div class="jumbotron_original">
 	<div class="row">
-		<div class="col-md-4">
 			@for(arg <- productForm.errors.flatMap(_.args)) { <div class="alert alert-danger">@arg</div> }
 			@form(routes.Admin.productPost, 'class -> "form-horizontal") {
 				@hidden(productForm("id")),
@@ -24,7 +24,7 @@
 			    	<a class="btn btn-info" href="@routes.Admin.products">Abbrechen</a>
 			  	</div>
 			}
-		</div>
 	</div>
+</div>
 </div>
 }

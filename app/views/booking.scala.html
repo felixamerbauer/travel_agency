@@ -4,7 +4,16 @@
 @import subtemplates._
 
 @main(title = "Booking", authenticated, Some(loginForm)) {
+	<div class="container">
+	<div class="textShadowSingle">
+				<h2><font color="green">Ihre Buchung</font></h2>
+	</div>
+</div>
+	
 <div class="container">
+<div class="jumbotron_original_new_rotate">
+<div class="jumbotron_original_new">
+<div class="jumbotron_original_new_">
 	@if(journey.isEmpty || order.isEmpty) {
 		<div class="alert alert-warning">Leider steht das Angebot nicht mehr zur Verfügung.</div>
 		<a class="btn btn-primary btn-lg" role="button" href="javascript:history.back()">Verfügbare Reisen anzeigen &raquo;</a>	
@@ -55,4 +64,7 @@
 	</div>
 	}
 	}
+</div>
+</div>
+</div>
 </div>

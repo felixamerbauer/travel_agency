@@ -8,7 +8,8 @@
 
 @main(title = "Admin-Hotelgroups", authenticated, Some(loginForm)) { 
 <div class="container">
-	<div class="col-md-4">
+<div class="jumbotron_original">
+   <div class="row">
 		@form(routes.Admin.hotelgroupPost, 'class -> "form-horizontal") {
 			@hidden(hotelgroupForm("id")),
 			@text(hotelgroupForm("name"),
@@ -21,5 +22,6 @@
 		  	</div>
 		}
 	</div>
+</div>
 </div>
 }
