@@ -3,7 +3,7 @@
   loginFailed:Boolean = false
   )(implicit lang: Lang)
 
-@main(title = "Search",authenticated, Some(loginForm)) { 
+@main(title = "Home",authenticated, Some(loginForm)) { 
 
 @if(loginFailed) {
 <div class="container">

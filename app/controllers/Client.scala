@@ -31,7 +31,7 @@ case class Journey(from: String, to: String, startDate: DateMidnight, endDate: D
 }
 
 object Client {
-  val baseUrl = Option(System.getenv("BASE_URI")).getOrElse("http://127.0.0.1:9000")
+  val baseUrl = Option(System.getenv("BASE_URI")).getOrElse("https://127.0.0.1")
 
   private def fetchApiUrls(implicit session: Session): Tuple2[Seq[String], Seq[String]] = {
     // fetch current airlines and 

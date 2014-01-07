@@ -1,5 +1,5 @@
 Start with http disabled, https enabled
-run -Dhttp.port=disabled -Dhttps.port=443 -Dhttps.keyStore=keystore.jks -Dhttps.keyStorePassword=password
+sbt "run -Dhttp.port=disabled -Dhttps.port=443 -Dhttps.keyStore=keystore.jks -Dhttps.keyStorePassword=password"
 
 
 keytool -genkey -alias MyKey -keyalg RSA -keysize 2048 -keystore keystore.jks
