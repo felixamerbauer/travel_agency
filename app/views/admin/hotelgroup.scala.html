@@ -11,7 +11,7 @@
 <div class="jumbotron_original">
    <div class="row">
 		@form(routes.Admin.hotelgroupPost, 'class -> "form-horizontal") {
-			@hidden(hotelgroupForm("id")),
+			@hidden(hotelgroupForm("id"))
 			@text(hotelgroupForm("name"),
 				label = "Name")
 			@text(hotelgroupForm("apiURL"),

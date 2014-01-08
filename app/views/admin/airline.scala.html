@@ -12,7 +12,7 @@
 	<div class="row">
 			@for(arg <- airlineForm.errors.flatMap(_.args)) { <div class="alert alert-danger">@arg</div> }
 			@form(routes.Admin.airlinePost, 'class -> "form-horizontal") {
-				@hidden(airlineForm("id")),
+				@hidden(airlineForm("id"))
 				@text(airlineForm("name"),
 					label = "Name")
 				@text(airlineForm("apiURL"),
